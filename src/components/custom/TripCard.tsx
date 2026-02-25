@@ -35,14 +35,21 @@ export function TripCard({ trip, variant = 'public', href, onClick, className }:
         <p className="text-sm text-muted-foreground">{trip.dates}</p>
         <div className="flex items-center justify-between">
           <span className="font-mono text-xl font-medium text-foreground">{formatCurrency(trip.price)}</span>
-          <Button
-            size="sm"
-            asChild={!!href}
-            className="min-h-11 bg-accent text-accent-foreground hover:bg-accent-light"
-            onClick={href ? undefined : (e) => { e.stopPropagation(); onClick?.() }}
-          >
-            {href ? <Link href={href}>{CTA_LABELS[variant]}</Link> : CTA_LABELS[variant]}
-          </Button>
+          {/* When href wraps the whole card, render a plain span styled as button
+              to avoid nested <a> tags (invalid HTML → hydration mismatch). */}
+          {href ? (
+            <span className="inline-flex h-9 min-h-11 items-center justify-center rounded-md bg-accent px-3 text-sm font-medium text-accent-foreground hover:bg-accent-light">
+              {CTA_LABELS[variant]}
+            </span>
+          ) : (
+            <Button
+              size="sm"
+              className="min-h-11 bg-accent text-accent-foreground hover:bg-accent-light"
+              onClick={(e) => { e.stopPropagation(); onClick?.() }}
+            >
+              {CTA_LABELS[variant]}
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>
