@@ -1,0 +1,11 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default: deny all reads and writes
+    // Security rules will be implemented per-collection in Story 1.4b
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

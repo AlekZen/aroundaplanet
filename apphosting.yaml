@@ -1,0 +1,45 @@
+runConfig:
+  minInstances: 1
+  maxInstances: 10
+  concurrency: 80
+  cpu: 1
+  memoryMiB: 1024
+
+env:
+  # === Client (NEXT_PUBLIC_ = frozen at build time) ===
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    secret: prod-firebase-api-key
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: arounda-planet.firebaseapp.com
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: arounda-planet
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    value: arounda-planet.firebasestorage.app
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+    secret: prod-firebase-messaging-sender-id
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    secret: prod-firebase-app-id
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_FIREBASE_VAPID_KEY
+    secret: prod-firebase-vapid-key
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_APP_URL
+    value: https://aroundaplanet--arounda-planet.us-east4.hosted.app
+    availability: [BUILD, RUNTIME]
+
+  # === Server (RUNTIME only — never exposed to client) ===
+  - variable: ODOO_URL
+    value: https://aroundaplanet.odoo.com
+    availability: [RUNTIME]
+  - variable: ODOO_DB
+    value: aroundaplanet
+    availability: [RUNTIME]
+  - variable: ODOO_API_KEY
+    secret: prod-odoo-api-key
+    availability: [RUNTIME]
+  # Firebase Admin SDK: uses ADC automatically in Cloud Run — no variable needed

@@ -1,0 +1,118 @@
+# generated: 2026-02-24
+# project: aroundaplanet
+# project_key: NOKEY
+# tracking_system: file-system
+# story_location: _bmad-output/implementation-artifacts
+#
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Epic Status Transitions:
+#   - backlog → in-progress: Automatically when first story is created (via create-story)
+#   - in-progress → done: Manually when all stories reach 'done' status
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created in stories folder
+#   - in-progress: Developer actively working on implementation
+#   - review: Ready for code review (via Dev's code-review workflow)
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when first story is created
+# - Stories can be worked in parallel if team capacity allows
+# - SM typically creates next story after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+
+generated: 2026-02-24
+project: aroundaplanet
+project_key: NOKEY
+tracking_system: file-system
+story_location: _bmad-output/implementation-artifacts
+
+development_status:
+  # =============================================
+  # Epic 1: Foundation & User Identity (9 stories)
+  # =============================================
+  epic-1: in-progress
+  1-1a-project-scaffold-ci-pipeline: in-progress
+  1-1b-design-system-layout-foundation: backlog
+  1-2-public-landing-pages: backlog
+  1-3-firebase-authentication-user-registration: backlog
+  1-4a-role-model-custom-claims: backlog
+  1-4b-route-protection-security-rules: backlog
+  1-5-odoo-client-abstraction-layer: backlog
+  1-6-superadmin-panel-user-management: backlog
+  1-7-user-profile-notification-preferences: backlog
+  epic-1-retrospective: optional
+
+  # =============================================
+  # Epic 2: Trip Discovery & Public Content (7 stories)
+  # =============================================
+  epic-2: backlog
+  2-1a-trip-sync-odoo-firestore: backlog
+  2-1b-admin-trip-crud-document-uploads: backlog
+  2-2-public-trip-catalog-with-filters: backlog
+  2-3-trip-landing-page: backlog
+  2-4-conversion-flow: backlog
+  2-5-agent-attribution-lead-routing: backlog
+  2-6-analytics-attribution-tracking: backlog
+  epic-2-retrospective: optional
+
+  # =============================================
+  # Epic 3: Payment Flow & Verification (4 stories)
+  # =============================================
+  epic-3: backlog
+  3-1-payment-report-flow: backlog
+  3-2-agent-admin-payment-proxy: backlog
+  3-3-admin-verification-queue-actions: backlog
+  3-4-payment-plan-history-status-tracking: backlog
+  epic-3-retrospective: optional
+
+  # =============================================
+  # Epic 4: Agent Business Portal (3 stories)
+  # =============================================
+  epic-4: backlog
+  4-1-agent-client-list-detail: backlog
+  4-2-commissions-business-metrics: backlog
+  4-3-referral-links-lead-notifications: backlog
+  epic-4-retrospective: optional
+
+  # =============================================
+  # Epic 5: Director Dashboard & BI (4 stories)
+  # =============================================
+  epic-5: backlog
+  5-1-executive-dashboard-kpi-cards: backlog
+  5-2-traffic-sources-agent-performance-attribution: backlog
+  5-3-pending-collections-financial-drilldown: backlog
+  5-4-analytics-kpi-cloud-functions: backlog
+  epic-5-retrospective: optional
+
+  # =============================================
+  # Epic 6: Notification System (5 stories)
+  # =============================================
+  epic-6: backlog
+  6-1a-notificationservice-core-push-fcm: backlog
+  6-1b-notification-center-ui-ctr-tracking: backlog
+  6-2-multi-channel-dispatch-fallback-grouping: backlog
+  6-3-scheduled-summaries-exception-alerts: backlog
+  6-4-notification-cloud-functions: backlog
+  epic-6-retrospective: optional
+
+  # =============================================
+  # Epic 7: Client Experience & UGC (3 stories)
+  # =============================================
+  epic-7: backlog
+  7-1-my-trips-dashboard-emotional-progress: backlog
+  7-2-document-downloads-photo-uploads: backlog
+  7-3-reviews-ratings-social-sharing: backlog
+  epic-7-retrospective: optional

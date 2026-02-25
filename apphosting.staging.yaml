@@ -1,0 +1,13 @@
+runConfig:
+  minInstances: 0
+  maxInstances: 3
+  cpu: 1
+  memoryMiB: 512
+
+env:
+  - variable: NEXT_PUBLIC_APP_URL
+    value: https://staging--arounda-planet.us-east4.hosted.app
+    availability: [BUILD, RUNTIME]
+  - variable: ODOO_READ_ONLY
+    value: "true"
+    availability: [RUNTIME]
