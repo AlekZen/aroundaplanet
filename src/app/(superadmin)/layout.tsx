@@ -1,7 +1,9 @@
+import { AdminShell } from '@/components/shared/AdminShell'
+
 export default function SuperAdminLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
-  return <>{children}</>;
+  return <AdminShell roles={['superadmin']}>{children}</AdminShell>
 }
