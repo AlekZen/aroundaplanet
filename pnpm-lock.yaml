@@ -17,6 +17,9 @@ importers:
       firebase:
         specifier: ^12.9.0
         version: 12.9.0
+      firebase-admin:
+        specifier: ^13.6.1
+        version: 13.6.1
       lucide-react:
         specifier: ^0.575.0
         version: 0.575.0(react@19.2.3)
@@ -75,9 +78,6 @@ importers:
       eslint-config-next:
         specifier: 16.1.6
         version: 16.1.6(@typescript-eslint/parser@8.56.1(eslint@9.39.3(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.3(jiti@2.6.1))(typescript@5.9.3)
-      firebase-admin:
-        specifier: ^13.6.1
-        version: 13.6.1
       jsdom:
         specifier: ^28.1.0
         version: 28.1.0(@noble/hashes@1.8.0)

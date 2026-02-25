@@ -1,6 +1,6 @@
 # Story 1.1a: Project Scaffold & CI Pipeline
 
-Status: ready-for-dev
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -431,7 +431,7 @@ jobs:
 {
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "cross-env NODE_OPTIONS='--no-deprecation' next build --webpack",
+    "build": "cross-env NODE_OPTIONS=--disable-warning=ExperimentalWarning next build --webpack",
     "start": "next start",
     "lint": "eslint src/",
     "typecheck": "tsc --noEmit",
@@ -442,7 +442,7 @@ jobs:
 }
 ```
 
-**Nota build:** Next.js 16 requiere `--webpack` flag explicito para `next build` (Serwist necesita Webpack para compilar el SW). Se usa `cross-env NODE_OPTIONS='--no-deprecation'` para suprimir ExperimentalWarning de Node. Instalar `cross-env` como devDependency.
+**Nota build:** Next.js 16 requiere `--webpack` flag explicito para `next build` (Serwist necesita Webpack para compilar el SW). Se usa `cross-env NODE_OPTIONS=--disable-warning=ExperimentalWarning` para suprimir ExperimentalWarning de Node. Instalar `cross-env` como devDependency.
 
 ### next.config.ts — Configuracion Completa
 
@@ -451,10 +451,12 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  turbopack: {},
 };
 
 export default async () => {
-  const withSerwist = (await import("@serwist/next")).default({
+  const withSerwistInit = (await import("@serwist/next")).default;
+  const withSerwist = withSerwistInit({
     swSrc: "src/app/sw.ts",
     swDest: "public/sw.js",
     disable: process.env.NODE_ENV === "development",
@@ -470,8 +472,7 @@ export default async () => {
 # next, react, react-dom, typescript, tailwindcss, eslint
 
 # Firebase
-pnpm add firebase
-pnpm add -D firebase-admin
+pnpm add firebase firebase-admin
 
 # PWA
 pnpm add @serwist/next
@@ -568,14 +569,73 @@ La estructura de carpetas creada en esta story sigue EXACTAMENTE la especificaci
 
 ### Agent Model Used
 
-{{agent_model_name_version}}
+Claude Opus 4.6 (claude-opus-4-6) via Claude Code CLI
 
 ### Debug Log References
 
+N/A
+
 ### Completion Notes List
+
+- Serwist 9.5+ requiere class instances, no strings, para runtime caching handlers
+- Next.js 16 renombro middleware.ts a proxy.ts (convencion nueva)
+- Build requiere --webpack flag porque Serwist usa webpack plugin (Turbopack no lo soporta)
+- cross-env necesario en Windows porque pnpm ejecuta scripts via cmd.exe
+- shadcn/ui init sobreescribe globals.css y utils.ts — requiere fusion manual de brand colors
+- Firebase App Hosting requiere secrets creados manualmente en Cloud Secret Manager + IAM bindings via firebase apphosting:secrets:grantaccess
 
 ### Change Log
 - 2026-02-25: Story creada via create-story workflow con party mode review (Winston, Amelia, Bob). Decisiones: pnpm, CI completo desde dia 1, Serwist 9.5+ packages corregidos, scaffold-only sin archivos de features.
 - 2026-02-25: Actualizada post-implementacion: middleware.ts→proxy.ts (Next.js 16), next.config.ts async dynamic import, build con --webpack + cross-env, sw.ts con class instances + declare global, lint con eslint src/, jsdom como devDep para Vitest.
+- 2026-02-25: Code review adversarial (9 findings: 3C, 2H, 3M, 1L). Fixes: .gitkeep en 15 dirs, page.tsx movido a (public)/, firebase-admin a dependencies, maskable icons, build script corregido en Dev Notes, File List completado, Status y Agent Model actualizados.
 
 ### File List
+
+**Root config (created/modified):**
+- `.env.example` — Environment variable template (committed)
+- `.github/workflows/ci.yml` — CI pipeline: lint, typecheck, test, e2e
+- `.gitignore` — Updated with PWA, testing, IDE entries
+- `apphosting.yaml` — Firebase App Hosting production config
+- `apphosting.staging.yaml` — Firebase App Hosting staging overrides
+- `components.json` — shadcn/ui configuration
+- `firebase.json` — Firebase project config (Firestore rules + indexes)
+- `firestore.indexes.json` — Empty composite indexes
+- `firestore.rules` — Default deny-all (placeholder for Story 1.4b)
+- `next.config.ts` — Async config with Serwist dynamic import + turbopack
+- `package.json` — Scripts, dependencies, devDependencies
+- `playwright.config.ts` — E2E test config (chromium, webServer)
+- `tsconfig.json` — TypeScript strict mode, path alias, webworker lib
+- `vitest.config.ts` — Unit test config (jsdom, path alias)
+
+**Source files (created):**
+- `src/app/globals.css` — Tailwind v4 + shadcn/ui + AroundaPlanet brand colors (light + dark)
+- `src/app/layout.tsx` — Root layout with Google Fonts (Inter, Poppins, Roboto Mono), metadata, viewport
+- `src/app/manifest.ts` — PWA Web App Manifest (dynamic, theme_color #1B4332, icons)
+- `src/app/sw.ts` — Serwist service worker with precache, runtime caching, FCM placeholder
+- `src/app/(public)/page.tsx` — Placeholder landing page (logo + "Plataforma en construccion")
+- `src/app/(public)/layout.tsx` — PublicLayout placeholder (passthrough)
+- `src/app/(auth)/layout.tsx` — AuthLayout placeholder
+- `src/app/(agent)/layout.tsx` — AgentLayout placeholder
+- `src/app/(admin)/layout.tsx` — AdminLayout placeholder
+- `src/app/(director)/layout.tsx` — DirectorLayout placeholder
+- `src/app/(client)/layout.tsx` — ClientLayout placeholder
+- `src/app/(superadmin)/layout.tsx` — SuperAdminLayout placeholder
+- `src/lib/firebase/client.ts` — Firebase client SDK singleton init
+- `src/lib/firebase/admin.ts` — Firebase Admin SDK with ADC (prod) / JSON (dev)
+- `src/lib/errors.ts` — AppError class (code, message, retryable, statusCode)
+- `src/lib/utils.ts` — cn() classnames merge + formatCurrency()
+- `src/proxy.ts` — Next.js 16 proxy placeholder (Story 1.4b)
+
+**Directory scaffolds (.gitkeep):**
+- `src/app/api/`, `src/components/ui/`, `src/components/custom/`, `src/components/shared/`
+- `src/hooks/`, `src/stores/`, `src/schemas/`, `src/types/`, `src/config/`
+- `src/lib/odoo/`, `src/lib/notifications/`, `src/lib/auth/`, `src/lib/analytics/`, `src/lib/pdf/`, `src/lib/offline/`
+
+**Static assets:**
+- `public/icons/icon-72x72.png` — PWA icon 72px (brand color #1B4332)
+- `public/icons/icon-192x192.png` — PWA icon 192px
+- `public/icons/icon-512x512.png` — PWA icon 512px
+- `public/images/logo-aroundaplanet.webp` — Brand logo
+
+**E2E tests:**
+- `e2e/placeholder.spec.ts` — Placeholder test (page loads, title check)
