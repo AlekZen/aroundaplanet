@@ -183,11 +183,11 @@ Esta es la story fundacional de todo el proyecto AroundaPlanet. Todos los 35 sto
   - [x] 9.5 Verificar `pnpm dev` inicia sin errores
   - [x] 9.6 Verificar `pnpm build` completa sin errores ni warnings
 
-- [ ] **Task 10: First Deploy** (AC: #8)
-  - [ ] 10.1 Ejecutar `firebase init apphosting` (si no se hizo en Task 6)
-  - [ ] 10.2 Push a `master`
-  - [ ] 10.3 Verificar deploy automatico en Firebase App Hosting
-  - [ ] 10.4 Verificar URL publica responde con placeholder page
+- [x] **Task 10: First Deploy** (AC: #8)
+  - [x] 10.1 Backend ya configurado en Firebase Console (aroundaplanet, us-east4)
+  - [x] 10.2 Push a `master` (3 commits: ca51035, 02ebd93, b462351)
+  - [x] 10.3 Rollout manual via `firebase apphosting:rollouts:create` (requirio crear 5 secrets en Cloud Secret Manager + IAM bindings)
+  - [x] 10.4 URL publica responde: https://aroundaplanet--arounda-planet.us-east4.hosted.app
 
 ---
 
