@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Poppins, Roboto_Mono } from "next/font/google";
+import { Toaster } from "@/components/ui/sonner";
+import { AuthInitializer } from "@/components/shared/AuthInitializer";
 import "./globals.css";
 
 const inter = Inter({
@@ -50,6 +52,8 @@ export default function RootLayout({
         className={`${inter.variable} ${poppins.variable} ${robotoMono.variable} antialiased`}
       >
         {children}
+        <AuthInitializer />
+        <Toaster />
       </body>
     </html>
   );

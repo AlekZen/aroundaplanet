@@ -1,5 +1,7 @@
+import { Suspense } from 'react'
 import Image from 'next/image'
 import { PageTransition } from '@/components/shared/PageTransition'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export default function AuthLayout({
   children,
@@ -55,7 +57,18 @@ export default function AuthLayout({
               id="main-content"
               className="bg-card rounded-lg shadow-lg p-8 max-w-md w-full"
             >
-              <PageTransition>{children}</PageTransition>
+              <Suspense
+                fallback={
+                  <div className="space-y-6">
+                    <Skeleton className="h-8 w-48 mx-auto" />
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                    <Skeleton className="h-12 w-full" />
+                  </div>
+                }
+              >
+                <PageTransition>{children}</PageTransition>
+              </Suspense>
             </main>
           </div>
         </div>
