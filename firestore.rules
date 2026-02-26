@@ -43,6 +43,22 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // === ODOO CACHE ===
+    // Read: authenticated users. Write: NEVER from client (Admin SDK only)
+    match /odooCache/{model}/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+
+    // === AUDIT LOG ===
+    // Read: admin/superadmin only. Write: NEVER from client (Admin SDK only)
+    match /auditLog/{logId} {
+      allow read: if request.auth != null
+                  && ('admin' in request.auth.token.roles
+                      || 'superadmin' in request.auth.token.roles);
+      allow write: if false;
+    }
+
     // === DEFAULT DENY ===
     // Any unspecified collection: denied
     match /{document=**} {

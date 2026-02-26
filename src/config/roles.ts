@@ -33,6 +33,33 @@ export interface RoleNavItem {
   priority: number
 }
 
+/** Color class for role badges (Tailwind classes) */
+export const ROLE_COLORS: Record<UserRole, { bg: string; text: string }> = {
+  superadmin: { bg: 'bg-purple-100', text: 'text-purple-800' },
+  director: { bg: 'bg-blue-100', text: 'text-blue-800' },
+  admin: { bg: 'bg-green-100', text: 'text-green-800' },
+  agente: { bg: 'bg-orange-100', text: 'text-orange-800' },
+  cliente: { bg: 'bg-gray-100', text: 'text-gray-600' },
+}
+
+/** Human-readable display labels per role */
+export const ROLE_LABELS: Record<UserRole, string> = {
+  superadmin: 'SuperAdmin',
+  director: 'Director',
+  admin: 'Admin',
+  agente: 'Agente',
+  cliente: 'Cliente',
+}
+
+/** Lucide icon name per role */
+export const ROLE_ICONS: Record<UserRole, string> = {
+  superadmin: 'Shield',
+  director: 'BarChart3',
+  admin: 'Settings',
+  agente: 'Briefcase',
+  cliente: 'User',
+}
+
 export const ROLE_NAVIGATION_MAP: Record<UserRole, RoleNavItem[]> = {
   cliente: [
     { role: 'cliente', label: 'Mis Viajes', href: '/client/my-trips', priority: 1 },

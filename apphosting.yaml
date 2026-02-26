@@ -39,6 +39,9 @@ env:
   - variable: ODOO_DB
     value: aroundaplanet
     availability: [RUNTIME]
+  - variable: ODOO_USERNAME
+    secret: prod-odoo-username
+    availability: [RUNTIME]
   - variable: ODOO_API_KEY
     secret: prod-odoo-api-key
     availability: [RUNTIME]

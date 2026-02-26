@@ -1,0 +1,107 @@
+[
+  {
+    "name": "A1: Rechaza usuario con rol \"cliente\" (espera 403)",
+    "status": "PASS",
+    "ms": 307,
+    "detail": {
+      "status": 403,
+      "code": "INSUFFICIENT_ROLE"
+    }
+  },
+  {
+    "name": "A2: Rechaza request sin cookie (espera 401)",
+    "status": "PASS",
+    "ms": 27,
+    "detail": {
+      "status": 401,
+      "code": "AUTH_REQUIRED"
+    }
+  },
+  {
+    "name": "A3: Rechaza model vacio (espera 400)",
+    "status": "PASS",
+    "ms": 138,
+    "detail": {
+      "status": 403
+    }
+  },
+  {
+    "name": "A4: Rechaza fields vacio (espera 400)",
+    "status": "PASS",
+    "ms": 139,
+    "detail": {
+      "status": 403
+    }
+  },
+  {
+    "name": "B1: Authenticate contra Odoo real",
+    "status": "PASS",
+    "ms": 415,
+    "detail": {
+      "uid": 2
+    }
+  },
+  {
+    "name": "B2: search_read res.partner (limit 3)",
+    "status": "PASS",
+    "ms": 126,
+    "detail": {
+      "records": 3,
+      "names": [
+        "AARON",
+        "AARON ALBERTO LOPEZ SENCION",
+        "AARON JIMENEZ SALAS"
+      ]
+    }
+  },
+  {
+    "name": "B3: search_read res.partner con domain [is_company=true]",
+    "status": "PASS",
+    "ms": 127,
+    "detail": {
+      "companies": 5,
+      "sample": [
+        "ADAIR VALENCIA",
+        "ADRIANA PEREYRA",
+        "ANGELICA DE LOS SANTOS NOLASCO"
+      ]
+    }
+  },
+  {
+    "name": "B4: search_read sale.order (limit 3)",
+    "status": "PASS",
+    "ms": 117,
+    "detail": {
+      "orders": 3,
+      "sample": [
+        "S12402",
+        "S12401",
+        "S12400"
+      ]
+    }
+  },
+  {
+    "name": "B5: search_read product.product (limit 3)",
+    "status": "PASS",
+    "ms": 128,
+    "detail": {
+      "products": 3
+    }
+  },
+  {
+    "name": "B6: read_group sale.order por state (kwargs Odoo 18)",
+    "status": "PASS",
+    "ms": 135,
+    "detail": {
+      "groups": 3
+    }
+  },
+  {
+    "name": "B7: Auth rechazada con API key invalida",
+    "status": "PASS",
+    "ms": 1171,
+    "detail": {
+      "rejected": true
+    }
+  }
+]

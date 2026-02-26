@@ -1,0 +1,55 @@
+{
+  "story": "1.6",
+  "timestamp": "2026-02-26T21:12:57.533Z",
+  "summary": {
+    "total": 11,
+    "passed": 11,
+    "failed": 0
+  },
+  "results": [
+    {
+      "test": "GET /api/users sin cookie → 401",
+      "status": "PASS"
+    },
+    {
+      "test": "GET /api/users con cliente → 403",
+      "status": "PASS"
+    },
+    {
+      "test": "GET /api/users con superadmin → 200 + users array",
+      "status": "PASS"
+    },
+    {
+      "test": "GET /api/users?roleFilter=cliente → 200",
+      "status": "PASS"
+    },
+    {
+      "test": "GET /api/users?statusFilter=active → 200",
+      "status": "PASS"
+    },
+    {
+      "test": "GET /api/users?search=alek → 200",
+      "status": "PASS"
+    },
+    {
+      "test": "PATCH /api/users/:uid/status sin cookie → 401",
+      "status": "PASS"
+    },
+    {
+      "test": "PATCH /api/users/:uid/status con cliente → 403",
+      "status": "PASS"
+    },
+    {
+      "test": "PATCH /api/users/:uid/status body invalido → 400",
+      "status": "PASS"
+    },
+    {
+      "test": "POST /api/odoo/sync-users sin cookie → 401",
+      "status": "PASS"
+    },
+    {
+      "test": "POST /api/odoo/sync-users con cliente → 403",
+      "status": "PASS"
+    }
+  ]
+}
