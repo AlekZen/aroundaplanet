@@ -2,13 +2,49 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Users: owner-only access (read/write own document)
-    match /users/{uid} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+
+    // === TRIPS ===
+    // Read: public (catalog is a marketing asset, SSG/ISR for SEO)
+    // Write: admin/superadmin only
+    match /trips/{tripId} {
+      allow read: if true;
+      allow write: if request.auth != null
+                   && ('admin' in request.auth.token.roles
+                       || 'superadmin' in request.auth.token.roles);
     }
 
-    // Default: deny all reads and writes for other collections
-    // Additional per-collection rules added in Story 1.4b
+    // === AGENTS (with subcollections) ===
+    // Agent isolation: only own agentId. Admin/Director/SuperAdmin can read
+    match /agents/{agentId}/{document=**} {
+      allow read: if request.auth != null
+                  && (request.auth.token.agentId == agentId
+                      || 'admin' in request.auth.token.roles
+                      || 'director' in request.auth.token.roles
+                      || 'superadmin' in request.auth.token.roles);
+      allow write: if request.auth != null
+                   && request.auth.token.agentId == agentId;
+    }
+
+    // === USERS ===
+    // Owner read/write. Admin/SuperAdmin read-only
+    match /users/{uid} {
+      allow read: if request.auth != null
+                  && (request.auth.uid == uid
+                      || 'admin' in request.auth.token.roles
+                      || 'superadmin' in request.auth.token.roles);
+      allow write: if request.auth != null
+                   && request.auth.uid == uid;
+    }
+
+    // === CONFIG (permissions, settings) ===
+    // Read: authenticated. Write: NEVER from client
+    match /config/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+
+    // === DEFAULT DENY ===
+    // Any unspecified collection: denied
     match /{document=**} {
       allow read, write: if false;
     }

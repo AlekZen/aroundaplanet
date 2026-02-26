@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useForm } from 'react-hook-form'
@@ -38,6 +38,12 @@ export default function RegisterPage() {
     resolver: zodResolver(registerSchema),
   })
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace(returnUrl)
+    }
+  }, [isAuthenticated, router, returnUrl])
+
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -52,7 +58,6 @@ export default function RegisterPage() {
   }
 
   if (isAuthenticated) {
-    router.replace(returnUrl)
     return null
   }
 

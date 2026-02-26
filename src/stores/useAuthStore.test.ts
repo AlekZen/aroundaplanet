@@ -1,11 +1,12 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { useAuthStore } from './useAuthStore'
+import { useAuthStore, hasRole } from './useAuthStore'
 
 describe('useAuthStore', () => {
   beforeEach(() => {
     useAuthStore.setState({
       user: null,
       profile: null,
+      claims: null,
       isLoading: true,
       isAuthenticated: false,
       error: null,
@@ -61,9 +62,10 @@ describe('useAuthStore', () => {
     expect(useAuthStore.getState().error).toBe('Auth failed')
   })
 
-  it('reset clears user, profile, auth status, and error', () => {
+  it('reset clears user, profile, claims, auth status, and error', () => {
     const mockUser = { uid: '123' } as never
     useAuthStore.getState().setUser(mockUser)
+    useAuthStore.getState().setClaims({ roles: ['cliente', 'admin'] })
     useAuthStore.getState().setError('some error')
 
     useAuthStore.getState().reset()
@@ -71,7 +73,49 @@ describe('useAuthStore', () => {
     const state = useAuthStore.getState()
     expect(state.user).toBeNull()
     expect(state.profile).toBeNull()
+    expect(state.claims).toBeNull()
     expect(state.isAuthenticated).toBe(false)
     expect(state.error).toBeNull()
+  })
+
+  it('setClaims updates claims in store', () => {
+    useAuthStore.getState().setClaims({ roles: ['cliente', 'agente'], agentId: 'agent123' })
+
+    const state = useAuthStore.getState()
+    expect(state.claims).toEqual({ roles: ['cliente', 'agente'], agentId: 'agent123' })
+  })
+
+  it('setClaims with null clears claims', () => {
+    useAuthStore.getState().setClaims({ roles: ['cliente'] })
+    useAuthStore.getState().setClaims(null)
+
+    expect(useAuthStore.getState().claims).toBeNull()
+  })
+
+  it('hasRole returns true for role present in claims', () => {
+    useAuthStore.setState({
+      claims: { roles: ['cliente', 'admin'] },
+    })
+
+    expect(hasRole('admin')).toBe(true)
+    expect(hasRole('cliente')).toBe(true)
+  })
+
+  it('hasRole returns false for role not in claims', () => {
+    useAuthStore.setState({
+      claims: { roles: ['cliente'] },
+    })
+
+    expect(hasRole('superadmin')).toBe(false)
+  })
+
+  it('hasRole falls back to profile.roles when claims is null', () => {
+    useAuthStore.setState({
+      claims: null,
+      profile: { roles: ['cliente', 'director'] } as never,
+    })
+
+    expect(hasRole('director')).toBe(true)
+    expect(hasRole('superadmin')).toBe(false)
   })
 })

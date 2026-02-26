@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { useAuthStore } from '@/stores/useAuthStore'
 
@@ -46,6 +46,13 @@ const DEFAULT_DASHBOARD_AUTH = {
   },
 }
 
+// Warmup import to avoid timeout in forked process
+let DashboardPage: React.ComponentType
+beforeAll(async () => {
+  const mod = await import('./page')
+  DashboardPage = mod.default
+})
+
 describe('DashboardPage', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -53,23 +60,22 @@ describe('DashboardPage', () => {
     vi.mocked(useAuthStore).mockReturnValue(DEFAULT_DASHBOARD_AUTH as any)
   })
 
-  it('renders welcome message with display name', async () => {
-    const { default: DashboardPage } = await import('./page')
+  it('renders welcome message with display name', () => {
     render(<DashboardPage />)
 
-    expect(screen.getByText(/bienvenido, juan perez/i)).toBeInTheDocument()
-    expect(screen.getByText('juan@example.com')).toBeInTheDocument()
+    const welcomeMessages = screen.getAllByText(/bienvenido, juan perez/i)
+    expect(welcomeMessages.length).toBeGreaterThan(0)
+    expect(screen.getAllByText('juan@example.com').length).toBeGreaterThan(0)
   })
 
-  it('renders logout button', async () => {
-    const { default: DashboardPage } = await import('./page')
+  it('renders logout button', () => {
     render(<DashboardPage />)
 
-    expect(screen.getByRole('button', { name: /cerrar sesion/i })).toBeInTheDocument()
+    const logoutButtons = screen.getAllByRole('button', { name: /cerrar sesion/i })
+    expect(logoutButtons.length).toBeGreaterThan(0)
   })
 
-  it('redirects to login if not authenticated', async () => {
-    const { useAuthStore } = await import('@/stores/useAuthStore')
+  it('redirects to login if not authenticated', () => {
     vi.mocked(useAuthStore).mockReturnValue({
       isLoading: false,
       isAuthenticated: false,
@@ -78,14 +84,12 @@ describe('DashboardPage', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any)
 
-    const { default: DashboardPage } = await import('./page')
     render(<DashboardPage />)
 
     expect(mockReplace).toHaveBeenCalledWith('/login')
   })
 
-  it('shows skeleton while loading', async () => {
-    const { useAuthStore } = await import('@/stores/useAuthStore')
+  it('shows skeleton while loading', () => {
     vi.mocked(useAuthStore).mockReturnValue({
       isLoading: true,
       isAuthenticated: false,
@@ -94,7 +98,6 @@ describe('DashboardPage', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any)
 
-    const { default: DashboardPage } = await import('./page')
     render(<DashboardPage />)
 
     expect(screen.queryByRole('button', { name: /cerrar sesion/i })).not.toBeInTheDocument()

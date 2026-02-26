@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 import { adminAuth } from '@/lib/firebase/admin'
+import { initUserClaims } from '@/lib/auth/claims'
 
 const SESSION_EXPIRY_MS = 14 * 24 * 60 * 60 * 1000 // 14 days
 
@@ -15,7 +16,10 @@ export async function POST(request: Request) {
       )
     }
 
-    await adminAuth.verifyIdToken(idToken)
+    const decodedToken = await adminAuth.verifyIdToken(idToken)
+
+    // Story 1.4a: Set initial claims for new users (idempotent)
+    await initUserClaims(decodedToken.uid)
 
     const sessionCookie = await adminAuth.createSessionCookie(idToken, {
       expiresIn: SESSION_EXPIRY_MS,

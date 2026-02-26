@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -9,6 +10,12 @@ import { useAuthStore } from '@/stores/useAuthStore'
 export default function DashboardPage() {
   const router = useRouter()
   const { isLoading, isAuthenticated, profile } = useAuthStore()
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.replace('/login')
+    }
+  }, [isLoading, isAuthenticated, router])
 
   if (isLoading) {
     return (
@@ -23,7 +30,6 @@ export default function DashboardPage() {
   }
 
   if (!isAuthenticated) {
-    router.replace('/login')
     return null
   }
 
