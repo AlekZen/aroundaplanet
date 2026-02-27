@@ -41,7 +41,7 @@ export function TripCard({ trip, variant = 'public', isSoldOut = false, href, on
       role="article"
       aria-label={`${trip.title}${isSoldOut ? ' — Agotado' : ''}`}
     >
-      <div className="relative aspect-video">
+      <div className="relative aspect-square">
         <Image
           src={trip.imageUrl || TRIP_PLACEHOLDER_IMAGE}
           alt={trip.title}
@@ -107,7 +107,7 @@ export function TripCard({ trip, variant = 'public', isSoldOut = false, href, on
 export function TripCardSkeleton() {
   return (
     <div className="overflow-hidden rounded-lg border bg-card">
-      <div className="aspect-video bg-muted animate-pulse" />
+      <div className="aspect-square bg-muted animate-pulse" />
       <div className="p-4 space-y-2">
         <div className="h-5 w-3/4 bg-muted animate-pulse rounded" />
         <div className="h-4 w-1/2 bg-muted animate-pulse rounded" />
