@@ -77,6 +77,7 @@ describe('PATCH /api/users/[uid]/profile', () => {
 
     // Default: caller is owner
     mockRequireAuth.mockResolvedValue({ uid: 'user1', roles: ['cliente'] })
+    mockUserDocGet.mockResolvedValue({ exists: true, data: () => ({ roles: ['cliente'] }) })
     mockUserDocUpdate.mockResolvedValue(undefined)
     mockFieldValueServerTimestamp.mockReturnValue(FAKE_TIMESTAMP)
   })

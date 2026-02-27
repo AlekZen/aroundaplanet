@@ -19,7 +19,7 @@ import { cn } from '@/lib/utils'
 import { staggerChildren } from '@/lib/animations/variants'
 import { spring } from '@/lib/animations/transitions'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
-import { LayoutDashboard, Users, CreditCard, Settings, BarChart3, Bell, Shield } from 'lucide-react'
+import { LayoutDashboard, Users, CreditCard, Settings, BarChart3, Bell, Shield, UserCircle } from 'lucide-react'
 
 interface RoleSidebarProps {
   roles: string[]
@@ -32,21 +32,25 @@ const SECTIONS_BY_ROLE: Record<string, Array<{ id: string; label: string; icon: 
     { id: 'agents', label: 'Agentes', icon: <Users className="h-5 w-5" />, href: '/admin/agents' },
     { id: 'clients', label: 'Clientes', icon: <Users className="h-5 w-5" />, href: '/admin/clients' },
     { id: 'trips', label: 'Viajes', icon: <LayoutDashboard className="h-5 w-5" />, href: '/admin/trips' },
+    { id: 'admin-profile', label: 'Mi Perfil', icon: <UserCircle className="h-5 w-5" />, href: '/admin/profile' },
   ],
   director: [
     { id: 'dashboard', label: 'Dashboard', icon: <BarChart3 className="h-5 w-5" />, href: '/director/dashboard' },
     { id: 'agents', label: 'Agentes', icon: <Users className="h-5 w-5" />, href: '/director/agents' },
     { id: 'alerts', label: 'Alertas', icon: <Bell className="h-5 w-5" />, href: '/director/alerts' },
+    { id: 'director-profile', label: 'Mi Perfil', icon: <UserCircle className="h-5 w-5" />, href: '/director/profile' },
   ],
   agente: [
     { id: 'dashboard', label: 'Mi Negocio', icon: <LayoutDashboard className="h-5 w-5" />, href: '/agent/dashboard' },
     { id: 'clients', label: 'Clientes', icon: <Users className="h-5 w-5" />, href: '/agent/clients' },
     { id: 'payments', label: 'Pagos', icon: <CreditCard className="h-5 w-5" />, href: '/agent/payments' },
+    { id: 'agent-profile', label: 'Mi Perfil', icon: <UserCircle className="h-5 w-5" />, href: '/agent/profile' },
   ],
   superadmin: [
     { id: 'users', label: 'Usuarios', icon: <Shield className="h-5 w-5" />, href: '/superadmin/users' },
     { id: 'config', label: 'Configuracion', icon: <Settings className="h-5 w-5" />, href: '/superadmin/config' },
     { id: 'odoo-sync', label: 'Sync Odoo', icon: <LayoutDashboard className="h-5 w-5" />, href: '/superadmin/odoo-sync' },
+    { id: 'superadmin-profile', label: 'Mi Perfil', icon: <UserCircle className="h-5 w-5" />, href: '/superadmin/profile' },
   ],
 }
 

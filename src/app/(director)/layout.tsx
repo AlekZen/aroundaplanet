@@ -1,5 +1,5 @@
 import { SidebarProvider } from '@/components/ui/sidebar'
-import { BarChart3, Users, Bell } from 'lucide-react'
+import { BarChart3, Users, Bell, UserCircle } from 'lucide-react'
 import { RoleSidebar } from '@/components/custom/RoleSidebar'
 import { BottomNavBar } from '@/components/custom/BottomNavBar'
 import { PageTransition } from '@/components/shared/PageTransition'
@@ -22,6 +22,12 @@ const DIRECTOR_TABS = [
     label: 'Alertas',
     icon: <Bell className="h-5 w-5" />,
     href: '/director/alerts',
+  },
+  {
+    id: 'profile',
+    label: 'Perfil',
+    icon: <UserCircle className="h-5 w-5" />,
+    href: '/director/profile',
   },
 ]
 
