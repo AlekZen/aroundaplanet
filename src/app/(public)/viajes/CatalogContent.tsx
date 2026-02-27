@@ -262,7 +262,7 @@ export function CatalogContent({ trips }: CatalogContentProps) {
                   trip={{
                     title: trip.odooName,
                     slug: trip.slug,
-                    imageUrl: trip.heroImages[0] ?? '/images/trips/placeholder.webp',
+                    imageUrl: trip.heroImages[0] ?? '/images/trips/placeholder.svg',
                     price: trip.odooListPriceCentavos,
                     dates: trip.nextDepartureDate ? formatDepartureDate(trip.nextDepartureDate) : 'Proximamente',
                     destination: trip.odooCategory || 'Destino',

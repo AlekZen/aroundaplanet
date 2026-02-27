@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { motion, useReducedMotion as useFramerReducedMotion } from 'framer-motion'
 import { spring } from '@/lib/animations/transitions'
 
-const TRIP_PLACEHOLDER_IMAGE = '/images/trips/placeholder.webp'
+const TRIP_PLACEHOLDER_IMAGE = '/images/trips/placeholder.svg'
 
 interface TripCardProps {
   trip: { title: string; slug: string; imageUrl: string; price: number; dates: string; destination: string }
