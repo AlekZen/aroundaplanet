@@ -26,14 +26,38 @@ service cloud.firestore {
     }
 
     // === USERS ===
-    // Owner read/write. Admin/SuperAdmin read-only
+    // Owner read/write. Admin/SuperAdmin read-only.
+    // bankData requires agente role. fiscalData RFC validated.
     match /users/{uid} {
       allow read: if request.auth != null
                   && (request.auth.uid == uid
                       || 'admin' in request.auth.token.roles
                       || 'superadmin' in request.auth.token.roles);
-      allow write: if request.auth != null
-                   && request.auth.uid == uid;
+
+      allow create: if request.auth != null
+                    && request.auth.uid == uid;
+
+      allow update: if request.auth != null
+                    && request.auth.uid == uid
+                    && bankDataAllowed()
+                    && fiscalRfcValid();
+
+      // Delete: Admin SDK only
+      allow delete: if false;
+
+      // bankData changes require agente role
+      function bankDataAllowed() {
+        return !request.resource.data.diff(resource.data).affectedKeys().hasAny(['bankData'])
+               || 'agente' in request.auth.token.roles;
+      }
+
+      // If fiscalData is written, RFC must match SAT format
+      function fiscalRfcValid() {
+        return !request.resource.data.diff(resource.data).affectedKeys().hasAny(['fiscalData'])
+               || (request.resource.data.fiscalData is map
+                   && 'rfc' in request.resource.data.fiscalData
+                   && request.resource.data.fiscalData.rfc.matches('^[A-ZÑ&]{3,4}[0-9]{6}[A-Z0-9]{3}$'));
+      }
     }
 
     // === CONFIG (permissions, settings) ===

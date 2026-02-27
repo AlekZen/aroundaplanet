@@ -52,7 +52,7 @@ development_status:
   1-4b-route-protection-security-rules: done
   1-5-odoo-client-abstraction-layer: done
   1-6-superadmin-panel-user-management: done
-  1-7-user-profile-notification-preferences: backlog
+  1-7-user-profile-notification-preferences: done
   epic-1-retrospective: optional
 
   # =============================================

@@ -30,32 +30,34 @@ describe('useRoleNavigation', () => {
     expect(result.current).toEqual([])
   })
 
-  it('returns exactly 1 item for cliente-only user', () => {
+  it('returns exactly 2 items for cliente-only user', () => {
     useAuthStore.setState({
       isAuthenticated: true,
       claims: { roles: ['cliente'] },
     })
 
     const { result } = renderHook(() => useRoleNavigation())
-    expect(result.current).toHaveLength(1)
+    expect(result.current).toHaveLength(2)
     expect(result.current[0]).toEqual({
       role: 'cliente',
       label: 'Mis Viajes',
       href: '/client/my-trips',
       priority: 1,
     })
+    expect(result.current[1].label).toBe('Perfil')
   })
 
-  it('returns exactly 2 items for agente-only user', () => {
+  it('returns exactly 3 items for agente-only user', () => {
     useAuthStore.setState({
       isAuthenticated: true,
       claims: { roles: ['agente'] },
     })
 
     const { result } = renderHook(() => useRoleNavigation())
-    expect(result.current).toHaveLength(2)
+    expect(result.current).toHaveLength(3)
     expect(result.current[0].label).toBe('Mi Portal')
     expect(result.current[1].label).toBe('Mis Clientes')
+    expect(result.current[2].label).toBe('Perfil')
   })
 
   it('returns exactly 1 item for admin-only user', () => {
@@ -113,16 +115,18 @@ describe('useRoleNavigation', () => {
     })
 
     const { result } = renderHook(() => useRoleNavigation())
-    // admin(3): 1 item + agente(2): 2 items + cliente(1): 1 item = 4 total
-    expect(result.current).toHaveLength(4)
+    // admin(3): 1 item + agente(2): 3 items + cliente(1): 2 items = 6 total
+    expect(result.current).toHaveLength(6)
 
     // First item should be admin (priority 3)
     expect(result.current[0].role).toBe('admin')
     // Then agente items (priority 2)
     expect(result.current[1].role).toBe('agente')
     expect(result.current[2].role).toBe('agente')
-    // Last should be cliente (priority 1)
-    expect(result.current[3].role).toBe('cliente')
+    expect(result.current[3].role).toBe('agente')
+    // Then cliente items (priority 1)
+    expect(result.current[4].role).toBe('cliente')
+    expect(result.current[5].role).toBe('cliente')
 
     // Verify strict descending order
     for (let i = 1; i < result.current.length; i++) {
@@ -137,8 +141,8 @@ describe('useRoleNavigation', () => {
     })
 
     const { result } = renderHook(() => useRoleNavigation())
-    // superadmin(1) + director(1) + admin(1) + agente(2) + cliente(1) = 6
-    expect(result.current).toHaveLength(6)
+    // superadmin(1) + director(1) + admin(1) + agente(3) + cliente(2) = 8
+    expect(result.current).toHaveLength(8)
     // First should be superadmin (priority 5)
     expect(result.current[0].role).toBe('superadmin')
   })
