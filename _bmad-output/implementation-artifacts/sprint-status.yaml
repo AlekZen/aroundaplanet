@@ -43,7 +43,7 @@ development_status:
   # =============================================
   # Epic 1: Foundation & User Identity (9 stories)
   # =============================================
-  epic-1: in-progress
+  epic-1: done
   1-1a-project-scaffold-ci-pipeline: done
   1-1b-design-system-layout-foundation: done
   1-2-public-landing-pages: done
@@ -53,13 +53,13 @@ development_status:
   1-5-odoo-client-abstraction-layer: done
   1-6-superadmin-panel-user-management: done
   1-7-user-profile-notification-preferences: done
-  epic-1-retrospective: optional
+  epic-1-retrospective: done
 
   # =============================================
   # Epic 2: Trip Discovery & Public Content (7 stories)
   # =============================================
-  epic-2: backlog
-  2-1a-trip-sync-odoo-firestore: backlog
+  epic-2: in-progress
+  2-1a-trip-sync-odoo-firestore: done
   2-1b-admin-trip-crud-document-uploads: backlog
   2-2-public-trip-catalog-with-filters: backlog
   2-3-trip-landing-page: backlog

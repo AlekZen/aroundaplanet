@@ -1,0 +1,69 @@
+{
+  "story": "2-1a",
+  "timestamp": "2026-02-27T18:32:06.210Z",
+  "summary": {
+    "passed": 10,
+    "failed": 0,
+    "total": 10
+  },
+  "syncFullResult": {
+    "total": 17,
+    "created": 0,
+    "updated": 17,
+    "skipped": 0,
+    "errors": 0,
+    "syncedAt": "2026-02-27T18:31:49.049Z",
+    "syncSource": "manual"
+  },
+  "syncIncrementalResult": {
+    "total": 17,
+    "created": 0,
+    "updated": 0,
+    "skipped": 17,
+    "errors": 0,
+    "syncedAt": "2026-02-27T18:31:59.054Z",
+    "syncSource": "scheduled"
+  },
+  "tests": [
+    {
+      "test": "1. POST /api/odoo/sync-trips sin cookie -> 401",
+      "status": "PASS"
+    },
+    {
+      "test": "2. POST /api/odoo/sync-trips con cliente -> 401/403",
+      "status": "PASS"
+    },
+    {
+      "test": "3. Mode invalido -> 400",
+      "status": "PASS"
+    },
+    {
+      "test": "4. minPrice negativo -> 400",
+      "status": "PASS"
+    },
+    {
+      "test": "5. Sync full 2026 -> 200",
+      "status": "PASS"
+    },
+    {
+      "test": "6. total > 0 (hay viajes 2026 en Odoo)",
+      "status": "PASS"
+    },
+    {
+      "test": "7. Sync incremental -> 200",
+      "status": "PASS"
+    },
+    {
+      "test": "8. Incremental: skipped > 0 (datos ya actualizados)",
+      "status": "PASS"
+    },
+    {
+      "test": "9. Formato TripSyncResult: total/created/updated/skipped/errors/syncedAt/syncSource",
+      "status": "PASS"
+    },
+    {
+      "test": "10. GET /superadmin/odoo-sync -> 200",
+      "status": "PASS"
+    }
+  ]
+}

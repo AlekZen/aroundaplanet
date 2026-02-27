@@ -1,0 +1,3410 @@
+{
+  "productTemplateFields": [
+    {
+      "name": "accessory_product_ids",
+      "string": "Accessory Products",
+      "type": "many2many",
+      "relation": "product.product"
+    },
+    {
+      "name": "account_tag_ids",
+      "string": "Account Tags",
+      "type": "many2many",
+      "relation": "account.account.tag"
+    },
+    {
+      "name": "active",
+      "string": "Active",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "activity_calendar_event_id",
+      "string": "Next Activity Calendar Event",
+      "type": "many2one",
+      "relation": "calendar.event"
+    },
+    {
+      "name": "activity_date_deadline",
+      "string": "Next Activity Deadline",
+      "type": "date",
+      "relation": null
+    },
+    {
+      "name": "activity_exception_decoration",
+      "string": "Activity Exception Decoration",
+      "type": "selection",
+      "relation": null
+    },
+    {
+      "name": "activity_exception_icon",
+      "string": "Icon",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "activity_ids",
+      "string": "Activities",
+      "type": "one2many",
+      "relation": "mail.activity"
+    },
+    {
+      "name": "activity_state",
+      "string": "Activity State",
+      "type": "selection",
+      "relation": null
+    },
+    {
+      "name": "activity_summary",
+      "string": "Next Activity Summary",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "activity_type_icon",
+      "string": "Activity Type Icon",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "activity_type_id",
+      "string": "Next Activity Type",
+      "type": "many2one",
+      "relation": "mail.activity.type"
+    },
+    {
+      "name": "activity_user_id",
+      "string": "Responsible User",
+      "type": "many2one",
+      "relation": "res.users"
+    },
+    {
+      "name": "allow_out_of_stock_order",
+      "string": "Continue selling when out-of-stock",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "alternative_product_ids",
+      "string": "Alternative Products",
+      "type": "many2many",
+      "relation": "product.template"
+    },
+    {
+      "name": "attribute_line_ids",
+      "string": "Product Attributes",
+      "type": "one2many",
+      "relation": "product.template.attribute.line"
+    },
+    {
+      "name": "available_threshold",
+      "string": "Show Threshold",
+      "type": "float",
+      "relation": null
+    },
+    {
+      "name": "barcode",
+      "string": "Barcode",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "base_unit_count",
+      "string": "Base Unit Count",
+      "type": "float",
+      "relation": null
+    },
+    {
+      "name": "base_unit_id",
+      "string": "Custom Unit of Measure",
+      "type": "many2one",
+      "relation": "website.base.unit"
+    },
+    {
+      "name": "base_unit_name",
+      "string": "Base Unit Name",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "base_unit_price",
+      "string": "Price Per Unit",
+      "type": "monetary",
+      "relation": null
+    },
+    {
+      "name": "can_be_expensed",
+      "string": "Expenses",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "can_image_1024_be_zoomed",
+      "string": "Can Image 1024 be zoomed",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "can_publish",
+      "string": "Can Publish",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "categ_id",
+      "string": "Product Category",
+      "type": "many2one",
+      "relation": "product.category"
+    },
+    {
+      "name": "color",
+      "string": "Color Index",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "combo_ids",
+      "string": "Combo Choices",
+      "type": "many2many",
+      "relation": "product.combo"
+    },
+    {
+      "name": "company_id",
+      "string": "Company",
+      "type": "many2one",
+      "relation": "res.company"
+    },
+    {
+      "name": "compare_list_price",
+      "string": "Compare to Price",
+      "type": "monetary",
+      "relation": null
+    },
+    {
+      "name": "cost_currency_id",
+      "string": "Cost Currency",
+      "type": "many2one",
+      "relation": "res.currency"
+    },
+    {
+      "name": "cost_method",
+      "string": "Costing Method",
+      "type": "selection",
+      "relation": null
+    },
+    {
+      "name": "country_of_origin",
+      "string": "Origin of Goods",
+      "type": "many2one",
+      "relation": "res.country"
+    },
+    {
+      "name": "create_date",
+      "string": "Created on",
+      "type": "datetime",
+      "relation": null
+    },
+    {
+      "name": "create_uid",
+      "string": "Created by",
+      "type": "many2one",
+      "relation": "res.users"
+    },
+    {
+      "name": "currency_id",
+      "string": "Currency",
+      "type": "many2one",
+      "relation": "res.currency"
+    },
+    {
+      "name": "default_code",
+      "string": "Internal Reference",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "description",
+      "string": "Description",
+      "type": "html",
+      "relation": null
+    },
+    {
+      "name": "description_ecommerce",
+      "string": "eCommerce Description",
+      "type": "html",
+      "relation": null
+    },
+    {
+      "name": "description_picking",
+      "string": "Description on Picking",
+      "type": "text",
+      "relation": null
+    },
+    {
+      "name": "description_pickingin",
+      "string": "Description on Receptions",
+      "type": "text",
+      "relation": null
+    },
+    {
+      "name": "description_pickingout",
+      "string": "Description on Delivery Orders",
+      "type": "text",
+      "relation": null
+    },
+    {
+      "name": "description_purchase",
+      "string": "Purchase Description",
+      "type": "text",
+      "relation": null
+    },
+    {
+      "name": "description_sale",
+      "string": "Sales Description",
+      "type": "text",
+      "relation": null
+    },
+    {
+      "name": "display_name",
+      "string": "Display Name",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "expense_policy",
+      "string": "Re-Invoice Costs",
+      "type": "selection",
+      "relation": null
+    },
+    {
+      "name": "expense_policy_tooltip",
+      "string": "Expense Policy Tooltip",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "fiscal_country_codes",
+      "string": "Fiscal Country Codes",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "has_available_route_ids",
+      "string": "Routes can be selected on this product",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "has_configurable_attributes",
+      "string": "Is a configurable product",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "has_message",
+      "string": "Has Message",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "hs_code",
+      "string": "HS Code",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "id",
+      "string": "ID",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "image_1024",
+      "string": "Image 1024",
+      "type": "binary",
+      "relation": null
+    },
+    {
+      "name": "image_128",
+      "string": "Image 128",
+      "type": "binary",
+      "relation": null
+    },
+    {
+      "name": "image_1920",
+      "string": "Image",
+      "type": "binary",
+      "relation": null
+    },
+    {
+      "name": "image_256",
+      "string": "Image 256",
+      "type": "binary",
+      "relation": null
+    },
+    {
+      "name": "image_512",
+      "string": "Image 512",
+      "type": "binary",
+      "relation": null
+    },
+    {
+      "name": "incoming_qty",
+      "string": "Incoming",
+      "type": "float",
+      "relation": null
+    },
+    {
+      "name": "invoice_policy",
+      "string": "Invoicing Policy",
+      "type": "selection",
+      "relation": null
+    },
+    {
+      "name": "is_favorite",
+      "string": "Favorite",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "is_product_variant",
+      "string": "Is a product variant",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "is_published",
+      "string": "Is Published",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "is_seo_optimized",
+      "string": "SEO optimized",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "is_storable",
+      "string": "Track Inventory",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "l10n_mx_edi_hazard_package_type",
+      "string": "Packaging type for hazardous material",
+      "type": "selection",
+      "relation": null
+    },
+    {
+      "name": "l10n_mx_edi_hazardous_material",
+      "string": "(MX) Is Hazardous Material",
+      "type": "selection",
+      "relation": null
+    },
+    {
+      "name": "l10n_mx_edi_hazardous_material_code_id",
+      "string": "Hazardous Material Designation Code",
+      "type": "many2one",
+      "relation": "l10n_mx_edi.hazardous.material"
+    },
+    {
+      "name": "l10n_mx_edi_material_description",
+      "string": "Material Description",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "l10n_mx_edi_material_type",
+      "string": "Material Type",
+      "type": "selection",
+      "relation": null
+    },
+    {
+      "name": "l10n_mx_edi_predial_account",
+      "string": "Cuenta predial",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "l10n_mx_edi_tariff_fraction_id",
+      "string": "Tariff Fraction",
+      "type": "many2one",
+      "relation": "l10n_mx_edi.tariff.fraction"
+    },
+    {
+      "name": "l10n_mx_edi_umt_aduana_id",
+      "string": "UMT Aduana",
+      "type": "many2one",
+      "relation": "uom.uom"
+    },
+    {
+      "name": "list_price",
+      "string": "Sales Price",
+      "type": "float",
+      "relation": null
+    },
+    {
+      "name": "location_id",
+      "string": "Location",
+      "type": "many2one",
+      "relation": "stock.location"
+    },
+    {
+      "name": "lot_valuated",
+      "string": "Valuation by Lot/Serial number",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "message_attachment_count",
+      "string": "Attachment Count",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "message_follower_ids",
+      "string": "Followers",
+      "type": "one2many",
+      "relation": "mail.followers"
+    },
+    {
+      "name": "message_has_error",
+      "string": "Message Delivery error",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "message_has_error_counter",
+      "string": "Number of errors",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "message_has_sms_error",
+      "string": "SMS Delivery error",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "message_ids",
+      "string": "Messages",
+      "type": "one2many",
+      "relation": "mail.message"
+    },
+    {
+      "name": "message_is_follower",
+      "string": "Is Follower",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "message_needaction",
+      "string": "Action Needed",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "message_needaction_counter",
+      "string": "Number of Actions",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "message_partner_ids",
+      "string": "Followers (Partners)",
+      "type": "many2many",
+      "relation": "res.partner"
+    },
+    {
+      "name": "my_activity_date_deadline",
+      "string": "My Activity Deadline",
+      "type": "date",
+      "relation": null
+    },
+    {
+      "name": "name",
+      "string": "Name",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "nbr_moves_in",
+      "string": "Nbr Moves In",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "nbr_moves_out",
+      "string": "Nbr Moves Out",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "nbr_reordering_rules",
+      "string": "Reordering Rules",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "optional_product_ids",
+      "string": "Optional Products",
+      "type": "many2many",
+      "relation": "product.template"
+    },
+    {
+      "name": "out_of_stock_message",
+      "string": "Out-of-Stock Message",
+      "type": "html",
+      "relation": null
+    },
+    {
+      "name": "outgoing_qty",
+      "string": "Outgoing",
+      "type": "float",
+      "relation": null
+    },
+    {
+      "name": "packaging_ids",
+      "string": "Product Packages",
+      "type": "one2many",
+      "relation": "product.packaging"
+    },
+    {
+      "name": "planning_enabled",
+      "string": "Plan Services",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "planning_role_id",
+      "string": "Planning Role",
+      "type": "many2one",
+      "relation": "planning.role"
+    },
+    {
+      "name": "pricelist_item_count",
+      "string": "Number of price rules",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "product_document_count",
+      "string": "Documents Count",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "product_document_ids",
+      "string": "Documents",
+      "type": "one2many",
+      "relation": "product.document"
+    },
+    {
+      "name": "product_properties",
+      "string": "Properties",
+      "type": "properties",
+      "relation": null
+    },
+    {
+      "name": "product_tag_ids",
+      "string": "Tags",
+      "type": "many2many",
+      "relation": "product.tag"
+    },
+    {
+      "name": "product_template_image_ids",
+      "string": "Extra Product Media",
+      "type": "one2many",
+      "relation": "product.image"
+    },
+    {
+      "name": "product_tooltip",
+      "string": "Product Tooltip",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "product_variant_count",
+      "string": "# Product Variants",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "product_variant_id",
+      "string": "Product",
+      "type": "many2one",
+      "relation": "product.product"
+    },
+    {
+      "name": "product_variant_ids",
+      "string": "Products",
+      "type": "one2many",
+      "relation": "product.product"
+    },
+    {
+      "name": "project_id",
+      "string": "Project",
+      "type": "many2one",
+      "relation": "project.project"
+    },
+    {
+      "name": "project_template_id",
+      "string": "Project Template",
+      "type": "many2one",
+      "relation": "project.project"
+    },
+    {
+      "name": "property_account_creditor_price_difference",
+      "string": "Price Difference Account",
+      "type": "many2one",
+      "relation": "account.account"
+    },
+    {
+      "name": "property_account_expense_id",
+      "string": "Expense Account",
+      "type": "many2one",
+      "relation": "account.account"
+    },
+    {
+      "name": "property_account_income_id",
+      "string": "Income Account",
+      "type": "many2one",
+      "relation": "account.account"
+    },
+    {
+      "name": "property_stock_inventory",
+      "string": "Inventory Location",
+      "type": "many2one",
+      "relation": "stock.location"
+    },
+    {
+      "name": "property_stock_production",
+      "string": "Production Location",
+      "type": "many2one",
+      "relation": "stock.location"
+    },
+    {
+      "name": "public_categ_ids",
+      "string": "Website Product Category",
+      "type": "many2many",
+      "relation": "product.public.category"
+    },
+    {
+      "name": "purchase_line_warn",
+      "string": "Purchase Order Line Warning",
+      "type": "selection",
+      "relation": null
+    },
+    {
+      "name": "purchase_line_warn_msg",
+      "string": "Message for Purchase Order Line",
+      "type": "text",
+      "relation": null
+    },
+    {
+      "name": "purchase_method",
+      "string": "Control Policy",
+      "type": "selection",
+      "relation": null
+    },
+    {
+      "name": "purchase_ok",
+      "string": "Purchase",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "purchased_product_qty",
+      "string": "Purchased",
+      "type": "float",
+      "relation": null
+    },
+    {
+      "name": "qty_available",
+      "string": "Quantity On Hand",
+      "type": "float",
+      "relation": null
+    },
+    {
+      "name": "rating_avg",
+      "string": "Average Rating",
+      "type": "float",
+      "relation": null
+    },
+    {
+      "name": "rating_avg_text",
+      "string": "Rating Avg Text",
+      "type": "selection",
+      "relation": null
+    },
+    {
+      "name": "rating_count",
+      "string": "Rating count",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "rating_ids",
+      "string": "Ratings",
+      "type": "one2many",
+      "relation": "rating.rating"
+    },
+    {
+      "name": "rating_last_feedback",
+      "string": "Rating Last Feedback",
+      "type": "text",
+      "relation": null
+    },
+    {
+      "name": "rating_last_image",
+      "string": "Rating Last Image",
+      "type": "binary",
+      "relation": null
+    },
+    {
+      "name": "rating_last_text",
+      "string": "Rating Text",
+      "type": "selection",
+      "relation": null
+    },
+    {
+      "name": "rating_last_value",
+      "string": "Rating Last Value",
+      "type": "float",
+      "relation": null
+    },
+    {
+      "name": "rating_percentage_satisfaction",
+      "string": "Rating Satisfaction",
+      "type": "float",
+      "relation": null
+    },
+    {
+      "name": "reordering_max_qty",
+      "string": "Reordering Max Qty",
+      "type": "float",
+      "relation": null
+    },
+    {
+      "name": "reordering_min_qty",
+      "string": "Reordering Min Qty",
+      "type": "float",
+      "relation": null
+    },
+    {
+      "name": "responsible_id",
+      "string": "Responsible",
+      "type": "many2one",
+      "relation": "res.users"
+    },
+    {
+      "name": "route_from_categ_ids",
+      "string": "Category Routes",
+      "type": "many2many",
+      "relation": "stock.route"
+    },
+    {
+      "name": "route_ids",
+      "string": "Routes",
+      "type": "many2many",
+      "relation": "stock.route"
+    },
+    {
+      "name": "sale_delay",
+      "string": "Customer Lead Time",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "sale_line_warn",
+      "string": "Sales Order Line",
+      "type": "selection",
+      "relation": null
+    },
+    {
+      "name": "sale_line_warn_msg",
+      "string": "Message for Sales Order Line",
+      "type": "text",
+      "relation": null
+    },
+    {
+      "name": "sale_ok",
+      "string": "Sales",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "sales_count",
+      "string": "Sold",
+      "type": "float",
+      "relation": null
+    },
+    {
+      "name": "seller_ids",
+      "string": "Vendors",
+      "type": "one2many",
+      "relation": "product.supplierinfo"
+    },
+    {
+      "name": "seo_name",
+      "string": "Seo name",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "sequence",
+      "string": "Sequence",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "service_policy",
+      "string": "Service Invoicing Policy",
+      "type": "selection",
+      "relation": null
+    },
+    {
+      "name": "service_to_purchase",
+      "string": "Subcontract Service",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "service_tracking",
+      "string": "Create on Order",
+      "type": "selection",
+      "relation": null
+    },
+    {
+      "name": "service_type",
+      "string": "Track Service",
+      "type": "selection",
+      "relation": null
+    },
+    {
+      "name": "service_upsell_threshold",
+      "string": "Threshold",
+      "type": "float",
+      "relation": null
+    },
+    {
+      "name": "service_upsell_threshold_ratio",
+      "string": "Service Upsell Threshold Ratio",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "show_availability",
+      "string": "Show availability Qty",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "show_forecasted_qty_status_button",
+      "string": "Show Forecasted Qty Status Button",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "show_on_hand_qty_status_button",
+      "string": "Show On Hand Qty Status Button",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "standard_price",
+      "string": "Cost",
+      "type": "float",
+      "relation": null
+    },
+    {
+      "name": "supplier_taxes_id",
+      "string": "Purchase Taxes",
+      "type": "many2many",
+      "relation": "account.tax"
+    },
+    {
+      "name": "tax_string",
+      "string": "Tax String",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "taxes_id",
+      "string": "Sales Taxes",
+      "type": "many2many",
+      "relation": "account.tax"
+    },
+    {
+      "name": "tracking",
+      "string": "Tracking",
+      "type": "selection",
+      "relation": null
+    },
+    {
+      "name": "type",
+      "string": "Product Type",
+      "type": "selection",
+      "relation": null
+    },
+    {
+      "name": "unspsc_code_id",
+      "string": "UNSPSC Category",
+      "type": "many2one",
+      "relation": "product.unspsc.code"
+    },
+    {
+      "name": "uom_category_id",
+      "string": "UoM Category",
+      "type": "many2one",
+      "relation": "uom.category"
+    },
+    {
+      "name": "uom_id",
+      "string": "Unit of Measure",
+      "type": "many2one",
+      "relation": "uom.uom"
+    },
+    {
+      "name": "uom_name",
+      "string": "Unit of Measure Name",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "uom_po_id",
+      "string": "Purchase Unit",
+      "type": "many2one",
+      "relation": "uom.uom"
+    },
+    {
+      "name": "valid_product_template_attribute_line_ids",
+      "string": "Valid Product Attribute Lines",
+      "type": "many2many",
+      "relation": "product.template.attribute.line"
+    },
+    {
+      "name": "valuation",
+      "string": "Inventory Valuation",
+      "type": "selection",
+      "relation": null
+    },
+    {
+      "name": "variant_seller_ids",
+      "string": "Variant Seller",
+      "type": "one2many",
+      "relation": "product.supplierinfo"
+    },
+    {
+      "name": "virtual_available",
+      "string": "Forecasted Quantity",
+      "type": "float",
+      "relation": null
+    },
+    {
+      "name": "visible_expense_policy",
+      "string": "Re-Invoice Policy visible",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "volume",
+      "string": "Volume",
+      "type": "float",
+      "relation": null
+    },
+    {
+      "name": "volume_uom_name",
+      "string": "Volume unit of measure label",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "warehouse_id",
+      "string": "Warehouse",
+      "type": "many2one",
+      "relation": "stock.warehouse"
+    },
+    {
+      "name": "website_description",
+      "string": "Description for the website",
+      "type": "html",
+      "relation": null
+    },
+    {
+      "name": "website_id",
+      "string": "Website",
+      "type": "many2one",
+      "relation": "website"
+    },
+    {
+      "name": "website_message_ids",
+      "string": "Website Messages",
+      "type": "one2many",
+      "relation": "mail.message"
+    },
+    {
+      "name": "website_meta_description",
+      "string": "Website meta description",
+      "type": "text",
+      "relation": null
+    },
+    {
+      "name": "website_meta_keywords",
+      "string": "Website meta keywords",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "website_meta_og_img",
+      "string": "Website opengraph image",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "website_meta_title",
+      "string": "Website meta title",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "website_published",
+      "string": "Visible on current website",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "website_ribbon_id",
+      "string": "Ribbon",
+      "type": "many2one",
+      "relation": "product.ribbon"
+    },
+    {
+      "name": "website_sequence",
+      "string": "Website Sequence",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "website_size_x",
+      "string": "Size X",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "website_size_y",
+      "string": "Size Y",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "website_url",
+      "string": "Website URL",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "weight",
+      "string": "Weight",
+      "type": "float",
+      "relation": null
+    },
+    {
+      "name": "weight_uom_name",
+      "string": "Weight unit of measure label",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "write_date",
+      "string": "Last Updated on",
+      "type": "datetime",
+      "relation": null
+    },
+    {
+      "name": "write_uid",
+      "string": "Last Updated by",
+      "type": "many2one",
+      "relation": "res.users"
+    }
+  ],
+  "productTemplateCount": 1545,
+  "productTemplateSample": [
+    {
+      "id": 2,
+      "name": "Standard delivery",
+      "list_price": 0,
+      "type": "service",
+      "categ_id": [
+        5,
+        "All / Deliveries"
+      ],
+      "active": true,
+      "write_date": "2025-02-09 09:06:20",
+      "create_date": "2024-02-29 15:09:38",
+      "description_sale": false,
+      "website_published": false,
+      "rating_count": 0,
+      "rating_avg": 0,
+      "default_code": "Delivery_007",
+      "public_categ_ids": [],
+      "product_tag_ids": [],
+      "currency_id": [
+        33,
+        "MXN"
+      ],
+      "sale_ok": false,
+      "image_1920": false
+    },
+    {
+      "id": 3,
+      "name": "Service on Timesheets",
+      "list_price": 40,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-02-09 09:06:20",
+      "create_date": "2024-02-29 15:09:38",
+      "description_sale": false,
+      "website_published": false,
+      "rating_count": 0,
+      "rating_avg": 0,
+      "default_code": false,
+      "public_categ_ids": [],
+      "product_tag_ids": [],
+      "currency_id": [
+        33,
+        "MXN"
+      ],
+      "sale_ok": true,
+      "image_1920": "[BASE64 7160 chars]"
+    },
+    {
+      "id": 21,
+      "name": "HOTEL PLAYA MAZATLAN ",
+      "list_price": 1,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-02-09 09:06:20",
+      "create_date": "2024-03-01 19:32:16",
+      "description_sale": false,
+      "website_published": false,
+      "rating_count": 0,
+      "rating_avg": 0,
+      "default_code": "HOTEL NACIONAL",
+      "public_categ_ids": [],
+      "product_tag_ids": [
+        12,
+        15
+      ],
+      "currency_id": [
+        33,
+        "MXN"
+      ],
+      "sale_ok": true,
+      "image_1920": "[BASE64 21180 chars]"
+    },
+    {
+      "id": 22,
+      "name": "HOTEL KRYSTAL PUERTO VALLARTA ",
+      "list_price": 1,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-02-09 09:06:20",
+      "create_date": "2024-03-01 19:41:42",
+      "description_sale": false,
+      "website_published": false,
+      "rating_count": 0,
+      "rating_avg": 0,
+      "default_code": false,
+      "public_categ_ids": [],
+      "product_tag_ids": [
+        12,
+        14
+      ],
+      "currency_id": [
+        33,
+        "MXN"
+      ],
+      "sale_ok": true,
+      "image_1920": "[BASE64 182828 chars]"
+    },
+    {
+      "id": 23,
+      "name": "HOTEL VILLA VARADERO NUEVO VALLARTA ",
+      "list_price": 1,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-02-09 09:06:20",
+      "create_date": "2024-03-01 19:44:42",
+      "description_sale": false,
+      "website_published": false,
+      "rating_count": 0,
+      "rating_avg": 0,
+      "default_code": false,
+      "public_categ_ids": [],
+      "product_tag_ids": [
+        12,
+        13
+      ],
+      "currency_id": [
+        33,
+        "MXN"
+      ],
+      "sale_ok": true,
+      "image_1920": "[BASE64 14704 chars]"
+    }
+  ],
+  "productCategories": [
+    {
+      "id": 1,
+      "name": "All",
+      "parent_id": false,
+      "complete_name": "All"
+    },
+    {
+      "id": 5,
+      "name": "Deliveries",
+      "parent_id": [
+        1,
+        "All"
+      ],
+      "complete_name": "All / Deliveries"
+    },
+    {
+      "id": 3,
+      "name": "Expenses",
+      "parent_id": [
+        1,
+        "All"
+      ],
+      "complete_name": "All / Expenses"
+    },
+    {
+      "id": 2,
+      "name": "Saleable",
+      "parent_id": [
+        1,
+        "All"
+      ],
+      "complete_name": "All / Saleable"
+    },
+    {
+      "id": 4,
+      "name": "Booking Fees",
+      "parent_id": [
+        2,
+        "All / Saleable"
+      ],
+      "complete_name": "All / Saleable / Booking Fees"
+    },
+    {
+      "id": 6,
+      "name": "Events",
+      "parent_id": [
+        2,
+        "All / Saleable"
+      ],
+      "complete_name": "All / Saleable / Events"
+    }
+  ],
+  "travelProducts": [
+    {
+      "id": 1208,
+      "name": "TURQUIA WINTER ENERO 2026",
+      "list_price": 44900,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-06-26 19:08:01",
+      "description_sale": "",
+      "website_published": true,
+      "default_code": false,
+      "public_categ_ids": []
+    },
+    {
+      "id": 894,
+      "name": "BOLETO RIFA EUROPA ",
+      "list_price": 500,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-02-09 09:06:20",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false,
+      "public_categ_ids": []
+    },
+    {
+      "id": 1622,
+      "name": "BOLETO RIFA TURQUIA",
+      "list_price": 0,
+      "type": "consu",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-08-11 19:28:35",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false,
+      "public_categ_ids": []
+    },
+    {
+      "id": 1677,
+      "name": "EUROPA  SEP 2026",
+      "list_price": 79800,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-10-06 19:18:01",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false,
+      "public_categ_ids": []
+    },
+    {
+      "id": 1369,
+      "name": "EUROPA DE ENSUEÑO 2025",
+      "list_price": 59800,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-06-26 17:40:19",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false,
+      "public_categ_ids": []
+    },
+    {
+      "id": 1326,
+      "name": "EUROPA INOLVIDABLE",
+      "list_price": 52500,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-06-26 20:11:02",
+      "description_sale": "",
+      "website_published": true,
+      "default_code": false,
+      "public_categ_ids": []
+    },
+    {
+      "id": 1009,
+      "name": "EUROPA SEPTIEMBRE 2025",
+      "list_price": 79800,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-07-30 00:07:59",
+      "description_sale": false,
+      "website_published": true,
+      "default_code": false,
+      "public_categ_ids": []
+    },
+    {
+      "id": 1604,
+      "name": "EUROPA SIN TOURS",
+      "list_price": 65000,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-07-30 00:06:40",
+      "description_sale": false,
+      "website_published": true,
+      "default_code": false,
+      "public_categ_ids": []
+    },
+    {
+      "id": 1005,
+      "name": "EUROPA VERANO 2025",
+      "list_price": 75000,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-05-20 03:14:24",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false,
+      "public_categ_ids": []
+    },
+    {
+      "id": 1701,
+      "name": "EUROPA VERANO 2026",
+      "list_price": 89800,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-10-31 22:49:40",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false,
+      "public_categ_ids": []
+    },
+    {
+      "id": 1010,
+      "name": "EUROPA Y LONDRES 2025",
+      "list_price": 65000,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-06-26 20:11:35",
+      "description_sale": "",
+      "website_published": true,
+      "default_code": false,
+      "public_categ_ids": []
+    },
+    {
+      "id": 919,
+      "name": "GRAN HOTEL EUROPA SANTO DOMINGO",
+      "list_price": 1,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-02-09 09:06:20",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false,
+      "public_categ_ids": []
+    },
+    {
+      "id": 1341,
+      "name": "HADRIAN GATE ANTALYA HOTEL TURQUIA",
+      "list_price": 0,
+      "type": "consu",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-03-20 17:45:36",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false,
+      "public_categ_ids": []
+    },
+    {
+      "id": 1368,
+      "name": "JAPÓN, CHINA & COREA 2026",
+      "list_price": 88900,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-06-26 19:08:58",
+      "description_sale": false,
+      "website_published": true,
+      "default_code": false,
+      "public_categ_ids": []
+    },
+    {
+      "id": 1516,
+      "name": "PERU ABRIL 2026",
+      "list_price": 37500,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-06-26 18:45:39",
+      "description_sale": false,
+      "website_published": true,
+      "default_code": false,
+      "public_categ_ids": []
+    },
+    {
+      "id": 1003,
+      "name": "PERÚ DICIEMBRE 2025",
+      "list_price": 37500,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-06-26 21:50:01",
+      "description_sale": false,
+      "website_published": true,
+      "default_code": false,
+      "public_categ_ids": []
+    },
+    {
+      "id": 413,
+      "name": "SEGURO DE VIAJERO",
+      "list_price": 1,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-02-09 09:06:20",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false,
+      "public_categ_ids": []
+    },
+    {
+      "id": 1606,
+      "name": "TURQUIA & EGIPTO ",
+      "list_price": 55000,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-07-29 23:55:28",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false,
+      "public_categ_ids": []
+    },
+    {
+      "id": 1397,
+      "name": "TURQUIA WINTER NOVIEMBRE 2025",
+      "list_price": 44900,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-06-26 19:08:27",
+      "description_sale": "",
+      "website_published": true,
+      "default_code": false,
+      "public_categ_ids": []
+    },
+    {
+      "id": 1724,
+      "name": "TURQUIA WINTER NOVIEMBRE 2026",
+      "list_price": 0,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-12-01 19:24:40",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false,
+      "public_categ_ids": []
+    },
+    {
+      "id": 1008,
+      "name": "TURQUÍA Y DUBÁI ​2025",
+      "list_price": 69500,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-07-30 00:09:28",
+      "description_sale": false,
+      "website_published": true,
+      "default_code": false,
+      "public_categ_ids": []
+    },
+    {
+      "id": 1349,
+      "name": "VIAJE PRIVADO PERU",
+      "list_price": 0,
+      "type": "consu",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-03-24 22:35:07",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false,
+      "public_categ_ids": []
+    },
+    {
+      "id": 913,
+      "name": "VUELO AIR EUROPA ",
+      "list_price": 1,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-02-09 09:06:20",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false,
+      "public_categ_ids": []
+    },
+    {
+      "id": 1015,
+      "name": "VUELTA AL MUNDO 2025",
+      "list_price": 120000,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-04-14 18:59:00",
+      "description_sale": false,
+      "website_published": true,
+      "default_code": false,
+      "public_categ_ids": []
+    },
+    {
+      "id": 1748,
+      "name": "VUELTA AL MUNDO 2026",
+      "list_price": 120000,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2026-01-09 17:28:52",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false,
+      "public_categ_ids": []
+    }
+  ],
+  "eventCategoryProducts": [
+    {
+      "id": 832,
+      "name": "Event Registration",
+      "list_price": 30,
+      "type": "service",
+      "categ_id": [
+        6,
+        "All / Saleable / Events"
+      ],
+      "active": true,
+      "write_date": "2025-02-09 09:06:20",
+      "description_sale": false,
+      "default_code": false
+    }
+  ],
+  "highPriceProducts": [
+    {
+      "id": 1748,
+      "name": "VUELTA AL MUNDO 2026",
+      "list_price": 120000,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2026-01-09 17:28:52",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false
+    },
+    {
+      "id": 1015,
+      "name": "VUELTA AL MUNDO 2025",
+      "list_price": 120000,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-04-14 18:59:00",
+      "description_sale": false,
+      "website_published": true,
+      "default_code": false
+    },
+    {
+      "id": 1701,
+      "name": "EUROPA VERANO 2026",
+      "list_price": 89800,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-10-31 22:49:40",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false
+    },
+    {
+      "id": 1368,
+      "name": "JAPÓN, CHINA & COREA 2026",
+      "list_price": 88900,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-06-26 19:08:58",
+      "description_sale": false,
+      "website_published": true,
+      "default_code": false
+    },
+    {
+      "id": 1698,
+      "name": "TAILANDIA Y CHINA 2026",
+      "list_price": 88900,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-10-28 18:45:36",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false
+    },
+    {
+      "id": 1515,
+      "name": "ASIA 2026",
+      "list_price": 88500,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-06-02 17:35:17",
+      "description_sale": false,
+      "website_published": true,
+      "default_code": false
+    },
+    {
+      "id": 1004,
+      "name": "ÁFRICA 2025 ",
+      "list_price": 84900,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-03-25 00:48:27",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false
+    },
+    {
+      "id": 1677,
+      "name": "EUROPA  SEP 2026",
+      "list_price": 79800,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-10-06 19:18:01",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false
+    },
+    {
+      "id": 1009,
+      "name": "EUROPA SEPTIEMBRE 2025",
+      "list_price": 79800,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-07-30 00:07:59",
+      "description_sale": false,
+      "website_published": true,
+      "default_code": false
+    },
+    {
+      "id": 1232,
+      "name": "MEDIO ORIENTE PRIVADO ",
+      "list_price": 79800,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-02-09 09:06:20",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false
+    },
+    {
+      "id": 1344,
+      "name": "MEDIO ORIENTE JULIO 2025",
+      "list_price": 79200,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-06-04 17:41:03",
+      "description_sale": "",
+      "website_published": false,
+      "default_code": false
+    },
+    {
+      "id": 1723,
+      "name": "MEDIO ORIENTE 2026",
+      "list_price": 79200,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-12-01 19:18:27",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false
+    },
+    {
+      "id": 1018,
+      "name": "MEDIO ORIENTE 2025",
+      "list_price": 79200,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-04-14 18:22:34",
+      "description_sale": false,
+      "website_published": true,
+      "default_code": false
+    },
+    {
+      "id": 1005,
+      "name": "EUROPA VERANO 2025",
+      "list_price": 75000,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-05-20 03:14:24",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false
+    },
+    {
+      "id": 1007,
+      "name": "ARGENTINA Y BRASIL AGOSTO 2025",
+      "list_price": 69500,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-04-14 18:29:23",
+      "description_sale": false,
+      "website_published": true,
+      "default_code": false
+    },
+    {
+      "id": 1694,
+      "name": "ARGENTINA BRASIL 2026",
+      "list_price": 69500,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-10-24 22:28:18",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false
+    },
+    {
+      "id": 1008,
+      "name": "TURQUÍA Y DUBÁI ​2025",
+      "list_price": 69500,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-07-30 00:09:28",
+      "description_sale": false,
+      "website_published": true,
+      "default_code": false
+    },
+    {
+      "id": 1052,
+      "name": "ARGENTINA Y BRASIL NOVIEMBRE 2025",
+      "list_price": 69500,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-04-14 18:29:49",
+      "description_sale": "",
+      "website_published": true,
+      "default_code": false
+    },
+    {
+      "id": 1604,
+      "name": "EUROPA SIN TOURS",
+      "list_price": 65000,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-07-30 00:06:40",
+      "description_sale": false,
+      "website_published": true,
+      "default_code": false
+    },
+    {
+      "id": 1010,
+      "name": "EUROPA Y LONDRES 2025",
+      "list_price": 65000,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-06-26 20:11:35",
+      "description_sale": "",
+      "website_published": true,
+      "default_code": false
+    },
+    {
+      "id": 1369,
+      "name": "EUROPA DE ENSUEÑO 2025",
+      "list_price": 59800,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-06-26 17:40:19",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false
+    },
+    {
+      "id": 1606,
+      "name": "TURQUIA & EGIPTO ",
+      "list_price": 55000,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-07-29 23:55:28",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false
+    },
+    {
+      "id": 1326,
+      "name": "EUROPA INOLVIDABLE",
+      "list_price": 52500,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-06-26 20:11:02",
+      "description_sale": "",
+      "website_published": true,
+      "default_code": false
+    },
+    {
+      "id": 1495,
+      "name": "TAILANDIA",
+      "list_price": 49900,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-06-03 23:45:00",
+      "description_sale": false,
+      "website_published": true,
+      "default_code": false
+    },
+    {
+      "id": 1397,
+      "name": "TURQUIA WINTER NOVIEMBRE 2025",
+      "list_price": 44900,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-06-26 19:08:27",
+      "description_sale": "",
+      "website_published": true,
+      "default_code": false
+    },
+    {
+      "id": 1398,
+      "name": "TUQUIA WINTER NOVIEMBRE 2025",
+      "list_price": 44900,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-04-09 16:33:39",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false
+    },
+    {
+      "id": 1208,
+      "name": "TURQUIA WINTER ENERO 2026",
+      "list_price": 44900,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-06-26 19:08:01",
+      "description_sale": "",
+      "website_published": true,
+      "default_code": false
+    },
+    {
+      "id": 1399,
+      "name": "TUQUIA WINTER DICIEMBRE 2025",
+      "list_price": 44900,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-04-09 16:35:04",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false
+    },
+    {
+      "id": 1607,
+      "name": "MADRID & BARCELONA",
+      "list_price": 44499,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-07-29 23:58:13",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false
+    },
+    {
+      "id": 1234,
+      "name": "RIU REPUBLICA PUNTA CANA",
+      "list_price": 38000,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-02-14 18:31:43",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false
+    },
+    {
+      "id": 1516,
+      "name": "PERU ABRIL 2026",
+      "list_price": 37500,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-06-26 18:45:39",
+      "description_sale": false,
+      "website_published": true,
+      "default_code": false
+    },
+    {
+      "id": 1003,
+      "name": "PERÚ DICIEMBRE 2025",
+      "list_price": 37500,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-06-26 21:50:01",
+      "description_sale": false,
+      "website_published": true,
+      "default_code": false
+    },
+    {
+      "id": 1608,
+      "name": "RUTA MAYA 2X1",
+      "list_price": 36899,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-08-25 17:46:45",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false
+    },
+    {
+      "id": 969,
+      "name": "COLOMBIA JUNIO 2025",
+      "list_price": 27600,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-04-14 18:52:24",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false
+    },
+    {
+      "id": 1379,
+      "name": "COLOMBIA NOVIEMBRE 2025",
+      "list_price": 27600,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-06-26 18:33:23",
+      "description_sale": false,
+      "website_published": true,
+      "default_code": false
+    },
+    {
+      "id": 1378,
+      "name": "COLOMBIA OCTUBRE 2025",
+      "list_price": 27600,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-06-26 18:32:51",
+      "description_sale": false,
+      "website_published": true,
+      "default_code": false
+    },
+    {
+      "id": 1695,
+      "name": "COLOMBIA ENERO 2026",
+      "list_price": 27600,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-10-24 22:27:39",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false
+    },
+    {
+      "id": 1740,
+      "name": "COLOMBIA MARZO 2026",
+      "list_price": 27600,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2026-01-07 23:46:02",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false
+    },
+    {
+      "id": 1749,
+      "name": "COLOMBIA MAYO 2026",
+      "list_price": 27600,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2026-01-09 18:42:25",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false
+    },
+    {
+      "id": 1453,
+      "name": "COLOMBIA JUNIO PRIVADO",
+      "list_price": 26600,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-05-07 22:37:12",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false
+    },
+    {
+      "id": 1367,
+      "name": "NUEVA YORK DICIEMBRE 2025",
+      "list_price": 25000,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-06-26 18:37:28",
+      "description_sale": false,
+      "website_published": true,
+      "default_code": false
+    },
+    {
+      "id": 1050,
+      "name": "NEW YORK 2025 2 FECHA",
+      "list_price": 24000,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-02-09 09:06:20",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false
+    },
+    {
+      "id": 1325,
+      "name": "RUTA MAYA AGOSTO 2025",
+      "list_price": 19900,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-08-25 17:46:32",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false
+    },
+    {
+      "id": 1718,
+      "name": "COLOMBIA PROMO BUEN FIN",
+      "list_price": 19900,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-11-19 19:35:44",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false
+    },
+    {
+      "id": 1605,
+      "name": "VUELOS GDL-MADRID",
+      "list_price": 19000,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-07-29 23:52:15",
+      "description_sale": false,
+      "website_published": true,
+      "default_code": false
+    },
+    {
+      "id": 1544,
+      "name": "CHEPE DICIEMBRE 2025",
+      "list_price": 17500,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-06-09 22:48:01",
+      "description_sale": false,
+      "website_published": true,
+      "default_code": false
+    },
+    {
+      "id": 1545,
+      "name": "CHEPE ENERO 2026",
+      "list_price": 17500,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-06-09 22:49:40",
+      "description_sale": false,
+      "website_published": true,
+      "default_code": false
+    },
+    {
+      "id": 1209,
+      "name": "LAS VEGAS OCTUBRE 2025",
+      "list_price": 17500,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-06-26 19:09:44",
+      "description_sale": false,
+      "website_published": true,
+      "default_code": false
+    },
+    {
+      "id": 250,
+      "name": "POSADA REAL PUERTO ESCONDIDO ",
+      "list_price": 17000,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-02-14 19:06:00",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false
+    },
+    {
+      "id": 986,
+      "name": "NEW YORK 2025",
+      "list_price": 16500,
+      "type": "service",
+      "categ_id": [
+        1,
+        "All"
+      ],
+      "active": true,
+      "write_date": "2025-02-09 09:06:20",
+      "description_sale": false,
+      "website_published": false,
+      "default_code": false
+    }
+  ],
+  "eventFields": [
+    {
+      "name": "active",
+      "string": "Active",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "activity_calendar_event_id",
+      "string": "Next Activity Calendar Event",
+      "type": "many2one",
+      "relation": "calendar.event"
+    },
+    {
+      "name": "activity_date_deadline",
+      "string": "Next Activity Deadline",
+      "type": "date",
+      "relation": null
+    },
+    {
+      "name": "activity_exception_decoration",
+      "string": "Activity Exception Decoration",
+      "type": "selection",
+      "relation": null
+    },
+    {
+      "name": "activity_exception_icon",
+      "string": "Icon",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "activity_ids",
+      "string": "Activities",
+      "type": "one2many",
+      "relation": "mail.activity"
+    },
+    {
+      "name": "activity_state",
+      "string": "Activity State",
+      "type": "selection",
+      "relation": null
+    },
+    {
+      "name": "activity_summary",
+      "string": "Next Activity Summary",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "activity_type_icon",
+      "string": "Activity Type Icon",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "activity_type_id",
+      "string": "Next Activity Type",
+      "type": "many2one",
+      "relation": "mail.activity.type"
+    },
+    {
+      "name": "activity_user_id",
+      "string": "Responsible User",
+      "type": "many2one",
+      "relation": "res.users"
+    },
+    {
+      "name": "address_id",
+      "string": "Venue",
+      "type": "many2one",
+      "relation": "res.partner"
+    },
+    {
+      "name": "address_inline",
+      "string": "Venue (formatted for one line uses)",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "address_name",
+      "string": "Name",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "address_search",
+      "string": "Address",
+      "type": "many2one",
+      "relation": "res.partner"
+    },
+    {
+      "name": "badge_format",
+      "string": "Badge Dimension",
+      "type": "selection",
+      "relation": null
+    },
+    {
+      "name": "badge_image",
+      "string": "Badge Background",
+      "type": "binary",
+      "relation": null
+    },
+    {
+      "name": "can_publish",
+      "string": "Can Publish",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "community_menu",
+      "string": "Community Menu",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "community_menu_ids",
+      "string": "Event Community Menus",
+      "type": "one2many",
+      "relation": "website.event.menu"
+    },
+    {
+      "name": "company_id",
+      "string": "Company",
+      "type": "many2one",
+      "relation": "res.company"
+    },
+    {
+      "name": "country_id",
+      "string": "Country",
+      "type": "many2one",
+      "relation": "res.country"
+    },
+    {
+      "name": "cover_properties",
+      "string": "Cover Properties",
+      "type": "text",
+      "relation": null
+    },
+    {
+      "name": "create_date",
+      "string": "Created on",
+      "type": "datetime",
+      "relation": null
+    },
+    {
+      "name": "create_uid",
+      "string": "Created by",
+      "type": "many2one",
+      "relation": "res.users"
+    },
+    {
+      "name": "currency_id",
+      "string": "Currency",
+      "type": "many2one",
+      "relation": "res.currency"
+    },
+    {
+      "name": "date_begin",
+      "string": "Start Date",
+      "type": "datetime",
+      "relation": null
+    },
+    {
+      "name": "date_begin_located",
+      "string": "Start Date Located",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "date_end",
+      "string": "End Date",
+      "type": "datetime",
+      "relation": null
+    },
+    {
+      "name": "date_end_located",
+      "string": "End Date Located",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "date_tz",
+      "string": "Display Timezone",
+      "type": "selection",
+      "relation": null
+    },
+    {
+      "name": "description",
+      "string": "Description",
+      "type": "html",
+      "relation": null
+    },
+    {
+      "name": "display_name",
+      "string": "Display Name",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "event_mail_ids",
+      "string": "Mail Schedule",
+      "type": "one2many",
+      "relation": "event.mail"
+    },
+    {
+      "name": "event_register_url",
+      "string": "Event Registration Link",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "event_registrations_open",
+      "string": "Registration open",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "event_registrations_sold_out",
+      "string": "Sold Out",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "event_registrations_started",
+      "string": "Registrations started",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "event_ticket_ids",
+      "string": "Event Ticket",
+      "type": "one2many",
+      "relation": "event.event.ticket"
+    },
+    {
+      "name": "event_type_id",
+      "string": "Template",
+      "type": "many2one",
+      "relation": "event.type"
+    },
+    {
+      "name": "firebase_enable_push_notifications",
+      "string": "Enable Web Push Notifications",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "general_question_ids",
+      "string": "General Questions",
+      "type": "one2many",
+      "relation": "event.question"
+    },
+    {
+      "name": "has_lead_request",
+      "string": "Ongoing Generation Request",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "has_message",
+      "string": "Has Message",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "id",
+      "string": "ID",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "introduction_menu",
+      "string": "Introduction Menu",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "introduction_menu_ids",
+      "string": "Introduction Menus",
+      "type": "one2many",
+      "relation": "website.event.menu"
+    },
+    {
+      "name": "is_done",
+      "string": "Is Done",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "is_finished",
+      "string": "Is Finished",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "is_one_day",
+      "string": "Is One Day",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "is_ongoing",
+      "string": "Is Ongoing",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "is_participating",
+      "string": "Is Participating",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "is_published",
+      "string": "Is Published",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "is_seo_optimized",
+      "string": "SEO optimized",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "is_visible_on_website",
+      "string": "Visible On Website",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "kanban_state",
+      "string": "Kanban State",
+      "type": "selection",
+      "relation": null
+    },
+    {
+      "name": "kanban_state_label",
+      "string": "Kanban State Label",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "lang",
+      "string": "Language",
+      "type": "selection",
+      "relation": null
+    },
+    {
+      "name": "lead_count",
+      "string": "# Leads",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "lead_ids",
+      "string": "Leads",
+      "type": "one2many",
+      "relation": "crm.lead"
+    },
+    {
+      "name": "legend_blocked",
+      "string": "Kanban Blocked Explanation",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "legend_done",
+      "string": "Kanban Valid Explanation",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "legend_normal",
+      "string": "Kanban Ongoing Explanation",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "location_menu",
+      "string": "Location Menu",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "location_menu_ids",
+      "string": "Location Menus",
+      "type": "one2many",
+      "relation": "website.event.menu"
+    },
+    {
+      "name": "menu_id",
+      "string": "Event Menu",
+      "type": "many2one",
+      "relation": "website.menu"
+    },
+    {
+      "name": "message_attachment_count",
+      "string": "Attachment Count",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "message_follower_ids",
+      "string": "Followers",
+      "type": "one2many",
+      "relation": "mail.followers"
+    },
+    {
+      "name": "message_has_error",
+      "string": "Message Delivery error",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "message_has_error_counter",
+      "string": "Number of errors",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "message_has_sms_error",
+      "string": "SMS Delivery error",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "message_ids",
+      "string": "Messages",
+      "type": "one2many",
+      "relation": "mail.message"
+    },
+    {
+      "name": "message_is_follower",
+      "string": "Is Follower",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "message_needaction",
+      "string": "Action Needed",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "message_needaction_counter",
+      "string": "Number of Actions",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "message_partner_ids",
+      "string": "Followers (Partners)",
+      "type": "many2many",
+      "relation": "res.partner"
+    },
+    {
+      "name": "my_activity_date_deadline",
+      "string": "My Activity Deadline",
+      "type": "date",
+      "relation": null
+    },
+    {
+      "name": "name",
+      "string": "Event",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "note",
+      "string": "Note",
+      "type": "html",
+      "relation": null
+    },
+    {
+      "name": "organizer_id",
+      "string": "Organizer",
+      "type": "many2one",
+      "relation": "res.partner"
+    },
+    {
+      "name": "question_ids",
+      "string": "Questions",
+      "type": "one2many",
+      "relation": "event.question"
+    },
+    {
+      "name": "rating_ids",
+      "string": "Ratings",
+      "type": "one2many",
+      "relation": "rating.rating"
+    },
+    {
+      "name": "register_menu",
+      "string": "Register Menu",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "register_menu_ids",
+      "string": "Register Menus",
+      "type": "one2many",
+      "relation": "website.event.menu"
+    },
+    {
+      "name": "registration_ids",
+      "string": "Attendees",
+      "type": "one2many",
+      "relation": "event.registration"
+    },
+    {
+      "name": "registration_properties_definition",
+      "string": "Registration Properties",
+      "type": "properties_definition",
+      "relation": null
+    },
+    {
+      "name": "sale_order_lines_ids",
+      "string": "All sale order lines pointing to this event",
+      "type": "one2many",
+      "relation": "sale.order.line"
+    },
+    {
+      "name": "sale_price_subtotal",
+      "string": "Sales (Tax Excluded)",
+      "type": "monetary",
+      "relation": null
+    },
+    {
+      "name": "seats_available",
+      "string": "Available Seats",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "seats_limited",
+      "string": "Limit Attendees",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "seats_max",
+      "string": "Maximum Attendees",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "seats_reserved",
+      "string": "Number of Registrations",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "seats_taken",
+      "string": "Number of Taken Seats",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "seats_used",
+      "string": "Number of Attendees",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "seo_name",
+      "string": "Seo name",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "specific_question_ids",
+      "string": "Specific Questions",
+      "type": "one2many",
+      "relation": "event.question"
+    },
+    {
+      "name": "stage_id",
+      "string": "Stage",
+      "type": "many2one",
+      "relation": "event.stage"
+    },
+    {
+      "name": "start_remaining",
+      "string": "Remaining before start",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "start_sale_datetime",
+      "string": "Start sale date",
+      "type": "datetime",
+      "relation": null
+    },
+    {
+      "name": "start_today",
+      "string": "Start Today",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "subtitle",
+      "string": "Event Subtitle",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "tag_ids",
+      "string": "Tags",
+      "type": "many2many",
+      "relation": "event.tag"
+    },
+    {
+      "name": "ticket_instructions",
+      "string": "Ticket Instructions",
+      "type": "html",
+      "relation": null
+    },
+    {
+      "name": "use_barcode",
+      "string": "Use Barcode",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "user_id",
+      "string": "Responsible",
+      "type": "many2one",
+      "relation": "res.users"
+    },
+    {
+      "name": "website_id",
+      "string": "Website",
+      "type": "many2one",
+      "relation": "website"
+    },
+    {
+      "name": "website_menu",
+      "string": "Website Menu",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "website_message_ids",
+      "string": "Website Messages",
+      "type": "one2many",
+      "relation": "mail.message"
+    },
+    {
+      "name": "website_meta_description",
+      "string": "Website meta description",
+      "type": "text",
+      "relation": null
+    },
+    {
+      "name": "website_meta_keywords",
+      "string": "Website meta keywords",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "website_meta_og_img",
+      "string": "Website opengraph image",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "website_meta_title",
+      "string": "Website meta title",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "website_published",
+      "string": "Visible on current website",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "website_url",
+      "string": "Website URL",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "website_visibility",
+      "string": "Website Visibility",
+      "type": "selection",
+      "relation": null
+    },
+    {
+      "name": "write_date",
+      "string": "Last Updated on",
+      "type": "datetime",
+      "relation": null
+    },
+    {
+      "name": "write_uid",
+      "string": "Last Updated by",
+      "type": "many2one",
+      "relation": "res.users"
+    }
+  ],
+  "eventCount": 0,
+  "eventSample": [],
+  "eventTicketFields": [
+    {
+      "name": "color",
+      "string": "Color",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "company_id",
+      "string": "Company",
+      "type": "many2one",
+      "relation": "res.company"
+    },
+    {
+      "name": "create_date",
+      "string": "Created on",
+      "type": "datetime",
+      "relation": null
+    },
+    {
+      "name": "create_uid",
+      "string": "Created by",
+      "type": "many2one",
+      "relation": "res.users"
+    },
+    {
+      "name": "currency_id",
+      "string": "Currency",
+      "type": "many2one",
+      "relation": "res.currency"
+    },
+    {
+      "name": "description",
+      "string": "Description",
+      "type": "text",
+      "relation": null
+    },
+    {
+      "name": "display_name",
+      "string": "Display Name",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "end_sale_datetime",
+      "string": "Registration End",
+      "type": "datetime",
+      "relation": null
+    },
+    {
+      "name": "event_id",
+      "string": "Event",
+      "type": "many2one",
+      "relation": "event.event"
+    },
+    {
+      "name": "event_type_id",
+      "string": "Event Category",
+      "type": "many2one",
+      "relation": "event.type"
+    },
+    {
+      "name": "id",
+      "string": "ID",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "is_expired",
+      "string": "Is Expired",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "is_launched",
+      "string": "Are sales launched",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "is_sold_out",
+      "string": "Sold Out",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "name",
+      "string": "Name",
+      "type": "char",
+      "relation": null
+    },
+    {
+      "name": "price",
+      "string": "Price",
+      "type": "float",
+      "relation": null
+    },
+    {
+      "name": "price_incl",
+      "string": "Price include",
+      "type": "float",
+      "relation": null
+    },
+    {
+      "name": "price_reduce",
+      "string": "Price Reduce",
+      "type": "float",
+      "relation": null
+    },
+    {
+      "name": "price_reduce_taxinc",
+      "string": "Price Reduce Tax inc",
+      "type": "float",
+      "relation": null
+    },
+    {
+      "name": "product_id",
+      "string": "Product",
+      "type": "many2one",
+      "relation": "product.product"
+    },
+    {
+      "name": "registration_ids",
+      "string": "Registrations",
+      "type": "one2many",
+      "relation": "event.registration"
+    },
+    {
+      "name": "sale_available",
+      "string": "Is Available",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "seats_available",
+      "string": "Available Seats",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "seats_limited",
+      "string": "Limit Attendees",
+      "type": "boolean",
+      "relation": null
+    },
+    {
+      "name": "seats_max",
+      "string": "Maximum Attendees",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "seats_reserved",
+      "string": "Reserved Seats",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "seats_taken",
+      "string": "Taken Seats",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "seats_used",
+      "string": "Used Seats",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "sequence",
+      "string": "Sequence",
+      "type": "integer",
+      "relation": null
+    },
+    {
+      "name": "start_sale_datetime",
+      "string": "Registration Start",
+      "type": "datetime",
+      "relation": null
+    },
+    {
+      "name": "write_date",
+      "string": "Last Updated on",
+      "type": "datetime",
+      "relation": null
+    },
+    {
+      "name": "write_uid",
+      "string": "Last Updated by",
+      "type": "many2one",
+      "relation": "res.users"
+    }
+  ],
+  "eventTicketSample": [],
+  "eventTypes": [
+    {
+      "id": 1,
+      "name": "VUELTA AL MUNDO 2024",
+      "has_seats_limitation": false,
+      "seats_max": 0,
+      "event_type_ticket_ids": [],
+      "tag_ids": [],
+      "note": false
+    }
+  ],
+  "futureEvents": []
+}
