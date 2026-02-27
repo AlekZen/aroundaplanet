@@ -24,6 +24,11 @@ import {
   odooTripRecordSchema,
   odooEventRecordSchema,
   tripSyncOptionsSchema,
+  tripEditorialUpdateSchema,
+  tripDepartureCreateSchema,
+  tripDepartureUpdateSchema,
+  tripListQuerySchema,
+  generateSlug,
   mapOdooToTripFields,
   mapOdooToDepartureFields,
   tripDocId,
@@ -50,6 +55,9 @@ function makeOdooTrip(overrides: Record<string, unknown> = {}) {
     currency_id: [33, 'MXN'],
     rating_count: 0,
     rating_avg: 0.0,
+    sales_count: 3,
+    is_favorite: true,
+    product_document_count: 5,
     ...overrides,
   }
 }
@@ -206,6 +214,9 @@ describe('mapOdooToTripFields', () => {
     expect(result!.odooRatingAvg).toBe(0.0)
     expect(result!.odooImageBase64).toBe('iVBORw0KGgoAAAANSUhEUg==')
     expect(result!.odooDefaultCode).toBe('VDM-2025')
+    expect(result!.odooSalesCount).toBe(3)
+    expect(result!.odooIsFavorite).toBe(true)
+    expect(result!.odooDocumentCount).toBe(5)
     expect(result!.isActive).toBe(true)
     expect(result!.isPublished).toBe(true)
     expect(result!.isSaleOk).toBe(true)
@@ -318,5 +329,227 @@ describe('departureDocId', () => {
   it('generates consistent document ID from Odoo event ID', () => {
     expect(departureDocId(42)).toBe('odoo-42')
     expect(departureDocId(100)).toBe('odoo-100')
+  })
+})
+
+// === Editorial schemas tests ===
+
+describe('tripEditorialUpdateSchema', () => {
+  it('accepts valid editorial update with all fields', () => {
+    const result = tripEditorialUpdateSchema.safeParse({
+      slug: 'vuelta-al-mundo-2026',
+      emotionalCopy: 'El viaje de tu vida',
+      tags: ['aventura', 'premium'],
+      highlights: ['33 dias', '15 paises'],
+      difficulty: 'moderate',
+      seoTitle: 'Vuelta al Mundo 2026',
+      seoDescription: 'Viaje alrededor del mundo en 33.8 dias',
+      isPublished: true,
+    })
+    expect(result.success).toBe(true)
+  })
+
+  it('accepts partial update (single field)', () => {
+    const result = tripEditorialUpdateSchema.safeParse({ slug: 'new-slug' })
+    expect(result.success).toBe(true)
+  })
+
+  it('rejects empty object (requires at least one field)', () => {
+    const result = tripEditorialUpdateSchema.safeParse({})
+    expect(result.success).toBe(false)
+  })
+
+  it('accepts null difficulty', () => {
+    const result = tripEditorialUpdateSchema.safeParse({ difficulty: null })
+    expect(result.success).toBe(true)
+    expect(result.data?.difficulty).toBeNull()
+  })
+
+  it('rejects invalid slug format (must be kebab-case)', () => {
+    expect(tripEditorialUpdateSchema.safeParse({ slug: 'Has Spaces' }).success).toBe(false)
+    expect(tripEditorialUpdateSchema.safeParse({ slug: 'UPPERCASE' }).success).toBe(false)
+    expect(tripEditorialUpdateSchema.safeParse({ slug: 'special_chars!' }).success).toBe(false)
+    expect(tripEditorialUpdateSchema.safeParse({ slug: '' }).success).toBe(false)
+  })
+
+  it('rejects invalid difficulty value', () => {
+    const result = tripEditorialUpdateSchema.safeParse({ difficulty: 'extreme' })
+    expect(result.success).toBe(false)
+  })
+
+  it('rejects seoTitle over 70 chars', () => {
+    const result = tripEditorialUpdateSchema.safeParse({ seoTitle: 'x'.repeat(71) })
+    expect(result.success).toBe(false)
+  })
+
+  it('rejects seoDescription over 160 chars', () => {
+    const result = tripEditorialUpdateSchema.safeParse({ seoDescription: 'x'.repeat(161) })
+    expect(result.success).toBe(false)
+  })
+
+  it('rejects unknown fields (strict mode)', () => {
+    const result = tripEditorialUpdateSchema.safeParse({ odooName: 'hack' })
+    expect(result.success).toBe(false)
+  })
+
+  it('rejects tags with empty strings', () => {
+    const result = tripEditorialUpdateSchema.safeParse({ tags: ['valid', ''] })
+    expect(result.success).toBe(false)
+  })
+
+  it('rejects more than 20 tags', () => {
+    const result = tripEditorialUpdateSchema.safeParse({ tags: Array(21).fill('tag') })
+    expect(result.success).toBe(false)
+  })
+})
+
+describe('tripDepartureCreateSchema', () => {
+  const validDeparture = {
+    name: 'Salida Marzo 2026',
+    startDate: '2026-03-15T08:00:00.000Z',
+    endDate: '2026-04-18T20:00:00.000Z',
+    seatsMax: 30,
+  }
+
+  it('accepts valid departure', () => {
+    const result = tripDepartureCreateSchema.safeParse(validDeparture)
+    expect(result.success).toBe(true)
+  })
+
+  it('rejects missing name', () => {
+    const { name: _, ...noName } = validDeparture
+    const result = tripDepartureCreateSchema.safeParse(noName)
+    expect(result.success).toBe(false)
+  })
+
+  it('rejects non-ISO startDate', () => {
+    const result = tripDepartureCreateSchema.safeParse({
+      ...validDeparture,
+      startDate: '2026-03-15',
+    })
+    expect(result.success).toBe(false)
+  })
+
+  it('rejects endDate before startDate', () => {
+    const result = tripDepartureCreateSchema.safeParse({
+      ...validDeparture,
+      startDate: '2026-04-18T20:00:00.000Z',
+      endDate: '2026-03-15T08:00:00.000Z',
+    })
+    expect(result.success).toBe(false)
+  })
+
+  it('rejects seatsMax of 0', () => {
+    const result = tripDepartureCreateSchema.safeParse({
+      ...validDeparture,
+      seatsMax: 0,
+    })
+    expect(result.success).toBe(false)
+  })
+
+  it('rejects seatsMax over 1000', () => {
+    const result = tripDepartureCreateSchema.safeParse({
+      ...validDeparture,
+      seatsMax: 1001,
+    })
+    expect(result.success).toBe(false)
+  })
+})
+
+describe('tripDepartureUpdateSchema', () => {
+  it('accepts partial update with seatsMax', () => {
+    const result = tripDepartureUpdateSchema.safeParse({ seatsMax: 50 })
+    expect(result.success).toBe(true)
+  })
+
+  it('accepts partial update with isActive', () => {
+    const result = tripDepartureUpdateSchema.safeParse({ isActive: false })
+    expect(result.success).toBe(true)
+  })
+
+  it('accepts empty object', () => {
+    const result = tripDepartureUpdateSchema.safeParse({})
+    expect(result.success).toBe(true)
+  })
+
+  it('rejects unknown fields (strict mode)', () => {
+    const result = tripDepartureUpdateSchema.safeParse({ startDate: '2026-01-01' })
+    expect(result.success).toBe(false)
+  })
+
+  it('rejects invalid seatsMax', () => {
+    expect(tripDepartureUpdateSchema.safeParse({ seatsMax: 0 }).success).toBe(false)
+    expect(tripDepartureUpdateSchema.safeParse({ seatsMax: -1 }).success).toBe(false)
+  })
+})
+
+describe('tripListQuerySchema', () => {
+  it('accepts empty query (uses defaults)', () => {
+    const result = tripListQuerySchema.safeParse({})
+    expect(result.success).toBe(true)
+    expect(result.data?.filter).toBe('all')
+    expect(result.data?.pageSize).toBe(20)
+  })
+
+  it('accepts all valid filters', () => {
+    for (const filter of ['all', 'published', 'draft', 'with-departures']) {
+      const result = tripListQuerySchema.safeParse({ filter })
+      expect(result.success).toBe(true)
+    }
+  })
+
+  it('accepts search with cursor', () => {
+    const result = tripListQuerySchema.safeParse({
+      search: 'vuelta',
+      cursor: 'odoo-1015',
+      pageSize: 10,
+    })
+    expect(result.success).toBe(true)
+    expect(result.data?.search).toBe('vuelta')
+    expect(result.data?.cursor).toBe('odoo-1015')
+    expect(result.data?.pageSize).toBe(10)
+  })
+
+  it('coerces string pageSize to number', () => {
+    const result = tripListQuerySchema.safeParse({ pageSize: '50' })
+    expect(result.success).toBe(true)
+    expect(result.data?.pageSize).toBe(50)
+  })
+
+  it('rejects invalid filter', () => {
+    const result = tripListQuerySchema.safeParse({ filter: 'archived' })
+    expect(result.success).toBe(false)
+  })
+
+  it('rejects pageSize over 100', () => {
+    const result = tripListQuerySchema.safeParse({ pageSize: 101 })
+    expect(result.success).toBe(false)
+  })
+
+  it('rejects search over 100 chars', () => {
+    const result = tripListQuerySchema.safeParse({ search: 'x'.repeat(101) })
+    expect(result.success).toBe(false)
+  })
+})
+
+describe('generateSlug', () => {
+  it('converts name to kebab-case', () => {
+    expect(generateSlug('VUELTA AL MUNDO 2026')).toBe('vuelta-al-mundo-2026')
+  })
+
+  it('removes diacritics', () => {
+    expect(generateSlug('Excursion Especial')).toBe('excursion-especial')
+  })
+
+  it('removes special characters', () => {
+    expect(generateSlug('Trip #1: "Best Ever!"')).toBe('trip-1-best-ever')
+  })
+
+  it('collapses multiple spaces and hyphens', () => {
+    expect(generateSlug('trip   ---  name')).toBe('trip-name')
+  })
+
+  it('trims whitespace', () => {
+    expect(generateSlug('  padded name  ')).toBe('padded-name')
   })
 })

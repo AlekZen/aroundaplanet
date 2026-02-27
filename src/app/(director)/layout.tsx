@@ -1,5 +1,5 @@
 import { SidebarProvider } from '@/components/ui/sidebar'
-import { BarChart3, Users, Bell, UserCircle } from 'lucide-react'
+import { BarChart3, Map, RefreshCw, UserCircle } from 'lucide-react'
 import { RoleSidebar } from '@/components/custom/RoleSidebar'
 import { BottomNavBar } from '@/components/custom/BottomNavBar'
 import { PageTransition } from '@/components/shared/PageTransition'
@@ -12,16 +12,16 @@ const DIRECTOR_TABS = [
     href: '/director/dashboard',
   },
   {
-    id: 'agents',
-    label: 'Agentes',
-    icon: <Users className="h-5 w-5" />,
-    href: '/director/agents',
+    id: 'trips',
+    label: 'Viajes',
+    icon: <Map className="h-5 w-5" />,
+    href: '/director/trips',
   },
   {
-    id: 'alerts',
-    label: 'Alertas',
-    icon: <Bell className="h-5 w-5" />,
-    href: '/director/alerts',
+    id: 'odoo-sync',
+    label: 'Sync',
+    icon: <RefreshCw className="h-5 w-5" />,
+    href: '/director/odoo-sync',
   },
   {
     id: 'profile',

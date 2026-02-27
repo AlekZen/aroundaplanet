@@ -55,6 +55,9 @@ function makeOdooProduct(id: number, name: string, price: number, overrides: Rec
     currency_id: [33, 'MXN'],
     rating_count: 0,
     rating_avg: 0.0,
+    sales_count: 0,
+    is_favorite: false,
+    product_document_count: 0,
     ...overrides,
   }
 }

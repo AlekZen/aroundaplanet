@@ -2,12 +2,10 @@ import { SidebarProvider } from '@/components/ui/sidebar'
 import { RoleSidebar } from '@/components/custom/RoleSidebar'
 import { BottomNavBar } from '@/components/custom/BottomNavBar'
 import { PageTransition } from '@/components/shared/PageTransition'
-import { LayoutDashboard, Users, CreditCard, User } from 'lucide-react'
+import { LayoutDashboard, User } from 'lucide-react'
 
 const AGENT_TABS = [
   { id: 'dashboard', label: 'Mi Negocio', icon: <LayoutDashboard className="h-5 w-5" />, href: '/agent/dashboard' },
-  { id: 'clients', label: 'Clientes', icon: <Users className="h-5 w-5" />, href: '/agent/clients' },
-  { id: 'payments', label: 'Pagos', icon: <CreditCard className="h-5 w-5" />, href: '/agent/payments' },
   { id: 'profile', label: 'Perfil', icon: <User className="h-5 w-5" />, href: '/agent/profile' },
 ]
 

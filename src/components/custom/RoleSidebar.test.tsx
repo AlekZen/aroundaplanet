@@ -48,9 +48,16 @@ describe('RoleSidebar', () => {
     render(<RoleSidebar roles={['admin']} />)
     expect(screen.getByRole('navigation', { name: /sidebar/i })).toBeInTheDocument()
     expect(screen.getByText('Verificacion')).toBeInTheDocument()
-    expect(screen.getByText('Agentes')).toBeInTheDocument()
-    expect(screen.getByText('Clientes')).toBeInTheDocument()
     expect(screen.getByText('Viajes')).toBeInTheDocument()
+    expect(screen.getByText('Sync Odoo')).toBeInTheDocument()
+    expect(screen.getByText('Mi Perfil')).toBeInTheDocument()
+  })
+
+  it('does not show phantom items for admin', () => {
+    mockUsePathname.mockReturnValue('/admin/verification')
+    render(<RoleSidebar roles={['admin']} />)
+    expect(screen.queryByText('Agentes')).not.toBeInTheDocument()
+    expect(screen.queryByText('Clientes')).not.toBeInTheDocument()
   })
 
   it('applies custom className', () => {
@@ -62,11 +69,9 @@ describe('RoleSidebar', () => {
   it('active section has data-active="true" when pathname matches exactly', () => {
     mockUsePathname.mockReturnValue('/admin/verification')
     render(<RoleSidebar roles={['admin']} />)
-    // El SidebarMenuButton del item activo debe tener data-active="true"
     const buttons = document.querySelectorAll('[data-active]')
     const activeButton = Array.from(buttons).find((b) => b.getAttribute('data-active') === 'true')
     expect(activeButton).toBeTruthy()
-    // Y el que esta activo contiene el texto de la seccion que coincide con el path
     expect(activeButton?.textContent).toContain('Verificacion')
   })
 
@@ -83,8 +88,8 @@ describe('RoleSidebar', () => {
     mockUsePathname.mockReturnValue('/admin/verification')
     render(<RoleSidebar roles={['admin']} />)
     const buttons = document.querySelectorAll('[data-active="false"]')
-    // Debe haber 4 botones inactivos (admin tiene 5 items, 1 activo)
-    expect(buttons.length).toBe(4)
+    // Admin tiene 4 items, 1 activo = 3 inactivos
+    expect(buttons.length).toBe(3)
   })
 
   it('renders combined sections for multiple roles', () => {
@@ -92,26 +97,41 @@ describe('RoleSidebar', () => {
     render(<RoleSidebar roles={['admin', 'director']} />)
     // Items de admin
     expect(screen.getByText('Verificacion')).toBeInTheDocument()
-    expect(screen.getByText('Viajes')).toBeInTheDocument()
     // Items de director
     expect(screen.getByText('Dashboard')).toBeInTheDocument()
-    expect(screen.getByText('Alertas')).toBeInTheDocument()
+    // Ambos tienen Viajes y Sync Odoo (duplicado por multi-role)
   })
 
-  it('renders only director sections when role is director', () => {
+  it('renders director sections correctly', () => {
     mockUsePathname.mockReturnValue('/director/dashboard')
     render(<RoleSidebar roles={['director']} />)
     expect(screen.getByText('Dashboard')).toBeInTheDocument()
-    expect(screen.getByText('Alertas')).toBeInTheDocument()
+    expect(screen.getByText('Viajes')).toBeInTheDocument()
+    expect(screen.getByText('Sync Odoo')).toBeInTheDocument()
+    expect(screen.getByText('Mi Perfil')).toBeInTheDocument()
     // No debe tener items exclusivos de admin
     expect(screen.queryByText('Verificacion')).not.toBeInTheDocument()
   })
 
-  it('renders superadmin sections correctly', () => {
+  it('renders agente sections correctly (only 2 items)', () => {
+    mockUsePathname.mockReturnValue('/agent/dashboard')
+    render(<RoleSidebar roles={['agente']} />)
+    expect(screen.getByText('Mi Negocio')).toBeInTheDocument()
+    expect(screen.getByText('Mi Perfil')).toBeInTheDocument()
+    // No debe tener items fantasma
+    expect(screen.queryByText('Clientes')).not.toBeInTheDocument()
+    expect(screen.queryByText('Pagos')).not.toBeInTheDocument()
+  })
+
+  it('renders superadmin sections correctly with Verificacion', () => {
     mockUsePathname.mockReturnValue('/superadmin/users')
     render(<RoleSidebar roles={['superadmin']} />)
     expect(screen.getByText('Usuarios')).toBeInTheDocument()
-    expect(screen.getByText('Configuracion')).toBeInTheDocument()
+    expect(screen.getByText('Verificacion')).toBeInTheDocument()
+    expect(screen.getByText('Viajes')).toBeInTheDocument()
     expect(screen.getByText('Sync Odoo')).toBeInTheDocument()
+    expect(screen.getByText('Mi Perfil')).toBeInTheDocument()
+    // No debe tener Configuracion fantasma
+    expect(screen.queryByText('Configuracion')).not.toBeInTheDocument()
   })
 })

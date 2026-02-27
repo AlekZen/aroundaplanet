@@ -109,7 +109,7 @@ describe('Navbar', () => {
     expect(mockLogout).toHaveBeenCalledTimes(1)
   })
 
-  it('shows role nav items for authenticated multi-role user', () => {
+  it('shows "Mi Panel" button for authenticated user instead of role nav items', () => {
     useAuthStore.setState({
       user: { uid: '123', displayName: 'Agent User', email: 'agent@example.com' } as never,
       isAuthenticated: true,
@@ -118,16 +118,14 @@ describe('Navbar', () => {
 
     render(<Navbar />)
 
-    // Should show agente nav items
-    const portalLinks = screen.getAllByText('Mi Portal')
-    expect(portalLinks.length).toBeGreaterThan(0)
+    // Should show "Mi Panel" button
+    const panelLinks = screen.getAllByText('Mi Panel')
+    expect(panelLinks.length).toBeGreaterThan(0)
 
-    const clientsLinks = screen.getAllByText('Mis Clientes')
-    expect(clientsLinks.length).toBeGreaterThan(0)
-
-    // Should show cliente nav items
-    const tripsLinks = screen.getAllByText('Mis Viajes')
-    expect(tripsLinks.length).toBeGreaterThan(0)
+    // Should NOT show old role-specific nav items
+    expect(screen.queryByText('Mi Portal')).not.toBeInTheDocument()
+    expect(screen.queryByText('Mis Clientes')).not.toBeInTheDocument()
+    expect(screen.queryByText('Mis Viajes')).not.toBeInTheDocument()
   })
 
   it('shows user display name when authenticated', () => {

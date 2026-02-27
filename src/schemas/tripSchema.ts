@@ -22,6 +22,9 @@ export const odooTripRecordSchema = z.object({
   currency_id: z.union([z.tuple([z.number(), z.string()]), z.literal(false)]),
   rating_count: z.number().int(),
   rating_avg: z.number(),
+  sales_count: z.number(),
+  is_favorite: z.boolean(),
+  product_document_count: z.number().int(),
 })
 
 export const odooEventRecordSchema = z.object({
@@ -56,7 +59,9 @@ export const tripSyncOptionsSchema = z.object({
 
 export function mapOdooToTripFields(record: Record<string, unknown>): Omit<Trip,
   'heroImages' | 'slug' | 'emotionalCopy' | 'tags' | 'highlights' |
-  'difficulty' | 'seoTitle' | 'seoDescription' | 'createdAt' | 'updatedAt'
+  'difficulty' | 'seoTitle' | 'seoDescription' | 'documents' | 'odooDocuments' |
+  'nextDepartureDate' | 'nextDepartureEndDate' | 'totalDepartures' | 'totalSeatsMax' | 'totalSeatsAvailable' |
+  'createdAt' | 'updatedAt'
 > | null {
   const parsed = odooTripRecordSchema.safeParse(record)
   if (!parsed.success) {
@@ -82,6 +87,9 @@ export function mapOdooToTripFields(record: Record<string, unknown>): Omit<Trip,
       ? data.image_1920
       : null,
     odooDefaultCode: typeof data.default_code === 'string' ? data.default_code : null,
+    odooSalesCount: data.sales_count,
+    odooIsFavorite: data.is_favorite,
+    odooDocumentCount: data.product_document_count,
 
     lastSyncAt: now,
     syncSource: 'manual' as const,
@@ -128,6 +136,7 @@ export function mapOdooToDepartureFields(record: Record<string, unknown>): Omit<
     seatsTaken: data.seats_taken,
     isActive: data.active,
     isPublished: data.website_published,
+    syncSource: 'odoo' as const,
     odooWriteDate: writeDate ?? now,
     lastSyncAt: now,
   }
@@ -144,3 +153,52 @@ export function tripDocId(odooProductId: number): string {
 export function departureDocId(odooEventId: number): string {
   return `odoo-${odooEventId}`
 }
+
+// === Editorial update validation (PATCH /api/trips/[tripId]) ===
+
+const DIFFICULTY_VALUES = ['easy', 'moderate', 'challenging'] as const
+
+export const tripEditorialUpdateSchema = z.object({
+  slug: z.string().min(1).max(200).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug debe ser kebab-case').optional(),
+  emotionalCopy: z.string().max(2000).optional(),
+  tags: z.array(z.string().min(1).max(50)).max(20).optional(),
+  highlights: z.array(z.string().min(1).max(200)).max(10).optional(),
+  difficulty: z.enum(DIFFICULTY_VALUES).nullable().optional(),
+  seoTitle: z.string().max(70).optional(),
+  seoDescription: z.string().max(160).optional(),
+  isPublished: z.boolean().optional(),
+}).strict().refine((data) => Object.keys(data).length > 0, {
+  message: 'Se requiere al menos un campo para actualizar',
+})
+
+// === Departure creation (POST /api/trips/[tripId]/departures) ===
+
+export const tripDepartureCreateSchema = z.object({
+  name: z.string().min(1).max(200),
+  startDate: z.string().datetime({ message: 'startDate debe ser ISO 8601' }),
+  endDate: z.string().datetime({ message: 'endDate debe ser ISO 8601' }),
+  seatsMax: z.number().int().min(1).max(1000),
+}).refine((data) => new Date(data.endDate) > new Date(data.startDate), {
+  message: 'endDate debe ser posterior a startDate',
+  path: ['endDate'],
+})
+
+// === Departure update (PATCH /api/trips/[tripId]/departures/[departureId]) ===
+
+export const tripDepartureUpdateSchema = z.object({
+  seatsMax: z.number().int().min(1).max(1000).optional(),
+  isActive: z.boolean().optional(),
+}).strict()
+
+// === Trip list query (GET /api/trips) ===
+
+export const tripListQuerySchema = z.object({
+  search: z.string().max(100).optional(),
+  filter: z.enum(['all', 'published', 'draft', 'with-departures']).default('all'),
+  cursor: z.string().optional(),
+  pageSize: z.coerce.number().int().min(1).max(100).default(20),
+})
+
+// === Slug generation helper (re-export from client-safe module) ===
+
+export { generateSlug } from '@/lib/utils/slugify'

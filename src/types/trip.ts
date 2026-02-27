@@ -41,6 +41,26 @@ export interface OdooEventRecord {
   website_published: boolean
 }
 
+// === Trip document attachment ===
+
+export interface TripDocument {
+  id: string
+  name: string
+  url: string
+  type: string
+  uploadedAt: string
+}
+
+// === Odoo document (synced from product.document / ir.attachment) ===
+
+export interface OdooDocument {
+  odooAttachmentId: number
+  name: string
+  mimetype: string
+  fileSize: number
+  shownOnProductPage: boolean
+}
+
 // === Firestore document: /trips/{tripId} ===
 
 export interface Trip {
@@ -56,6 +76,9 @@ export interface Trip {
   odooRatingAvg: number
   odooImageBase64: string | null
   odooDefaultCode: string | null
+  odooSalesCount: number
+  odooIsFavorite: boolean
+  odooDocumentCount: number
 
   // Sync metadata
   lastSyncAt: Timestamp
@@ -67,6 +90,13 @@ export interface Trip {
   isPublished: boolean
   isSaleOk: boolean
 
+  // Departure aggregates (computed during sync from subcollection data, source: Odoo)
+  nextDepartureDate: Timestamp | null
+  nextDepartureEndDate: Timestamp | null
+  totalDepartures: number
+  totalSeatsMax: number
+  totalSeatsAvailable: number
+
   // Editorial fields (NEVER overwritten by sync)
   heroImages: string[]
   slug: string
@@ -76,6 +106,8 @@ export interface Trip {
   difficulty: 'easy' | 'moderate' | 'challenging' | null
   seoTitle: string
   seoDescription: string
+  documents: TripDocument[]
+  odooDocuments: OdooDocument[]
 
   // Timestamps
   createdAt: Timestamp
@@ -85,7 +117,7 @@ export interface Trip {
 // === Firestore subcollection: /trips/{tripId}/departures/{departureId} ===
 
 export interface TripDeparture {
-  odooEventId: number
+  odooEventId: number | null
   odooName: string
   startDate: Timestamp
   endDate: Timestamp
@@ -97,7 +129,8 @@ export interface TripDeparture {
   seatsTaken: number
   isActive: boolean
   isPublished: boolean
-  odooWriteDate: Timestamp
+  syncSource: 'odoo' | 'manual'
+  odooWriteDate: Timestamp | null
   lastSyncAt: Timestamp
   createdAt: Timestamp
   updatedAt: Timestamp

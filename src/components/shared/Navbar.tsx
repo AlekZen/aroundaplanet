@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/stores/useAuthStore'
-import { useRoleNavigation } from '@/hooks/useRoleNavigation'
 import { logout } from '@/lib/firebase/auth'
 
 const NAV_LINKS = [
@@ -30,7 +29,6 @@ export function Navbar({ className }: NavbarProps) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
   const isLoading = useAuthStore((s) => s.isLoading)
   const user = useAuthStore((s) => s.user)
-  const roleNavItems = useRoleNavigation()
 
   return (
     <header
@@ -78,31 +76,6 @@ export function Navbar({ className }: NavbarProps) {
               </Link>
             )
           })}
-
-          {/* Role-based nav items (authenticated users) */}
-          {isAuthenticated && roleNavItems.length > 0 && (
-            <>
-              <Separator orientation="vertical" className="h-6" />
-              {roleNavItems.map((item) => {
-                const isActive = pathname.startsWith(item.href)
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    aria-current={isActive ? 'page' : undefined}
-                    className={cn(
-                      'text-sm font-medium transition-colors min-h-11 flex items-center focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2',
-                      isActive
-                        ? 'text-primary border-b-2 border-accent'
-                        : 'text-foreground/80 hover:text-primary'
-                    )}
-                  >
-                    {item.label}
-                  </Link>
-                )
-              })}
-            </>
-          )}
         </div>
 
         {/* Desktop CTA */}
@@ -117,6 +90,9 @@ export function Navbar({ className }: NavbarProps) {
               <span className="text-sm text-foreground/70 truncate max-w-[150px]">
                 {user?.displayName ?? user?.email}
               </span>
+              <Button size="sm" asChild className="min-h-11 bg-accent text-accent-foreground hover:bg-accent-light">
+                <Link href="/dashboard">Mi Panel</Link>
+              </Button>
               <Button
                 variant="outline"
                 size="sm"
@@ -169,32 +145,6 @@ export function Navbar({ className }: NavbarProps) {
                 )
               })}
 
-              {/* Role-based mobile nav items */}
-              {isAuthenticated && roleNavItems.length > 0 && (
-                <>
-                  <Separator className="my-2" />
-                  {roleNavItems.map((item) => {
-                    const isActive = pathname.startsWith(item.href)
-                    return (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        onClick={() => setOpen(false)}
-                        aria-current={isActive ? 'page' : undefined}
-                        className={cn(
-                          'text-lg font-medium transition-colors min-h-11 flex items-center focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2',
-                          isActive
-                            ? 'text-primary font-bold'
-                            : 'text-foreground hover:text-primary'
-                        )}
-                      >
-                        {item.label}
-                      </Link>
-                    )
-                  })}
-                </>
-              )}
-
               <Separator className="my-2" />
               {isLoading ? (
                 <>
@@ -206,6 +156,9 @@ export function Navbar({ className }: NavbarProps) {
                   <span className="text-sm text-foreground/70 truncate">
                     {user?.displayName ?? user?.email}
                   </span>
+                  <Button asChild className="min-h-11 bg-accent text-accent-foreground hover:bg-accent-light">
+                    <Link href="/dashboard" onClick={() => setOpen(false)}>Mi Panel</Link>
+                  </Button>
                   <Button
                     variant="outline"
                     className="min-h-11"

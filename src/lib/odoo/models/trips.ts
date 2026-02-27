@@ -1,12 +1,13 @@
 import { getOdooClient } from '@/lib/odoo/client'
 import { mapOdooToTripFields, mapOdooToDepartureFields } from '@/schemas/tripSchema'
 import type { OdooDomain } from '@/types/odoo'
-import type { TripSyncOptions } from '@/types/trip'
+import type { TripSyncOptions, OdooDocument } from '@/types/trip'
 
 const TRIP_FIELDS = [
   'name', 'list_price', 'type', 'categ_id', 'active', 'write_date', 'create_date',
   'description_sale', 'website_published', 'image_1920', 'sale_ok',
   'default_code', 'currency_id', 'rating_count', 'rating_avg',
+  'sales_count', 'is_favorite', 'product_document_count',
 ] as const
 
 const EVENT_FIELDS = [
@@ -177,4 +178,62 @@ export async function fetchDeparturesFromOdoo(odooProductIds: number[]) {
   }
 
   return { departures: departuresByProduct, errors }
+}
+
+const DOCUMENT_FIELDS = [
+  'name', 'mimetype', 'file_size', 'shown_on_product_page',
+  'ir_attachment_id', 'res_id', 'active',
+] as const
+
+/**
+ * Fetch product documents from Odoo for given product template IDs.
+ * Returns a Map<odooProductId, OdooDocument[]> with document metadata.
+ * Documents include PDFs (itineraries, contracts) and images from product.document.
+ */
+export async function fetchOdooDocuments(
+  odooProductIds: number[],
+): Promise<Map<number, OdooDocument[]>> {
+  const byProduct = new Map<number, OdooDocument[]>()
+  if (odooProductIds.length === 0) return byProduct
+
+  const client = getOdooClient()
+
+  try {
+    const docs = await client.searchRead(
+      'product.document',
+      [
+        ['res_model', '=', 'product.template'],
+        ['res_id', 'in', odooProductIds],
+        ['active', '=', true],
+      ],
+      [...DOCUMENT_FIELDS],
+      { limit: 10000 },
+    )
+
+    for (const doc of docs) {
+      const productId = doc.res_id as number
+      const attachmentId = Array.isArray(doc.ir_attachment_id)
+        ? doc.ir_attachment_id[0] as number
+        : doc.ir_attachment_id as number
+
+      if (!attachmentId || !productId) continue
+
+      const mapped: OdooDocument = {
+        odooAttachmentId: attachmentId,
+        name: (doc.name as string) || 'Sin nombre',
+        mimetype: (doc.mimetype as string) || 'application/octet-stream',
+        fileSize: (doc.file_size as number) || 0,
+        shownOnProductPage: (doc.shown_on_product_page as boolean) || false,
+      }
+
+      const existing = byProduct.get(productId) ?? []
+      existing.push(mapped)
+      byProduct.set(productId, existing)
+    }
+  } catch (err) {
+    console.error('[trips] Error fetching Odoo documents:', err)
+    // Non-fatal: trips sync continues even if documents fail
+  }
+
+  return byProduct
 }

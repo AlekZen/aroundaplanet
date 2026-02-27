@@ -60,7 +60,7 @@ development_status:
   # =============================================
   epic-2: in-progress
   2-1a-trip-sync-odoo-firestore: done
-  2-1b-admin-trip-crud-document-uploads: backlog
+  2-1b-admin-trip-crud-document-uploads: done
   2-2-public-trip-catalog-with-filters: backlog
   2-3-trip-landing-page: backlog
   2-4-conversion-flow: backlog

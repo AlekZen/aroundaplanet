@@ -106,15 +106,15 @@
   --chart-4: #E76F51;
   --chart-5: #D8F3DC;
 
-  /* Sidebar (admin/director layouts) */
-  --sidebar: #FAFAF8;
-  --sidebar-foreground: #1A1A1A;
-  --sidebar-primary: #1B4332;
-  --sidebar-primary-foreground: #FAFAF8;
-  --sidebar-accent: #F1F0EB;
-  --sidebar-accent-foreground: #1B4332;
-  --sidebar-border: #E5E4DF;
-  --sidebar-ring: #1B4332;
+  /* Sidebar (admin/director layouts — dark green theme) */
+  --sidebar: #1B4332;
+  --sidebar-foreground: #FAFAF8;
+  --sidebar-primary: #F4A261;
+  --sidebar-primary-foreground: #1B4332;
+  --sidebar-accent: rgba(255, 255, 255, 0.12);
+  --sidebar-accent-foreground: #FAFAF8;
+  --sidebar-border: rgba(255, 255, 255, 0.15);
+  --sidebar-ring: #F4A261;
 }
 
 .dark {

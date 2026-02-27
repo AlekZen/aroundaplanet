@@ -1,6 +1,6 @@
 import { Timestamp } from 'firebase-admin/firestore'
 import { adminDb } from '@/lib/firebase/admin'
-import { fetchTripsFromOdoo, fetchDeparturesFromOdoo } from '@/lib/odoo/models/trips'
+import { fetchTripsFromOdoo, fetchDeparturesFromOdoo, fetchOdooDocuments } from '@/lib/odoo/models/trips'
 import { tripDocId, departureDocId } from '@/schemas/tripSchema'
 import type { Trip, TripSyncOptions, TripSyncResult } from '@/types/trip'
 
@@ -11,7 +11,8 @@ const AUDIT_COLLECTION = 'auditLog'
 /** Default editorial fields for new trip documents */
 const DEFAULT_EDITORIAL_FIELDS: Pick<Trip,
   'heroImages' | 'slug' | 'emotionalCopy' | 'tags' | 'highlights' |
-  'difficulty' | 'seoTitle' | 'seoDescription'
+  'difficulty' | 'seoTitle' | 'seoDescription' | 'documents' | 'odooDocuments' |
+  'nextDepartureDate' | 'nextDepartureEndDate' | 'totalDepartures' | 'totalSeatsMax' | 'totalSeatsAvailable'
 > = {
   heroImages: [],
   slug: '',
@@ -21,6 +22,13 @@ const DEFAULT_EDITORIAL_FIELDS: Pick<Trip,
   difficulty: null,
   seoTitle: '',
   seoDescription: '',
+  documents: [],
+  odooDocuments: [],
+  nextDepartureDate: null,
+  nextDepartureEndDate: null,
+  totalDepartures: 0,
+  totalSeatsMax: 0,
+  totalSeatsAvailable: 0,
 }
 
 /**
@@ -147,10 +155,12 @@ export async function syncTrips(
 
         for (const dep of departureList) {
           try {
+            if (dep.odooEventId === null) continue
             const depDocRef = depCollRef.doc(departureDocId(dep.odooEventId))
+            const depExists = (await depDocRef.get()).exists
             await depDocRef.set({
               ...dep,
-              createdAt: now,
+              ...(depExists ? {} : { createdAt: now }),
               updatedAt: now,
             }, { merge: true })
           } catch (err) {
@@ -165,7 +175,62 @@ export async function syncTrips(
     }
   }
 
-  // Step 6: Audit log
+  // Step 5b: Compute departure aggregates and write to parent trip docs
+  // These are denormalized from Odoo source-of-truth data we just synced
+  if (odooProductIds.length > 0) {
+    for (const productId of odooProductIds) {
+      try {
+        const tripDocRef = tripsRef.doc(tripDocId(productId))
+        const depSnap = await tripDocRef.collection(DEPARTURES_SUBCOLLECTION)
+          .where('isActive', '==', true)
+          .orderBy('startDate', 'asc')
+          .get()
+
+        const activeDeps = depSnap.docs.map((d) => d.data())
+        const futureDeps = activeDeps.filter((d) => {
+          const ts = d.startDate as Timestamp | undefined
+          return ts && ts.toMillis() > Date.now()
+        })
+
+        const nextDep = futureDeps[0] ?? null
+        const totalDepartures = activeDeps.length
+        const totalSeatsMax = futureDeps.reduce((sum, d) => sum + ((d.seatsMax as number) ?? 0), 0)
+        const totalSeatsAvailable = futureDeps.reduce((sum, d) => sum + ((d.seatsAvailable as number) ?? 0), 0)
+
+        await tripDocRef.set({
+          nextDepartureDate: nextDep?.startDate ?? null,
+          nextDepartureEndDate: nextDep?.endDate ?? null,
+          totalDepartures,
+          totalSeatsMax,
+          totalSeatsAvailable,
+        }, { merge: true })
+      } catch (err) {
+        console.error(`[trip-sync] Error computing departure aggregates for product ${productId}:`, err)
+        // Non-fatal: trip data is still valid without aggregates
+      }
+    }
+  }
+
+  // Step 6: Sync Odoo documents (PDFs, images attached to products)
+  if (odooProductIds.length > 0) {
+    try {
+      const documentsByProduct = await fetchOdooDocuments(odooProductIds)
+      for (const [productId, docs] of documentsByProduct) {
+        try {
+          const tripDocRef = tripsRef.doc(tripDocId(productId))
+          await tripDocRef.set({ odooDocuments: docs }, { merge: true })
+        } catch (err) {
+          console.error(`[trip-sync] Error syncing documents for product ${productId}:`, err)
+          // Non-fatal per product
+        }
+      }
+    } catch (err) {
+      console.error('[trip-sync] Error fetching Odoo documents:', err)
+      // Non-fatal: trips are still synced even if documents fail
+    }
+  }
+
+  // Step 7: Audit log
   const syncedAt = syncStartedAt.toISOString()
   try {
     await adminDb.collection(AUDIT_COLLECTION).add({

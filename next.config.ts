@@ -4,6 +4,12 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   // Allow webpack config from @serwist/next alongside Turbopack (Next.js 16 default)
   turbopack: {},
+  images: {
+    remotePatterns: [
+      { protocol: 'https', hostname: 'aroundaplanet.odoo.com' },
+      { protocol: 'https', hostname: 'firebasestorage.googleapis.com' },
+    ],
+  },
 };
 
 // Dynamic import avoids CJS/ESM mismatch warning:

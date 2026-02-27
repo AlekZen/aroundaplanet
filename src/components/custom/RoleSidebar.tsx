@@ -19,7 +19,7 @@ import { cn } from '@/lib/utils'
 import { staggerChildren } from '@/lib/animations/variants'
 import { spring } from '@/lib/animations/transitions'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
-import { LayoutDashboard, Users, CreditCard, Settings, BarChart3, Bell, Shield, UserCircle } from 'lucide-react'
+import { LayoutDashboard, CreditCard, BarChart3, Shield, UserCircle, RefreshCw, Map } from 'lucide-react'
 
 interface RoleSidebarProps {
   roles: string[]
@@ -29,39 +29,43 @@ interface RoleSidebarProps {
 const SECTIONS_BY_ROLE: Record<string, Array<{ id: string; label: string; icon: React.ReactNode; href: string }>> = {
   admin: [
     { id: 'verification', label: 'Verificacion', icon: <CreditCard className="h-5 w-5" />, href: '/admin/verification' },
-    { id: 'agents', label: 'Agentes', icon: <Users className="h-5 w-5" />, href: '/admin/agents' },
-    { id: 'clients', label: 'Clientes', icon: <Users className="h-5 w-5" />, href: '/admin/clients' },
-    { id: 'trips', label: 'Viajes', icon: <LayoutDashboard className="h-5 w-5" />, href: '/admin/trips' },
+    { id: 'trips', label: 'Viajes', icon: <Map className="h-5 w-5" />, href: '/admin/trips' },
+    { id: 'odoo-sync', label: 'Sync Odoo', icon: <RefreshCw className="h-5 w-5" />, href: '/admin/odoo-sync' },
     { id: 'admin-profile', label: 'Mi Perfil', icon: <UserCircle className="h-5 w-5" />, href: '/admin/profile' },
   ],
   director: [
     { id: 'dashboard', label: 'Dashboard', icon: <BarChart3 className="h-5 w-5" />, href: '/director/dashboard' },
-    { id: 'agents', label: 'Agentes', icon: <Users className="h-5 w-5" />, href: '/director/agents' },
-    { id: 'alerts', label: 'Alertas', icon: <Bell className="h-5 w-5" />, href: '/director/alerts' },
+    { id: 'trips', label: 'Viajes', icon: <Map className="h-5 w-5" />, href: '/director/trips' },
+    { id: 'odoo-sync', label: 'Sync Odoo', icon: <RefreshCw className="h-5 w-5" />, href: '/director/odoo-sync' },
     { id: 'director-profile', label: 'Mi Perfil', icon: <UserCircle className="h-5 w-5" />, href: '/director/profile' },
   ],
   agente: [
     { id: 'dashboard', label: 'Mi Negocio', icon: <LayoutDashboard className="h-5 w-5" />, href: '/agent/dashboard' },
-    { id: 'clients', label: 'Clientes', icon: <Users className="h-5 w-5" />, href: '/agent/clients' },
-    { id: 'payments', label: 'Pagos', icon: <CreditCard className="h-5 w-5" />, href: '/agent/payments' },
     { id: 'agent-profile', label: 'Mi Perfil', icon: <UserCircle className="h-5 w-5" />, href: '/agent/profile' },
   ],
   superadmin: [
     { id: 'users', label: 'Usuarios', icon: <Shield className="h-5 w-5" />, href: '/superadmin/users' },
-    { id: 'config', label: 'Configuracion', icon: <Settings className="h-5 w-5" />, href: '/superadmin/config' },
-    { id: 'odoo-sync', label: 'Sync Odoo', icon: <LayoutDashboard className="h-5 w-5" />, href: '/superadmin/odoo-sync' },
+    { id: 'verification', label: 'Verificacion', icon: <CreditCard className="h-5 w-5" />, href: '/superadmin/verification' },
+    { id: 'trips', label: 'Viajes', icon: <Map className="h-5 w-5" />, href: '/superadmin/trips' },
+    { id: 'odoo-sync', label: 'Sync Odoo', icon: <RefreshCw className="h-5 w-5" />, href: '/superadmin/odoo-sync' },
     { id: 'superadmin-profile', label: 'Mi Perfil', icon: <UserCircle className="h-5 w-5" />, href: '/superadmin/profile' },
   ],
 }
 
 export function RoleSidebar({ roles, className }: RoleSidebarProps) {
   const pathname = usePathname()
-  const sections = roles.flatMap((role) => SECTIONS_BY_ROLE[role] ?? [])
+  const allSections = roles.flatMap((role) => SECTIONS_BY_ROLE[role] ?? [])
+  const seen = new Set<string>()
+  const sections = allSections.filter((s) => {
+    if (seen.has(s.href)) return false
+    seen.add(s.href)
+    return true
+  })
   const variants = useReducedMotion(staggerChildren)
 
   return (
-    <Sidebar collapsible="icon" className={cn('bg-primary text-primary-foreground', className)}>
-      <SidebarHeader className="border-b border-primary-foreground/20">
+    <Sidebar collapsible="icon" className={className}>
+      <SidebarHeader className="border-b border-sidebar-border">
         <div className="flex items-center gap-3 px-2">
           <Image src="/images/logo-aroundaplanet.webp" alt="AroundaPlanet" width={32} height={32} className="h-8 w-8" />
           <span className="font-heading text-sm font-semibold group-data-[collapsible=icon]:hidden">AroundaPlanet</span>
@@ -90,8 +94,8 @@ export function RoleSidebar({ roles, className }: RoleSidebarProps) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="border-t border-primary-foreground/20 p-2">
-        <span className="text-xs text-primary-foreground/50 group-data-[collapsible=icon]:hidden">AroundaPlanet v1.0</span>
+      <SidebarFooter className="border-t border-sidebar-border p-2">
+        <span className="text-xs text-sidebar-foreground/50 group-data-[collapsible=icon]:hidden">AroundaPlanet v1.0</span>
       </SidebarFooter>
     </Sidebar>
   )

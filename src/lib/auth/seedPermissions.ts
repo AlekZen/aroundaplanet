@@ -68,11 +68,11 @@ export const PERMISSION_MATRIX: Record<UserRole, Record<string, boolean>> = {
     'config:manage': false,
     'notifications:config': true,
     'referrals:create': false,
-    'sync:odoo': false,
+    'sync:odoo': true,
   },
   director: {
     'trips:read': true,
-    'trips:write': false,
+    'trips:write': true,
     'orders:readOwn': true,
     'orders:readAll': true,
     'orders:create': false,
@@ -91,7 +91,7 @@ export const PERMISSION_MATRIX: Record<UserRole, Record<string, boolean>> = {
     'config:manage': false,
     'notifications:config': true,
     'referrals:create': false,
-    'sync:odoo': false,
+    'sync:odoo': true,
   },
   superadmin: {
     'trips:read': true,
