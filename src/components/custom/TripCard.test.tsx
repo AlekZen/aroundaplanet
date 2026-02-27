@@ -1,6 +1,6 @@
 import { render, screen, cleanup, fireEvent } from '@testing-library/react'
 import { describe, it, expect, vi, afterEach } from 'vitest'
-import { TripCard } from './TripCard'
+import { TripCard, TripCardSkeleton } from './TripCard'
 
 vi.mock('framer-motion', () => ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -86,5 +86,59 @@ describe('TripCard', () => {
   it('renders trip dates', () => {
     render(<TripCard trip={trip} />)
     expect(screen.getByText('Mar 2026')).toBeInTheDocument()
+  })
+
+  describe('sold-out state', () => {
+    it('shows Agotado badge when isSoldOut is true', () => {
+      render(<TripCard trip={trip} isSoldOut />)
+      const agotados = screen.getAllByText('Agotado')
+      expect(agotados.length).toBeGreaterThanOrEqual(1)
+    })
+
+    it('hides destination badge when sold out', () => {
+      render(<TripCard trip={trip} isSoldOut />)
+      expect(screen.queryByText('Global')).not.toBeInTheDocument()
+    })
+
+    it('has aria-label with Agotado suffix', () => {
+      render(<TripCard trip={trip} isSoldOut />)
+      expect(screen.getByRole('article', { name: /Vuelta al Mundo.*Agotado/ })).toBeInTheDocument()
+    })
+
+    it('CTA shows Agotado text when sold out', () => {
+      render(<TripCard trip={trip} isSoldOut />)
+      // Both badge and CTA show "Agotado"
+      const agotados = screen.getAllByText('Agotado')
+      expect(agotados.length).toBeGreaterThanOrEqual(2)
+    })
+
+    it('does not wrap in Link when sold out even if href provided', () => {
+      const { container } = render(<TripCard trip={trip} isSoldOut href="/viajes/test" />)
+      const links = container.querySelectorAll('a')
+      expect(links).toHaveLength(0)
+    })
+
+    it('does not fire onClick when sold out', () => {
+      const handleClick = vi.fn()
+      render(<TripCard trip={trip} isSoldOut onClick={handleClick} />)
+      const article = screen.getByRole('article')
+      fireEvent.click(article)
+      expect(handleClick).not.toHaveBeenCalled()
+    })
+  })
+
+  it('uses placeholder image when imageUrl is empty', () => {
+    const tripNoImage = { ...trip, imageUrl: '' }
+    render(<TripCard trip={tripNoImage} />)
+    const img = screen.getByRole('img')
+    expect(img).toHaveAttribute('alt', 'Vuelta al Mundo')
+  })
+})
+
+describe('TripCardSkeleton', () => {
+  it('renders skeleton elements with pulse animation', () => {
+    const { container } = render(<TripCardSkeleton />)
+    const pulseElements = container.querySelectorAll('.animate-pulse')
+    expect(pulseElements.length).toBeGreaterThanOrEqual(3)
   })
 })

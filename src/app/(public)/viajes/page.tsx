@@ -1,6 +1,11 @@
-import { STATIC_TRIPS } from '@/lib/data/trips'
+import { Suspense } from 'react'
 import { createMetadata } from '@/lib/metadata'
-import { TripCard } from '@/components/custom/TripCard'
+import { getPublishedTrips } from '@/lib/firebase/trips-public'
+import { CatalogContent } from './CatalogContent'
+import { CatalogSkeleton } from './CatalogSkeleton'
+import type { PublicTrip } from '@/types/trip'
+
+export const revalidate = 3600
 
 export const metadata = createMetadata({
   title: 'Viajes — AroundaPlanet',
@@ -8,7 +13,14 @@ export const metadata = createMetadata({
     'Explora nuestro catalogo de viajes grupales: Vuelta al Mundo, Europa, Asia, Sudamerica y mas. Grupos pequenos, experiencias unicas.',
 })
 
-export default function CatalogPage() {
+export default async function CatalogPage() {
+  let trips: PublicTrip[] = []
+  try {
+    trips = await getPublishedTrips()
+  } catch (error) {
+    console.error('[CatalogPage] Error fetching trips from Firestore:', error)
+  }
+
   return (
     <div className="space-y-8 py-8">
       <div className="space-y-2">
@@ -20,13 +32,9 @@ export default function CatalogPage() {
         </p>
       </div>
 
-      <ul className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 list-none p-0">
-        {STATIC_TRIPS.map((trip) => (
-          <li key={trip.slug}>
-            <TripCard trip={trip} variant="public" href={`/viajes/${trip.slug}`} />
-          </li>
-        ))}
-      </ul>
+      <Suspense fallback={<CatalogSkeleton />}>
+        <CatalogContent trips={trips} />
+      </Suspense>
     </div>
   )
 }

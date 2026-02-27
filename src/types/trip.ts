@@ -136,6 +136,30 @@ export interface TripDeparture {
   updatedAt: Timestamp
 }
 
+// === Public trip (JSON-serializable, no Timestamp/admin imports) ===
+
+export interface PublicTrip {
+  id: string
+  odooName: string
+  odooListPriceCentavos: number
+  odooCurrencyCode: string
+  odooCategory: string
+  odooDescriptionSale: string
+  slug: string
+  emotionalCopy: string
+  tags: string[]
+  highlights: string[]
+  difficulty: 'easy' | 'moderate' | 'challenging' | null
+  seoTitle: string
+  seoDescription: string
+  heroImages: string[]
+  isPublished: boolean
+  nextDepartureDate: string | null // ISO string
+  totalDepartures: number
+  totalSeatsAvailable: number
+  totalSeatsMax: number
+}
+
 // === Sync result ===
 
 export interface TripSyncResult {
