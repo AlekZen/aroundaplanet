@@ -39,7 +39,7 @@ export default function HomePage() {
         title="Tu proxima aventura te espera"
         description="Mas de 8 anios llevando grupos por el mundo. Unete a la comunidad de viajeros AroundaPlanet."
         ctaLabel="Cotizar mi Viaje"
-        ctaHref="/viajes/vuelta-al-mundo"
+        ctaHref="/viajes/vuelta-al-mundo-2025"
       />
     </div>
   )

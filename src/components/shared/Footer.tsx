@@ -34,7 +34,7 @@ export function Footer({ className }: FooterProps) {
             <nav aria-label="Links del footer" className="flex flex-col gap-2">
               {[
                 { href: '/viajes', label: 'Viajes' },
-                { href: '/viajes/vuelta-al-mundo', label: 'Vuelta al Mundo' },
+                { href: '/viajes/vuelta-al-mundo-2025', label: 'Vuelta al Mundo' },
                 { href: '/sobre-nosotros', label: 'Nosotros' },
               ].map((link) => (
                 <Link

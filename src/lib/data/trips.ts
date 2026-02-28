@@ -19,7 +19,7 @@ export interface ItineraryDay {
 export const STATIC_TRIPS: readonly StaticTrip[] = [
   {
     title: 'Vuelta al Mundo 33.8 dias',
-    slug: 'vuelta-al-mundo',
+    slug: 'vuelta-al-mundo-2025',
     imageUrl: '/images/trips/vuelta-al-mundo-2025.webp',
     price: 14500000,
     dates: 'Todo el anio',
@@ -39,7 +39,7 @@ export const STATIC_TRIPS: readonly StaticTrip[] = [
   },
   {
     title: 'Argentina y Brasil',
-    slug: 'argentina-brasil',
+    slug: 'argentina-y-brasil-agosto-2025',
     imageUrl: '/images/trips/argentina-brasil-agosto-2025.webp',
     price: 5500000,
     dates: 'Agosto 2025',
@@ -49,7 +49,7 @@ export const STATIC_TRIPS: readonly StaticTrip[] = [
   },
   {
     title: 'Chiapas Magico',
-    slug: 'chiapas',
+    slug: 'chiapas-octubre-2025',
     imageUrl: '/images/trips/chiapas-octubre-2025.webp',
     price: 1500000,
     dates: 'Octubre 2025',
@@ -59,7 +59,7 @@ export const STATIC_TRIPS: readonly StaticTrip[] = [
   },
   {
     title: 'Turquia y Dubai',
-    slug: 'turquia-dubai',
+    slug: 'turquia-y-dubai-2025',
     imageUrl: '/images/trips/turquia-dubai-2025.webp',
     price: 6000000,
     dates: 'Noviembre 2025',
@@ -69,7 +69,7 @@ export const STATIC_TRIPS: readonly StaticTrip[] = [
   },
   {
     title: 'Colombia Aventura',
-    slug: 'colombia',
+    slug: 'colombia-octubre-2025',
     imageUrl: '/images/trips/colombia-octubre-2025.webp',
     price: 4000000,
     dates: 'Octubre 2025',
@@ -79,7 +79,7 @@ export const STATIC_TRIPS: readonly StaticTrip[] = [
   },
   {
     title: 'Peru Ancestral',
-    slug: 'peru',
+    slug: 'peru-diciembre-2025',
     imageUrl: '/images/trips/peru-diciembre-2025.webp',
     price: 4500000,
     dates: 'Diciembre 2025',
@@ -89,7 +89,7 @@ export const STATIC_TRIPS: readonly StaticTrip[] = [
   },
   {
     title: 'Japon, China y Corea',
-    slug: 'japon-china-corea',
+    slug: 'japon-china-corea-2026',
     imageUrl: '/images/trips/japon-china-corea-2026.webp',
     price: 9500000,
     dates: 'Marzo 2026',

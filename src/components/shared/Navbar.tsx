@@ -15,7 +15,7 @@ import { logout } from '@/lib/firebase/auth'
 const NAV_LINKS = [
   { href: '/', label: 'Inicio' },
   { href: '/viajes', label: 'Viajes' },
-  { href: '/viajes/vuelta-al-mundo', label: 'Vuelta al Mundo' },
+  { href: '/viajes/vuelta-al-mundo-2025', label: 'Vuelta al Mundo' },
   { href: '/sobre-nosotros', label: 'Nosotros' },
 ]
 

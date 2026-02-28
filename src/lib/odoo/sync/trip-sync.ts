@@ -2,6 +2,7 @@ import { Timestamp } from 'firebase-admin/firestore'
 import { adminDb } from '@/lib/firebase/admin'
 import { fetchTripsFromOdoo, fetchDeparturesFromOdoo, fetchOdooDocuments } from '@/lib/odoo/models/trips'
 import { tripDocId, departureDocId } from '@/schemas/tripSchema'
+import { generateSlug } from '@/lib/utils/slugify'
 import type { Trip, TripSyncOptions, TripSyncResult } from '@/types/trip'
 
 const TRIPS_COLLECTION = 'trips'
@@ -94,18 +95,24 @@ export async function syncTrips(
         }
 
         // Update: only odoo* fields + sync metadata + status flags
-        // NEVER touch editorial fields
+        // NEVER touch editorial fields — except auto-fill empty slug
+        const existingData = existingDoc.data()
+        const needsSlug = !existingData?.slug && tripFields.odooName
         await docRef.set({
           ...tripFields,
+          ...(needsSlug ? { slug: generateSlug(tripFields.odooName) } : {}),
           syncSource: options.mode === 'incremental' ? 'scheduled' as const : 'manual' as const,
           updatedAt: now,
         }, { merge: true })
         updated++
       } else {
         // Create: odoo fields + default editorial fields + timestamps
+        // Auto-generate slug from odooName so trip pages are immediately navigable
+        const autoSlug = tripFields.odooName ? generateSlug(tripFields.odooName) : ''
         await docRef.set({
           ...tripFields,
           ...DEFAULT_EDITORIAL_FIELDS,
+          slug: autoSlug,
           syncSource: 'manual' as const,
           createdAt: now,
           updatedAt: now,
