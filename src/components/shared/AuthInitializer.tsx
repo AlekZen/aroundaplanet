@@ -36,10 +36,19 @@ export function AuthInitializer() {
         try {
           // POST session cookie with ID token string
           const idToken = await user.getIdToken()
+          // Include guestToken for account linking (Conversion 2.0)
+          // Read and clear BEFORE fetch — prevents stale token on retry or device sharing
+          let guestToken: string | null = null
+          try {
+            guestToken = localStorage.getItem('guestOrderToken')
+            if (guestToken) localStorage.removeItem('guestOrderToken')
+          } catch {
+            // localStorage unavailable — skip
+          }
           await fetch('/api/auth/session', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ idToken }),
+            body: JSON.stringify({ idToken, guestToken }),
           })
           if (cancelled) return
 

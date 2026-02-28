@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -29,12 +30,39 @@ function getOccupancyInfo(dep: PublicDeparture): OccupancyInfo {
     return { text: 'Agotado', className: 'bg-red-100 text-red-800', icon: '✕' }
   }
   if (pctAvailable < 0.2) {
-    return { text: `Quedan ${dep.seatsAvailable}`, className: 'bg-red-100 text-red-800', icon: '!' }
+    const plural = dep.seatsAvailable === 1 ? '' : 'es'
+    return { text: `Solo ${dep.seatsAvailable} lugar${plural} — reserva ya!`, className: 'bg-red-100 text-red-800', icon: '!' }
   }
   if (pctAvailable < 0.5) {
     return { text: `${dep.seatsAvailable} disponibles`, className: 'bg-yellow-100 text-yellow-800', icon: '△' }
   }
   return { text: `${dep.seatsAvailable} disponibles`, className: 'bg-green-100 text-green-800', icon: '✓' }
+}
+
+function computeCountdownText(startDate: string): string | null {
+  const now = new Date()
+  const departure = new Date(startDate)
+  const diffMs = departure.getTime() - now.getTime()
+  if (diffMs <= 0) return null
+  const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24))
+  if (diffDays > 30) return null
+  return `Sale en ${diffDays} dia${diffDays === 1 ? '' : 's'}`
+}
+
+/** Compute countdowns client-side only to avoid hydration mismatch */
+function useCountdowns(departures: PublicDeparture[]): Map<string, string> {
+  const [countdowns, setCountdowns] = useState<Map<string, string>>(new Map())
+
+  useEffect(() => {
+    const map = new Map<string, string>()
+    for (const dep of departures) {
+      const text = computeCountdownText(dep.startDate)
+      if (text) map.set(dep.id, text)
+    }
+    setCountdowns(map)
+  }, [departures])
+
+  return countdowns
 }
 
 function formatDepartureDate(isoDate: string): string {
@@ -46,6 +74,8 @@ function formatDepartureDate(isoDate: string): string {
 }
 
 export function TripDepartures({ departures, tripId, tripName, onSelectDeparture }: TripDeparturesProps) {
+  const countdowns = useCountdowns(departures)
+
   if (departures.length === 0) {
     return (
       <section className="space-y-4" aria-label="Proximas salidas">
@@ -82,6 +112,7 @@ export function TripDepartures({ departures, tripId, tripName, onSelectDeparture
         {departures.map((dep) => {
           const occupancy = getOccupancyInfo(dep)
           const isSoldOut = dep.seatsAvailable === 0
+          const countdown = countdowns.get(dep.id)
 
           return (
             <Card key={dep.id} aria-label={`Salida ${formatDepartureDate(dep.startDate)}`}>
@@ -90,6 +121,9 @@ export function TripDepartures({ departures, tripId, tripName, onSelectDeparture
                   <p className="font-medium text-foreground">
                     {formatDepartureDate(dep.startDate)}
                   </p>
+                  {countdown && (
+                    <p className="text-sm font-medium text-orange-600">{countdown}</p>
+                  )}
                   <Badge className={cn('text-xs', occupancy.className)}>
                     <span aria-hidden="true" className="mr-1">{occupancy.icon}</span>
                     {occupancy.text}
@@ -132,11 +166,17 @@ export function TripDepartures({ departures, tripId, tripName, onSelectDeparture
             {departures.map((dep) => {
               const occupancy = getOccupancyInfo(dep)
               const isSoldOut = dep.seatsAvailable === 0
+              const countdown = countdowns.get(dep.id)
 
               return (
                 <tr key={dep.id} className="border-b last:border-b-0">
-                  <td className="py-4 font-medium text-foreground">
-                    {formatDepartureDate(dep.startDate)}
+                  <td className="py-4">
+                    <span className="font-medium text-foreground">
+                      {formatDepartureDate(dep.startDate)}
+                    </span>
+                    {countdown && (
+                      <p className="text-sm font-medium text-orange-600">{countdown}</p>
+                    )}
                   </td>
                   <td className="py-4">
                     <Badge className={cn('text-xs', occupancy.className)}>

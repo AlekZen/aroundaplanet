@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { TripDepartures } from './TripDepartures'
 import type { PublicDeparture } from '@/types/trip'
 
@@ -64,7 +64,7 @@ describe('TripDepartures', () => {
     expect(badges.length).toBeGreaterThanOrEqual(1)
   })
 
-  it('shows red badge for <20% availability', () => {
+  it('shows red urgency badge for <20% availability', () => {
     render(
       <TripDepartures
         departures={[makeDep({ seatsMax: 20, seatsAvailable: 3 })]}
@@ -72,7 +72,19 @@ describe('TripDepartures', () => {
         tripName="Test Trip"
       />
     )
-    const badges = screen.getAllByText('Quedan 3')
+    const badges = screen.getAllByText(/Solo 3 lugares/)
+    expect(badges.length).toBeGreaterThanOrEqual(1)
+  })
+
+  it('shows singular urgency text for 1 seat', () => {
+    render(
+      <TripDepartures
+        departures={[makeDep({ seatsMax: 20, seatsAvailable: 1 })]}
+        tripId="t1"
+        tripName="Test Trip"
+      />
+    )
+    const badges = screen.getAllByText(/Solo 1 lugar —/)
     expect(badges.length).toBeGreaterThanOrEqual(1)
   })
 
@@ -130,6 +142,36 @@ describe('TripDepartures', () => {
     fireEvent.click(agotadoButtons[0])
 
     expect(onSelect).not.toHaveBeenCalled()
+  })
+
+  it('shows countdown for departures within 30 days', async () => {
+    const soon = new Date()
+    soon.setDate(soon.getDate() + 10)
+    render(
+      <TripDepartures
+        departures={[makeDep({ startDate: soon.toISOString() })]}
+        tripId="t1"
+        tripName="Test Trip"
+      />
+    )
+    await waitFor(() => {
+      const countdowns = screen.getAllByText(/Sale en \d+ dia/)
+      expect(countdowns.length).toBeGreaterThanOrEqual(1)
+    })
+  })
+
+  it('does not show countdown for departures more than 30 days away', async () => {
+    render(
+      <TripDepartures
+        departures={[makeDep()]}
+        tripId="t1"
+        tripName="Test Trip"
+      />
+    )
+    // Wait for useEffect to settle, then check
+    await waitFor(() => {
+      expect(screen.queryByText(/Sale en/)).not.toBeInTheDocument()
+    })
   })
 
   it('works without onSelectDeparture (backward compat)', () => {

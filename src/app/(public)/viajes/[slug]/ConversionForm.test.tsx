@@ -41,20 +41,58 @@ const DEFAULT_PROPS = {
   onClose: vi.fn(),
   tripId: 'trip-1',
   tripName: 'Vuelta al Mundo',
+  tripSlug: 'vuelta-al-mundo',
   tripPrice: 14500000,
   departures: [makeDep()],
   selectedDepartureId: null,
+  isAuthenticated: false,
   attributionData: {},
+}
+
+const mockLocalStorage: Record<string, string> = {}
+
+function mockSuccessResponse(guestToken: string | null = 'guest-token-123') {
+  return vi.fn().mockResolvedValue({
+    ok: true,
+    json: async () => ({
+      orderId: 'order-1',
+      status: 'Interesado',
+      tripId: 'trip-1',
+      departureId: 'dep-1',
+      amountTotalCents: 14500000,
+      guestToken,
+    }),
+  })
+}
+
+function fillAndSubmit() {
+  const nameInputs = screen.getAllByPlaceholderText('Tu nombre')
+  fireEvent.change(nameInputs[0], { target: { value: 'Juan Perez' } })
+
+  const phoneInputs = screen.getAllByPlaceholderText('Numero de telefono')
+  fireEvent.change(phoneInputs[0], { target: { value: '3411234567' } })
+
+  const buttons = screen.getAllByText('Confirmar Cotizacion')
+  const enabledButton = buttons.find(
+    (b) => !(b as HTMLButtonElement).disabled && !b.closest('button')?.disabled
+  )
+  if (enabledButton) fireEvent.click(enabledButton)
 }
 
 describe('ConversionForm', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.stubGlobal('fetch', vi.fn())
+    vi.stubGlobal('localStorage', {
+      getItem: vi.fn((key: string) => mockLocalStorage[key] ?? null),
+      setItem: vi.fn((key: string, val: string) => { mockLocalStorage[key] = val }),
+      removeItem: vi.fn((key: string) => { delete mockLocalStorage[key] }),
+    })
   })
 
   afterEach(() => {
     vi.unstubAllGlobals()
+    for (const key of Object.keys(mockLocalStorage)) delete mockLocalStorage[key]
   })
 
   it('renders trip name and formatted price', () => {
@@ -75,7 +113,6 @@ describe('ConversionForm', () => {
     render(<ConversionForm {...DEFAULT_PROPS} />)
     const labels = screen.getAllByText('WhatsApp / Telefono')
     expect(labels.length).toBeGreaterThanOrEqual(1)
-    // Default country code is Mexico +52
     const codes = screen.getAllByText('MX +52')
     expect(codes.length).toBeGreaterThanOrEqual(1)
   })
@@ -142,16 +179,7 @@ describe('ConversionForm', () => {
   })
 
   it('submits order with contact data and shows success toast', async () => {
-    const mockFetch = vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({
-        orderId: 'order-1',
-        status: 'Interesado',
-        tripId: 'trip-1',
-        departureId: 'dep-1',
-        amountTotalCents: 14500000,
-      }),
-    })
+    const mockFetch = mockSuccessResponse()
     vi.stubGlobal('fetch', mockFetch)
 
     render(
@@ -161,20 +189,7 @@ describe('ConversionForm', () => {
       />
     )
 
-    // Fill in name
-    const nameInputs = screen.getAllByPlaceholderText('Tu nombre')
-    fireEvent.change(nameInputs[0], { target: { value: 'Juan Perez' } })
-
-    // Fill in phone
-    const phoneInputs = screen.getAllByPlaceholderText('Numero de telefono')
-    fireEvent.change(phoneInputs[0], { target: { value: '3411234567' } })
-
-    // Click submit
-    const buttons = screen.getAllByText('Confirmar Cotizacion')
-    const enabledButton = buttons.find(
-      (b) => !(b as HTMLButtonElement).disabled && !b.closest('button')?.disabled
-    )
-    if (enabledButton) fireEvent.click(enabledButton)
+    fillAndSubmit()
 
     await waitFor(() => {
       expect(mockFetch).toHaveBeenCalledWith('/api/orders', expect.objectContaining({
@@ -188,23 +203,138 @@ describe('ConversionForm', () => {
     expect(callBody.contactPhone).toBe('+523411234567')
 
     await waitFor(() => {
-      expect(toast.success).toHaveBeenCalledWith(
-        'Tu cotizacion fue registrada — te contactaremos pronto'
-      )
+      expect(toast.success).toHaveBeenCalledWith('Tu cotizacion fue registrada')
     })
   })
 
-  it('fires generate_lead analytics event on success', async () => {
-    const mockFetch = vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({
-        orderId: 'order-1',
-        status: 'Interesado',
-        tripId: 'trip-1',
-        departureId: 'dep-1',
-        amountTotalCents: 14500000,
-      }),
+  it('shows success screen after submit instead of closing', async () => {
+    const mockFetch = mockSuccessResponse()
+    vi.stubGlobal('fetch', mockFetch)
+    const onClose = vi.fn()
+
+    render(
+      <ConversionForm
+        {...DEFAULT_PROPS}
+        onClose={onClose}
+        selectedDepartureId="dep-1"
+      />
+    )
+
+    fillAndSubmit()
+
+    await waitFor(() => {
+      const successMsgs = screen.getAllByText('Tu cotizacion fue registrada')
+      expect(successMsgs.length).toBeGreaterThanOrEqual(1)
     })
+
+    // Should NOT call onClose — shows success screen instead
+    expect(onClose).not.toHaveBeenCalled()
+  })
+
+  it('shows create account CTA on success for unauthenticated users', async () => {
+    const mockFetch = mockSuccessResponse()
+    vi.stubGlobal('fetch', mockFetch)
+
+    render(
+      <ConversionForm
+        {...DEFAULT_PROPS}
+        isAuthenticated={false}
+        selectedDepartureId="dep-1"
+      />
+    )
+
+    fillAndSubmit()
+
+    await waitFor(() => {
+      const ctaTexts = screen.getAllByText('Crear cuenta para dar seguimiento')
+      expect(ctaTexts.length).toBeGreaterThanOrEqual(1)
+    })
+  })
+
+  it('hides create account CTA on success for authenticated users', async () => {
+    const mockFetch = mockSuccessResponse(null)
+    vi.stubGlobal('fetch', mockFetch)
+
+    render(
+      <ConversionForm
+        {...DEFAULT_PROPS}
+        isAuthenticated={true}
+        selectedDepartureId="dep-1"
+      />
+    )
+
+    fillAndSubmit()
+
+    await waitFor(() => {
+      const successMsgs = screen.getAllByText('Tu cotizacion fue registrada')
+      expect(successMsgs.length).toBeGreaterThanOrEqual(1)
+    })
+
+    expect(screen.queryByText('Crear cuenta para dar seguimiento')).not.toBeInTheDocument()
+  })
+
+  it('shows WhatsApp CTA on success screen', async () => {
+    const mockFetch = mockSuccessResponse()
+    vi.stubGlobal('fetch', mockFetch)
+
+    render(
+      <ConversionForm
+        {...DEFAULT_PROPS}
+        selectedDepartureId="dep-1"
+      />
+    )
+
+    fillAndSubmit()
+
+    await waitFor(() => {
+      const whatsappLinks = screen.getAllByText('Contactar por WhatsApp')
+      expect(whatsappLinks.length).toBeGreaterThanOrEqual(1)
+    })
+  })
+
+  it('saves guestToken to localStorage on guest submit', async () => {
+    const mockFetch = mockSuccessResponse('guest-uuid-abc')
+    vi.stubGlobal('fetch', mockFetch)
+
+    render(
+      <ConversionForm
+        {...DEFAULT_PROPS}
+        isAuthenticated={false}
+        selectedDepartureId="dep-1"
+      />
+    )
+
+    fillAndSubmit()
+
+    await waitFor(() => {
+      expect(localStorage.setItem).toHaveBeenCalledWith('guestOrderToken', 'guest-uuid-abc')
+    })
+  })
+
+  it('does not save guestToken for authenticated user submit', async () => {
+    const mockFetch = mockSuccessResponse(null)
+    vi.stubGlobal('fetch', mockFetch)
+
+    render(
+      <ConversionForm
+        {...DEFAULT_PROPS}
+        isAuthenticated={true}
+        selectedDepartureId="dep-1"
+      />
+    )
+
+    fillAndSubmit()
+
+    await waitFor(() => {
+      const successMsgs = screen.getAllByText('Tu cotizacion fue registrada')
+      expect(successMsgs.length).toBeGreaterThanOrEqual(1)
+    })
+
+    expect(localStorage.setItem).not.toHaveBeenCalledWith('guestOrderToken', expect.anything())
+  })
+
+  it('fires generate_lead analytics event on success', async () => {
+    const mockFetch = mockSuccessResponse()
     vi.stubGlobal('fetch', mockFetch)
 
     render(
@@ -249,16 +379,7 @@ describe('ConversionForm', () => {
       />
     )
 
-    const nameInputs = screen.getAllByPlaceholderText('Tu nombre')
-    fireEvent.change(nameInputs[0], { target: { value: 'Test User' } })
-    const phoneInputs = screen.getAllByPlaceholderText('Numero de telefono')
-    fireEvent.change(phoneInputs[0], { target: { value: '3411234567' } })
-
-    const buttons = screen.getAllByText('Confirmar Cotizacion')
-    const enabledButton = buttons.find(
-      (b) => !(b as HTMLButtonElement).disabled && !b.closest('button')?.disabled
-    )
-    if (enabledButton) fireEvent.click(enabledButton)
+    fillAndSubmit()
 
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith(
@@ -282,16 +403,7 @@ describe('ConversionForm', () => {
       />
     )
 
-    const nameInputs = screen.getAllByPlaceholderText('Tu nombre')
-    fireEvent.change(nameInputs[0], { target: { value: 'Test User' } })
-    const phoneInputs = screen.getAllByPlaceholderText('Numero de telefono')
-    fireEvent.change(phoneInputs[0], { target: { value: '3411234567' } })
-
-    const buttons = screen.getAllByText('Confirmar Cotizacion')
-    const enabledButton = buttons.find(
-      (b) => !(b as HTMLButtonElement).disabled && !b.closest('button')?.disabled
-    )
-    if (enabledButton) fireEvent.click(enabledButton)
+    fillAndSubmit()
 
     await waitFor(() => {
       const loadingTexts = screen.getAllByText('Procesando...')
@@ -301,51 +413,15 @@ describe('ConversionForm', () => {
     // Cleanup
     resolveResponse!({
       ok: true,
-      json: async () => ({ orderId: 'x', status: 'Interesado', tripId: 'trip-1', departureId: 'dep-1', amountTotalCents: 0 }),
+      json: async () => ({ orderId: 'x', status: 'Interesado', tripId: 'trip-1', departureId: 'dep-1', amountTotalCents: 0, guestToken: null }),
     })
   })
 
-  it('renders consent text (not T&C)', () => {
+  it('renders T&C and privacy links in legal text', () => {
     render(<ConversionForm {...DEFAULT_PROPS} />)
-    const legalTexts = screen.getAllByText(/Al confirmar, aceptas que te contactemos/)
-    expect(legalTexts.length).toBeGreaterThanOrEqual(1)
-  })
-
-  it('calls onClose on successful submission', async () => {
-    const mockFetch = vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({
-        orderId: 'order-1',
-        status: 'Interesado',
-        tripId: 'trip-1',
-        departureId: 'dep-1',
-        amountTotalCents: 14500000,
-      }),
-    })
-    vi.stubGlobal('fetch', mockFetch)
-    const onClose = vi.fn()
-
-    render(
-      <ConversionForm
-        {...DEFAULT_PROPS}
-        onClose={onClose}
-        selectedDepartureId="dep-1"
-      />
-    )
-
-    const nameInputs = screen.getAllByPlaceholderText('Tu nombre')
-    fireEvent.change(nameInputs[0], { target: { value: 'Test User' } })
-    const phoneInputs = screen.getAllByPlaceholderText('Numero de telefono')
-    fireEvent.change(phoneInputs[0], { target: { value: '3411234567' } })
-
-    const buttons = screen.getAllByText('Confirmar Cotizacion')
-    const enabledButton = buttons.find(
-      (b) => !(b as HTMLButtonElement).disabled && !b.closest('button')?.disabled
-    )
-    if (enabledButton) fireEvent.click(enabledButton)
-
-    await waitFor(() => {
-      expect(onClose).toHaveBeenCalled()
-    })
+    const tcLinks = screen.getAllByText('Terminos y Condiciones')
+    expect(tcLinks.length).toBeGreaterThanOrEqual(1)
+    const privacyLinks = screen.getAllByText('Aviso de Privacidad')
+    expect(privacyLinks.length).toBeGreaterThanOrEqual(1)
   })
 })

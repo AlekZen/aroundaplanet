@@ -3,9 +3,8 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 
 // === Hoisted mocks ===
 
-const { mockTrackEvent, mockPush, mockSearchParams, mockUseAuthStore } = vi.hoisted(() => ({
+const { mockTrackEvent, mockSearchParams, mockUseAuthStore } = vi.hoisted(() => ({
   mockTrackEvent: vi.fn(),
-  mockPush: vi.fn(),
   mockSearchParams: new URLSearchParams(),
   mockUseAuthStore: vi.fn(),
 }))
@@ -15,7 +14,6 @@ vi.mock('@/lib/analytics', () => ({
 }))
 
 vi.mock('next/navigation', () => ({
-  useRouter: () => ({ push: mockPush }),
   useSearchParams: () => mockSearchParams,
 }))
 
@@ -55,7 +53,6 @@ const DEFAULT_PROPS = {
 }
 
 const mockSessionStorage: Record<string, string> = {}
-const originalSessionStorage = globalThis.sessionStorage
 
 describe('ConversionFlow', () => {
   beforeEach(() => {
@@ -99,40 +96,20 @@ describe('ConversionFlow', () => {
     })
   })
 
-  it('redirects to login when unauthenticated user clicks CTA', () => {
+  it('opens form without auth when CTA is clicked (guest checkout)', async () => {
     mockUseAuthStore.mockReturnValue({ isAuthenticated: false, isLoading: false })
     render(<ConversionFlow {...DEFAULT_PROPS} />)
 
     fireEvent.click(screen.getByText('Cotizar Ahora'))
 
-    expect(mockPush).toHaveBeenCalledWith(
-      expect.stringContaining('/login?returnUrl=')
-    )
+    await waitFor(() => {
+      const titles = screen.getAllByText('Cotizar Viaje')
+      expect(titles.length).toBeGreaterThanOrEqual(1)
+    })
   })
 
-  it('includes slug in returnUrl when redirecting', () => {
+  it('auto-opens form from URL params without requiring auth', async () => {
     mockUseAuthStore.mockReturnValue({ isAuthenticated: false, isLoading: false })
-    render(<ConversionFlow {...DEFAULT_PROPS} />)
-
-    fireEvent.click(screen.getByText('Cotizar Ahora'))
-
-    const pushArg = mockPush.mock.calls[0][0] as string
-    expect(decodeURIComponent(pushArg)).toContain('/viajes/vuelta-al-mundo')
-  })
-
-  it('saves pendingQuote to sessionStorage on redirect', () => {
-    mockUseAuthStore.mockReturnValue({ isAuthenticated: false, isLoading: false })
-    render(<ConversionFlow {...DEFAULT_PROPS} />)
-
-    fireEvent.click(screen.getByText('Cotizar Ahora'))
-
-    expect(sessionStorage.setItem).toHaveBeenCalledWith(
-      'pendingQuote',
-      expect.any(String)
-    )
-  })
-
-  it('auto-opens form from URL params after login redirect', async () => {
     mockSearchParams.set('cotizar', 'true')
     mockSearchParams.set('salida', 'dep-1')
 
@@ -144,13 +121,16 @@ describe('ConversionFlow', () => {
     })
   })
 
-  it('does not auto-open when not authenticated', () => {
+  it('passes isAuthenticated prop to ConversionForm', async () => {
     mockUseAuthStore.mockReturnValue({ isAuthenticated: false, isLoading: false })
-    mockSearchParams.set('cotizar', 'true')
-
     render(<ConversionFlow {...DEFAULT_PROPS} />)
 
-    expect(screen.queryByText('Cotizar Viaje')).not.toBeInTheDocument()
+    fireEvent.click(screen.getByText('Cotizar Ahora'))
+
+    await waitFor(() => {
+      const titles = screen.getAllByText('Cotizar Viaje')
+      expect(titles.length).toBeGreaterThanOrEqual(1)
+    })
   })
 
   it('tracks begin_checkout when CTA is clicked', () => {

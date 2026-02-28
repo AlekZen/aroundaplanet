@@ -3,7 +3,8 @@ export type { OrderStatus }
 
 export interface Order {
   id: string
-  userId: string
+  userId: string | null
+  guestToken: string | null
   agentId: string | null
   tripId: string
   departureId: string
@@ -36,4 +37,5 @@ export interface CreateOrderResponse {
   tripId: string
   departureId: string
   amountTotalCents: number
+  guestToken: string | null
 }

@@ -4,22 +4,24 @@ import { NextRequest } from 'next/server'
 // === Hoisted mocks ===
 
 const {
-  mockRequireAuth,
+  mockTryAuth,
   mockGet,
   mockDoc,
   mockCollection,
   mockAdd,
+  mockWhere,
 } = vi.hoisted(() => {
-  const mockRequireAuth = vi.fn()
+  const mockTryAuth = vi.fn()
   const mockGet = vi.fn()
   const mockDoc = vi.fn()
   const mockCollection = vi.fn()
   const mockAdd = vi.fn()
-  return { mockRequireAuth, mockGet, mockDoc, mockCollection, mockAdd }
+  const mockWhere = vi.fn()
+  return { mockTryAuth, mockGet, mockDoc, mockCollection, mockAdd, mockWhere }
 })
 
-vi.mock('@/lib/auth/requireAuth', () => ({
-  requireAuth: mockRequireAuth,
+vi.mock('@/lib/auth/tryAuth', () => ({
+  tryAuth: mockTryAuth,
 }))
 
 vi.mock('@/lib/firebase/admin', () => ({
@@ -77,11 +79,13 @@ const VALID_BODY = {
   contactPhone: '+523411234567',
 }
 
-function makeRequest(body: Record<string, unknown>) {
+function makeRequest(body: Record<string, unknown>, ip?: string) {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+  if (ip) headers['x-forwarded-for'] = ip
   return new NextRequest('http://localhost/api/orders', {
     method: 'POST',
     body: JSON.stringify(body),
-    headers: { 'Content-Type': 'application/json' },
+    headers,
   })
 }
 
@@ -118,14 +122,23 @@ function setupFirestoreMocks(options: {
     collection: mockTripCollection,
   })
 
+  // Rate limit query mock (for guest orders) — uses .count().get()
+  const mockCountGet = vi.fn().mockResolvedValue({ data: () => ({ count: 0 }) })
+  const mockCount = vi.fn().mockReturnValue({ get: mockCountGet })
+  const mockRateLimitWhere3 = vi.fn().mockReturnValue({ count: mockCount })
+  const mockRateLimitWhere2 = vi.fn().mockReturnValue({ where: mockRateLimitWhere3 })
+  const mockRateLimitWhere1 = vi.fn().mockReturnValue({ where: mockRateLimitWhere2 })
+
   // Top-level collection routing
   mockCollection.mockImplementation((name: string) => {
     if (name === 'trips') return { doc: mockTripDoc }
-    if (name === 'orders') return { add: mockAdd }
+    if (name === 'orders') return { add: mockAdd, where: mockRateLimitWhere1 }
     return {}
   })
 
   mockAdd.mockResolvedValue({ id: 'order-new-1' })
+
+  return { mockCountGet }
 }
 
 // === Tests ===
@@ -133,11 +146,11 @@ function setupFirestoreMocks(options: {
 describe('POST /api/orders', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    mockRequireAuth.mockResolvedValue(MOCK_CLAIMS)
+    mockTryAuth.mockResolvedValue(MOCK_CLAIMS)
     setupFirestoreMocks({})
   })
 
-  it('creates order and returns 201 with correct data', async () => {
+  it('creates order and returns 201 with correct data (authenticated)', async () => {
     const req = makeRequest(VALID_BODY)
     const res = await POST(req)
     const data = await res.json()
@@ -149,6 +162,7 @@ describe('POST /api/orders', () => {
       tripId: 'trip-1',
       departureId: 'dep-1',
       amountTotalCents: 14500000,
+      guestToken: null,
     })
   })
 
@@ -211,17 +225,6 @@ describe('POST /api/orders', () => {
     )
   })
 
-  it('returns 401 when not authenticated', async () => {
-    const authError = new Error('No autenticado')
-    Object.assign(authError, { code: 'AUTH_REQUIRED', status: 401, retryable: false, name: 'AppError' })
-    mockRequireAuth.mockRejectedValue(authError)
-
-    const req = makeRequest(VALID_BODY)
-    const res = await POST(req)
-
-    expect(res.status).toBe(401)
-  })
-
   it('returns 400 for invalid body (missing required fields)', async () => {
     const req = makeRequest({ tripId: 'trip-1', departureId: 'dep-1' })
     const res = await POST(req)
@@ -250,6 +253,16 @@ describe('POST /api/orders', () => {
     const res = await POST(req)
 
     expect(res.status).toBe(400)
+  })
+
+  it('returns 500 when trip has no price configured', async () => {
+    setupFirestoreMocks({ odooListPriceCentavos: 0 })
+    const req = makeRequest(VALID_BODY)
+    const res = await POST(req)
+
+    expect(res.status).toBe(500)
+    const data = await res.json()
+    expect(data.code).toBe('INVALID_PRICE')
   })
 
   it('returns 404 when trip not found', async () => {
@@ -318,5 +331,69 @@ describe('POST /api/orders', () => {
     expect(mockAdd).toHaveBeenCalledWith(
       expect.objectContaining({ status: 'Interesado' })
     )
+  })
+
+  // --- Guest checkout tests ---
+
+  it('creates guest order with userId null and guestToken when not authenticated', async () => {
+    mockTryAuth.mockResolvedValue(null)
+    setupFirestoreMocks({})
+
+    const req = makeRequest(VALID_BODY, '192.168.1.1')
+    const res = await POST(req)
+    const data = await res.json()
+
+    expect(res.status).toBe(201)
+    expect(data.guestToken).toBeTruthy()
+    expect(typeof data.guestToken).toBe('string')
+    expect(mockAdd).toHaveBeenCalledWith(
+      expect.objectContaining({
+        userId: null,
+        guestToken: expect.any(String),
+        guestIp: '192.168.1.1',
+      })
+    )
+  })
+
+  it('sets guestToken null and guestIp null for authenticated users', async () => {
+    const req = makeRequest(VALID_BODY)
+    await POST(req)
+
+    expect(mockAdd).toHaveBeenCalledWith(
+      expect.objectContaining({
+        userId: 'user-123',
+        guestToken: null,
+        guestIp: null,
+      })
+    )
+  })
+
+  it('returns guestToken null for authenticated orders', async () => {
+    const req = makeRequest(VALID_BODY)
+    const res = await POST(req)
+    const data = await res.json()
+
+    expect(data.guestToken).toBeNull()
+  })
+
+  it('returns 429 when guest exceeds rate limit', async () => {
+    mockTryAuth.mockResolvedValue(null)
+    const { mockCountGet } = setupFirestoreMocks({})
+    mockCountGet.mockResolvedValue({ data: () => ({ count: 5 }) })
+
+    const req = makeRequest(VALID_BODY, '10.0.0.1')
+    const res = await POST(req)
+
+    expect(res.status).toBe(429)
+    const data = await res.json()
+    expect(data.code).toBe('RATE_LIMITED')
+  })
+
+  it('does not apply rate limit for authenticated users', async () => {
+    // Authenticated user — should NOT check rate limit
+    const req = makeRequest(VALID_BODY)
+    const res = await POST(req)
+
+    expect(res.status).toBe(201)
   })
 })

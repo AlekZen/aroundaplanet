@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { trackEvent } from '@/lib/analytics'
 import { TripDepartures } from './TripDepartures'
@@ -34,41 +34,27 @@ function ConversionFlowInner({
   tripPrice,
   departures,
 }: ConversionFlowProps) {
-  const router = useRouter()
   const searchParams = useSearchParams()
-  const { isAuthenticated, isLoading } = useAuthStore()
+  const { isAuthenticated } = useAuthStore()
 
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [selectedDepartureId, setSelectedDepartureId] = useState<string | null>(null)
 
-  // Auto-open from URL params after login redirect
+  // Auto-open from URL params (no auth required)
   useEffect(() => {
-    if (isLoading) return
-
     const shouldOpen = searchParams.get('cotizar') === 'true'
-    if (shouldOpen && isAuthenticated) {
+    if (shouldOpen) {
       const depId = searchParams.get('salida')
       if (depId) setSelectedDepartureId(depId)
       setIsFormOpen(true)
-      sessionStorage.removeItem('pendingQuote')
     }
-  }, [searchParams, isAuthenticated, isLoading])
+  }, [searchParams])
 
   function handleQuoteClick() {
     trackEvent('begin_checkout', {
       item_id: tripId,
       item_name: tripName,
     })
-
-    if (isLoading) return
-
-    if (!isAuthenticated) {
-      const depParam = selectedDepartureId ? `&salida=${selectedDepartureId}` : ''
-      const returnUrl = `/viajes/${tripSlug}?cotizar=true${depParam}`
-      sessionStorage.setItem('pendingQuote', JSON.stringify({ tripId, departureId: selectedDepartureId }))
-      router.push(`/login?returnUrl=${encodeURIComponent(returnUrl)}`)
-      return
-    }
 
     setIsFormOpen(true)
   }
@@ -85,16 +71,6 @@ function ConversionFlowInner({
     }
 
     setSelectedDepartureId(departureId)
-
-    if (isLoading) return
-
-    if (!isAuthenticated) {
-      const returnUrl = `/viajes/${tripSlug}?cotizar=true&salida=${departureId}`
-      sessionStorage.setItem('pendingQuote', JSON.stringify({ tripId, departureId }))
-      router.push(`/login?returnUrl=${encodeURIComponent(returnUrl)}`)
-      return
-    }
-
     setIsFormOpen(true)
   }
 
@@ -114,10 +90,12 @@ function ConversionFlowInner({
         onClose={() => setIsFormOpen(false)}
         tripId={tripId}
         tripName={tripName}
+        tripSlug={tripSlug}
         tripPrice={tripPrice}
         departures={departures}
         selectedDepartureId={selectedDepartureId}
         attributionData={getAttributionData()}
+        isAuthenticated={isAuthenticated}
       />
     </>
   )

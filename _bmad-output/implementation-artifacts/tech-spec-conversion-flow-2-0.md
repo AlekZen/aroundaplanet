@@ -2,7 +2,7 @@
 title: 'Conversion Flow 2.0 — Guest Checkout + UX Improvements'
 slug: 'conversion-flow-2-0'
 created: '2026-02-28'
-status: 'ready-for-dev'
+status: 'completed'
 stepsCompleted: [1, 2, 3, 4]
 tech_stack: ['Next.js 16', 'Firebase Auth', 'Firestore', 'Zod', 'shadcn/ui', 'Tailwind v4', 'sonner']
 files_to_modify:
@@ -116,27 +116,27 @@ Implementar un flujo hibrido robusto:
 
 Ordenados por dependencia (foundation primero, UI al final).
 
-- [ ] Task 1: Actualizar tipos de Order para guest support
+- [x] Task 1: Actualizar tipos de Order para guest support
   - File: `src/types/order.ts`
   - Action: Cambiar `userId: string` a `userId: string | null`. Agregar `guestToken: string | null` al interface `Order`. Agregar `guestToken` a `CreateOrderResponse`.
   - Notes: `CreateOrderRequest` NO cambia — userId viene del server, no del body del cliente. guestToken lo genera el server.
 
-- [ ] Task 2: Crear constantes de WhatsApp
+- [x] Task 2: Crear constantes de WhatsApp
   - File: `src/config/whatsapp.ts` (NEW)
   - Action: Extraer `WHATSAPP_CONTACT_NUMBER = '523331741585'` de ConversionForm.tsx a config compartido. Agregar helper `buildWhatsAppUrl(phone: string, text?: string): string` que construye `https://wa.me/{phone}?text={encodedText}`.
   - Notes: Reutilizable en ConversionForm (empty state), pantalla de confirmacion, y futuras integraciones.
 
-- [ ] Task 3: Crear helper tryAuth()
+- [x] Task 3: Crear helper tryAuth()
   - File: `src/lib/auth/tryAuth.ts` (NEW)
   - Action: Wrapper de requireAuth() que retorna `AuthClaims | null` en vez de lanzar. Implementacion: `try { return await requireAuth() } catch { return null }`. Exportar tipo `AuthClaims` si no esta ya exportado.
   - Notes: NO modifica requireAuth.ts. Es un nuevo helper que lo wrappea. Usado en rutas donde auth es opcional.
 
-- [ ] Task 4: Crear linkGuestOrders()
+- [x] Task 4: Crear linkGuestOrders()
   - File: `src/lib/orders/linkGuestOrders.ts` (NEW)
   - Action: Funcion `linkGuestOrders(userId: string, guestToken: string | null): Promise<number>`. Busca en Firestore: `where('guestToken', '==', guestToken).where('userId', '==', null)`. Actualiza cada match con `{ userId, guestToken: null, updatedAt: FieldValue.serverTimestamp() }`. Retorna count de orders linkeadas.
   - Notes: Si guestToken es null o vacio, retorna 0 sin query. Necesita composite index: `guestToken ASC, userId ASC`. Operacion idempotente — re-ejecutar no causa dano.
 
-- [ ] Task 5: Modificar POST /api/orders para guest support
+- [x] Task 5: Modificar POST /api/orders para guest support
   - File: `src/app/api/orders/route.ts`
   - Action:
     1. Reemplazar `requireAuth()` con `tryAuth()` (import de `src/lib/auth/tryAuth`)
@@ -146,7 +146,7 @@ Ordenados por dependencia (foundation primero, UI al final).
     5. Rate limit para guests: antes de crear, contar orders recientes (ultima hora) por IP header (`x-forwarded-for`). Si > 5, lanzar `AppError('RATE_LIMITED', 'Demasiadas solicitudes', 429, true)`
   - Notes: Orders de usuarios autenticados NO tienen rate limit ni guestToken. El response ahora incluye `guestToken: string | null`.
 
-- [ ] Task 6: Modificar POST /api/auth/session para account linking
+- [x] Task 6: Modificar POST /api/auth/session para account linking
   - File: `src/app/api/auth/session/route.ts`
   - Action:
     1. Aceptar campo opcional `guestToken` en el body del request (agregar Zod schema inline o extraer a schemas/)
@@ -154,7 +154,7 @@ Ordenados por dependencia (foundation primero, UI al final).
     3. Import linkGuestOrders desde `src/lib/orders/linkGuestOrders`
   - Notes: Si guestToken es null/undefined, linkGuestOrders retorna 0 — no-op. El body actual solo envia `{ idToken }`, ahora acepta `{ idToken, guestToken? }`.
 
-- [ ] Task 7: Remover auth gate de ConversionFlow
+- [x] Task 7: Remover auth gate de ConversionFlow
   - File: `src/app/(public)/viajes/[slug]/ConversionFlow.tsx`
   - Action:
     1. Eliminar `import { useAuthStore } from '@/stores/useAuthStore'`
@@ -166,7 +166,7 @@ Ordenados por dependencia (foundation primero, UI al final).
     7. Limpiar imports no usados.
   - Notes: `useSearchParams` se sigue necesitando para `?cotizar=true&salida=X`. El `Suspense` boundary se mantiene.
 
-- [ ] Task 8: Agregar pantalla de confirmacion post-submit en ConversionForm
+- [x] Task 8: Agregar pantalla de confirmacion post-submit en ConversionForm
   - File: `src/app/(public)/viajes/[slug]/ConversionForm.tsx`
   - Action:
     1. Agregar estado `formStep: 'form' | 'success'` (default: `'form'`)
@@ -183,7 +183,7 @@ Ordenados por dependencia (foundation primero, UI al final).
     7. Actualizar texto legal: "Al confirmar, aceptas nuestros [Terminos y Condiciones](/terms) y [Aviso de Privacidad](/privacy)" con links funcionales.
   - Notes: El guestToken solo se guarda en localStorage para guests (si la response tiene guestToken !== null). Para usuarios autenticados, no se guarda. El CTA "Crear cuenta" solo se muestra si el usuario NO esta autenticado (agregar prop `isAuthenticated` al form, pasado desde ConversionFlow).
 
-- [ ] Task 9: Mejorar urgencia en TripDepartures
+- [x] Task 9: Mejorar urgencia en TripDepartures
   - File: `src/app/(public)/viajes/[slug]/TripDepartures.tsx`
   - Action:
     1. En `getOccupancyInfo()`, para el caso `pctAvailable < 0.2`: cambiar texto de `'Quedan ${dep.seatsAvailable}'` a `'Solo ${dep.seatsAvailable} lugar${dep.seatsAvailable === 1 ? '' : 'es'} — reserva ya!'`
@@ -192,7 +192,7 @@ Ordenados por dependencia (foundation primero, UI al final).
     4. Usar clase `text-sm text-orange-600 font-medium` para el countdown.
   - Notes: El countdown es un calculo client-side simple basado en `new Date(startDate) - new Date()`. No requiere datos adicionales del server.
 
-- [ ] Task 10: Crear paginas legales (Privacy + Terms)
+- [x] Task 10: Crear paginas legales (Privacy + Terms)
   - File: `src/app/(public)/privacy/page.tsx` (NEW)
   - File: `src/app/(public)/terms/page.tsx` (NEW)
   - Action:
@@ -204,14 +204,14 @@ Ordenados por dependencia (foundation primero, UI al final).
     6. Layout: heading + prose sections con spacing consistente (`prose prose-green` o clases manuales).
   - Notes: Contenido es MVP — puede refinarse con abogado despues. Lo importante es que los links del footer funcionen y el formulario pueda referenciarlos.
 
-- [ ] Task 11: Enviar guestToken en login/register para account linking
+- [x] Task 11: Enviar guestToken en login/register para account linking
   - File: `src/app/(auth)/login/page.tsx` o `src/lib/auth/AuthInitializer.tsx` (verificar cual hace el POST a /api/auth/session)
   - Action:
     1. Al hacer POST a `/api/auth/session`, incluir `guestToken: localStorage.getItem('guestOrderToken')` en el body.
     2. Despues del POST exitoso, limpiar: `localStorage.removeItem('guestOrderToken')`.
   - Notes: Esto conecta el cliente con el server-side linkGuestOrders(). Si no hay guestToken en localStorage, se envia null — no-op en el server.
 
-- [ ] Task 12: Actualizar ConversionFlow para pasar isAuthenticated al form
+- [x] Task 12: Actualizar ConversionFlow para pasar isAuthenticated al form
   - File: `src/app/(public)/viajes/[slug]/ConversionFlow.tsx`
   - Action:
     1. Re-agregar `useAuthStore` (solo para leer `isAuthenticated`, no como gate).
@@ -219,7 +219,7 @@ Ordenados por dependencia (foundation primero, UI al final).
     3. En ConversionForm, usar para mostrar/ocultar CTA "Crear cuenta" en pantalla success.
   - Notes: El auth store ya no bloquea — solo se usa para personalizar la pantalla post-submit.
 
-- [ ] Task 13: Actualizar tests
+- [x] Task 13: Actualizar tests
   - Files: Todos los archivos `.test.tsx` y `.test.ts` de los componentes/rutas modificados
   - Action:
     1. **ConversionFlow.test.tsx**: Eliminar tests de redirect a login (3 tests). Simplificar mock de useAuthStore. Agregar test: "opens form without auth when CTA clicked". Agregar test: "opens form from URL params without auth".
@@ -231,7 +231,7 @@ Ordenados por dependencia (foundation primero, UI al final).
     7. **tryAuth.test.ts** (NEW): Test retorna claims cuando autenticado, retorna null cuando no.
   - Notes: Patron establecido: vi.hoisted(), getAllByText() para dual render, setupFirestoreMocks(). Total estimado: ~15 tests nuevos, ~5 eliminados, ~8 modificados.
 
-- [ ] Task 14: Agregar composite index de Firestore
+- [x] Task 14: Agregar composite index de Firestore
   - File: `firestore.indexes.json`
   - Action: Agregar composite index para `orders` collection: `guestToken ASC, userId ASC`.
   - Notes: Necesario para la query en linkGuestOrders(). Desplegar con `firebase deploy --only firestore:indexes`. Tarda ~3-5 min en construirse.
@@ -239,35 +239,35 @@ Ordenados por dependencia (foundation primero, UI al final).
 ### Acceptance Criteria
 
 **Guest Checkout (core):**
-- [ ] AC1: Given un visitante NO autenticado en la landing de un viaje, when hace click en "Cotizar Ahora" o "Apartar Lugar", then el formulario de cotizacion se abre directamente SIN redirigir a login.
-- [ ] AC2: Given un visitante NO autenticado con el formulario abierto, when llena nombre + telefono + fecha de salida y confirma, then se crea una orden en Firestore con `userId: null` y `guestToken: <uuid>`, y el response retorna 201 con guestToken.
-- [ ] AC3: Given un visitante que completo su cotizacion como guest, when ve la pantalla de confirmacion, then ve: mensaje de exito, CTA "Crear cuenta para seguimiento", CTA "WhatsApp", y boton "Cerrar".
-- [ ] AC4: Given un usuario YA autenticado, when completa una cotizacion, then la orden se crea con `userId: <uid>` y `guestToken: null`, y la pantalla success NO muestra "Crear cuenta".
+- [x] AC1: Given un visitante NO autenticado en la landing de un viaje, when hace click en "Cotizar Ahora" o "Apartar Lugar", then el formulario de cotizacion se abre directamente SIN redirigir a login.
+- [x] AC2: Given un visitante NO autenticado con el formulario abierto, when llena nombre + telefono + fecha de salida y confirma, then se crea una orden en Firestore con `userId: null` y `guestToken: <uuid>`, y el response retorna 201 con guestToken.
+- [x] AC3: Given un visitante que completo su cotizacion como guest, when ve la pantalla de confirmacion, then ve: mensaje de exito, CTA "Crear cuenta para seguimiento", CTA "WhatsApp", y boton "Cerrar".
+- [x] AC4: Given un usuario YA autenticado, when completa una cotizacion, then la orden se crea con `userId: <uid>` y `guestToken: null`, y la pantalla success NO muestra "Crear cuenta".
 
 **Account Linking:**
-- [ ] AC5: Given un visitante que cotizo como guest (tiene guestToken en localStorage), when se registra o logea, then el POST a /api/auth/session incluye el guestToken, y las orders huerfanas con ese token se actualizan con su nuevo userId.
-- [ ] AC6: Given un usuario que se logea SIN guestToken en localStorage, when se hace POST a /api/auth/session, then linkGuestOrders es no-op (retorna 0).
+- [x] AC5: Given un visitante que cotizo como guest (tiene guestToken en localStorage), when se registra o logea, then el POST a /api/auth/session incluye el guestToken, y las orders huerfanas con ese token se actualizan con su nuevo userId.
+- [x] AC6: Given un usuario que se logea SIN guestToken en localStorage, when se hace POST a /api/auth/session, then linkGuestOrders es no-op (retorna 0).
 
 **Rate Limiting:**
-- [ ] AC7: Given un visitante NO autenticado que ha creado 5 orders en la ultima hora, when intenta crear otra, then recibe HTTP 429 con `{ code: 'RATE_LIMITED', retryable: true }`.
-- [ ] AC8: Given un usuario autenticado, when crea orders, then NO se aplica rate limit.
+- [x] AC7: Given un visitante NO autenticado que ha creado 5 orders en la ultima hora, when intenta crear otra, then recibe HTTP 429 con `{ code: 'RATE_LIMITED', retryable: true }`.
+- [x] AC8: Given un usuario autenticado, when crea orders, then NO se aplica rate limit.
 
 **Urgencia / Social Proof:**
-- [ ] AC9: Given una salida con <20% de disponibilidad, when se renderiza en TripDepartures, then muestra "Solo X lugar(es) — reserva ya!" en badge rojo.
-- [ ] AC10: Given una salida que sale en menos de 30 dias, when se renderiza, then muestra "Sale en X dias" debajo de la fecha.
+- [x] AC9: Given una salida con <20% de disponibilidad, when se renderiza en TripDepartures, then muestra "Solo X lugar(es) — reserva ya!" en badge rojo.
+- [x] AC10: Given una salida que sale en menos de 30 dias, when se renderiza, then muestra "Sale en X dias" debajo de la fecha.
 
 **WhatsApp Alternativo:**
-- [ ] AC11: Given un visitante en la pantalla de confirmacion post-cotizacion, when hace click en "Contactar por WhatsApp", then se abre wa.me con el numero correcto y un mensaje pre-llenado con el nombre del viaje.
+- [x] AC11: Given un visitante en la pantalla de confirmacion post-cotizacion, when hace click en "Contactar por WhatsApp", then se abre wa.me con el numero correcto y un mensaje pre-llenado con el nombre del viaje.
 
 **Legal Pages:**
-- [ ] AC12: Given un visitante que hace click en "Terminos y Condiciones" en el footer o en el formulario, when la pagina carga, then ve contenido legal basico con secciones de uso, cotizaciones, pagos, cancelaciones.
-- [ ] AC13: Given un visitante que hace click en "Aviso de Privacidad" en el footer, when la pagina carga, then ve contenido sobre datos recopilados, uso, derechos.
+- [x] AC12: Given un visitante que hace click en "Terminos y Condiciones" en el footer o en el formulario, when la pagina carga, then ve contenido legal basico con secciones de uso, cotizaciones, pagos, cancelaciones.
+- [x] AC13: Given un visitante que hace click en "Aviso de Privacidad" en el footer, when la pagina carga, then ve contenido sobre datos recopilados, uso, derechos.
 
 **Texto Legal en Form:**
-- [ ] AC14: Given un visitante viendo el formulario de cotizacion, when lee el texto legal al fondo, then dice "Al confirmar, aceptas nuestros Terminos y Condiciones y Aviso de Privacidad" con links funcionales a /terms y /privacy.
+- [x] AC14: Given un visitante viendo el formulario de cotizacion, when lee el texto legal al fondo, then dice "Al confirmar, aceptas nuestros Terminos y Condiciones y Aviso de Privacidad" con links funcionales a /terms y /privacy.
 
 **URL Params:**
-- [ ] AC15: Given un visitante que llega a `/viajes/slug?cotizar=true&salida=dep-1`, when la pagina carga, then el formulario se abre automaticamente con la salida preseleccionada SIN requerir auth.
+- [x] AC15: Given un visitante que llega a `/viajes/slug?cotizar=true&salida=dep-1`, when la pagina carga, then el formulario se abre automaticamente con la salida preseleccionada SIN requerir auth.
 
 ## Additional Context
 
@@ -314,6 +314,12 @@ Ordenados por dependencia (foundation primero, UI al final).
 - Multi-step wizard mas elaborado (datos personales → seleccion → confirmacion → pago)
 - A/B testing de variantes de CTA (requiere engine de feature flags)
 - Linkeo fallback por telefono si guestToken se pierde
+
+## Review Notes
+- Adversarial review completed: 14 findings total
+- 7 fixed (F1, F4, F5, F6, F7, F11, F14), 7 dismissed (noise/pre-existing/by-design)
+- Resolution approach: auto-fix all real findings, 0 tech debt
+- Key fixes: returnUrl slug bug (F6), price $0 validation (F5), form reset on close (F14), guestToken optimistic clear (F4), rate limit .count() + IP validation (F1), linkGuestOrders .limit(10) (F7), hydration-safe countdown (F11)
 
 **Orden de implementacion sugerido como sub-stories:**
 1. **Sub-story A (foundation)**: Tasks 1-6 — tipos, helpers, API changes

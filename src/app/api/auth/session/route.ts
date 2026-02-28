@@ -2,12 +2,13 @@ import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 import { adminAuth } from '@/lib/firebase/admin'
 import { initUserClaims } from '@/lib/auth/claims'
+import { linkGuestOrders } from '@/lib/orders/linkGuestOrders'
 
 const SESSION_EXPIRY_MS = 14 * 24 * 60 * 60 * 1000 // 14 days
 
 export async function POST(request: Request) {
   try {
-    const { idToken } = await request.json()
+    const { idToken, guestToken } = await request.json()
 
     if (!idToken || typeof idToken !== 'string') {
       return NextResponse.json(
@@ -20,6 +21,10 @@ export async function POST(request: Request) {
 
     // Story 1.4a: Set initial claims for new users (idempotent)
     await initUserClaims(decodedToken.uid)
+
+    // Link guest orders if guestToken provided (Conversion 2.0)
+    const tokenValue = typeof guestToken === 'string' ? guestToken : null
+    await linkGuestOrders(decodedToken.uid, tokenValue)
 
     const sessionCookie = await adminAuth.createSessionCookie(idToken, {
       expiresIn: SESSION_EXPIRY_MS,

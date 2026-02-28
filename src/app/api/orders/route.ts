@@ -1,7 +1,8 @@
+import crypto from 'node:crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { FieldValue } from 'firebase-admin/firestore'
 import { adminDb } from '@/lib/firebase/admin'
-import { requireAuth } from '@/lib/auth/requireAuth'
+import { tryAuth } from '@/lib/auth/tryAuth'
 import { handleApiError } from '@/lib/errors/handleApiError'
 import { AppError } from '@/lib/errors/AppError'
 import { createOrderSchema } from '@/schemas/orderSchema'
@@ -9,10 +10,12 @@ import { createOrderSchema } from '@/schemas/orderSchema'
 const TRIPS_COLLECTION = 'trips'
 const DEPARTURES_SUBCOLLECTION = 'departures'
 const ORDERS_COLLECTION = 'orders'
+const GUEST_RATE_LIMIT_MAX = 5
+const GUEST_RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000 // 1 hour
 
 export async function POST(request: NextRequest) {
   try {
-    const claims = await requireAuth()
+    const claims = await tryAuth()
 
     const body = await request.json()
     const parsed = createOrderSchema.safeParse(body)
@@ -25,6 +28,25 @@ export async function POST(request: NextRequest) {
     }
 
     const { tripId, departureId, contactName, contactPhone, utmSource, utmMedium, utmCampaign, agentId } = parsed.data
+
+    // Rate limit for guest users (no auth)
+    if (!claims) {
+      const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+      if (!ip) {
+        throw new AppError('RATE_LIMITED', 'No se pudo identificar la solicitud', 429, true)
+      }
+      const oneHourAgo = new Date(Date.now() - GUEST_RATE_LIMIT_WINDOW_MS)
+      const rateLimitQuery = adminDb
+        .collection(ORDERS_COLLECTION)
+        .where('userId', '==', null)
+        .where('guestIp', '==', ip)
+        .where('createdAt', '>=', oneHourAgo)
+      const countSnap = await rateLimitQuery.count().get()
+
+      if (countSnap.data().count >= GUEST_RATE_LIMIT_MAX) {
+        throw new AppError('RATE_LIMITED', 'Demasiadas solicitudes — intenta mas tarde', 429, true)
+      }
+    }
 
     // Verify trip exists and is published
     const tripRef = adminDb.collection(TRIPS_COLLECTION).doc(tripId)
@@ -51,9 +73,18 @@ export async function POST(request: NextRequest) {
     const tripData = tripSnap.data()!
     const amountTotalCents = tripData.odooListPriceCentavos ?? 0
 
+    if (!amountTotalCents || amountTotalCents <= 0) {
+      throw new AppError('INVALID_PRICE', 'Precio del viaje no configurado', 500)
+    }
+
+    const guestToken = claims ? null : crypto.randomUUID()
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+
     // Create order document
     const orderData = {
-      userId: claims.uid,
+      userId: claims?.uid ?? null,
+      guestToken,
+      guestIp: claims ? null : ip,
       agentId: agentId ?? null,
       tripId,
       departureId,
@@ -78,6 +109,7 @@ export async function POST(request: NextRequest) {
         tripId,
         departureId,
         amountTotalCents,
+        guestToken,
       },
       { status: 201 }
     )
