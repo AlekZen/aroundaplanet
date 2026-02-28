@@ -136,6 +136,18 @@ export interface TripDeparture {
   updatedAt: Timestamp
 }
 
+// === Public departure (JSON-serializable subset of TripDeparture) ===
+
+export interface PublicDeparture {
+  id: string
+  odooName: string
+  startDate: string // ISO string
+  endDate: string // ISO string
+  seatsMax: number
+  seatsAvailable: number
+  seatsUsed: number
+}
+
 // === Public trip (JSON-serializable, no Timestamp/admin imports) ===
 
 export interface PublicTrip {
@@ -145,6 +157,8 @@ export interface PublicTrip {
   odooCurrencyCode: string
   odooCategory: string
   odooDescriptionSale: string
+  odooRatingAvg: number
+  odooRatingCount: number
   slug: string
   emotionalCopy: string
   tags: string[]
@@ -158,6 +172,16 @@ export interface PublicTrip {
   totalDepartures: number
   totalSeatsAvailable: number
   totalSeatsMax: number
+}
+
+// === Testimonial (placeholder until Epic 7 Story 7-3 implements reviews) ===
+
+export interface Testimonial {
+  id: string
+  name: string
+  text: string
+  rating: number
+  avatarUrl?: string
 }
 
 // === Sync result ===

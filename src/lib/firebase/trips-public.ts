@@ -1,8 +1,9 @@
 import 'server-only'
 import { adminDb } from '@/lib/firebase/admin'
-import type { PublicTrip } from '@/types/trip'
+import type { PublicTrip, PublicDeparture } from '@/types/trip'
 
 const TRIPS_COLLECTION = 'trips'
+const DEPARTURES_SUBCOLLECTION = 'departures'
 
 /** Fields needed for PublicTrip — excludes heavy fields like odooImageBase64 */
 const PUBLIC_TRIP_FIELDS = [
@@ -11,6 +12,8 @@ const PUBLIC_TRIP_FIELDS = [
   'odooCurrencyCode',
   'odooCategory',
   'odooDescriptionSale',
+  'odooRatingAvg',
+  'odooRatingCount',
   'slug',
   'emotionalCopy',
   'tags',
@@ -60,6 +63,50 @@ export async function getPublishedTripBySlug(slug: string): Promise<PublicTrip |
   return mapDocToPublicTrip(doc.id, doc.data())
 }
 
+/**
+ * Get future active+published departures for a trip.
+ * Reads subcollection /trips/{tripId}/departures/ directly (COLLECTION scope).
+ * Uses composite index: departures(isActive+startDate) ASC.
+ * Filters isPublished in-memory (few departures per trip, avoids extra index).
+ */
+export async function getDeparturesForTrip(tripId: string): Promise<PublicDeparture[]> {
+  const now = new Date()
+  const snapshot = await adminDb
+    .collection(TRIPS_COLLECTION)
+    .doc(tripId)
+    .collection(DEPARTURES_SUBCOLLECTION)
+    .where('isActive', '==', true)
+    .orderBy('startDate', 'asc')
+    .get()
+
+  return snapshot.docs
+    .filter((doc) => doc.data().isPublished === true)
+    .map((doc) => mapDocToPublicDeparture(doc.id, doc.data()))
+    .filter((dep) => new Date(dep.startDate) > now)
+}
+
+function mapDocToPublicDeparture(
+  id: string,
+  data: FirebaseFirestore.DocumentData
+): PublicDeparture {
+  return {
+    id,
+    odooName: data.odooName ?? '',
+    startDate: timestampToISO(data.startDate),
+    endDate: timestampToISO(data.endDate),
+    seatsMax: data.seatsMax ?? 0,
+    seatsAvailable: data.seatsAvailable ?? 0,
+    seatsUsed: data.seatsUsed ?? 0,
+  }
+}
+
+function timestampToISO(ts: unknown): string {
+  if (!ts || typeof ts !== 'object') return new Date(0).toISOString()
+  const rec = ts as Record<string, number>
+  const secs = rec._seconds ?? rec.seconds ?? 0
+  return new Date(secs * 1000).toISOString()
+}
+
 function mapDocToPublicTrip(id: string, data: FirebaseFirestore.DocumentData): PublicTrip {
   let nextDepartureDate: string | null = null
   const nextDep = data.nextDepartureDate
@@ -77,6 +124,8 @@ function mapDocToPublicTrip(id: string, data: FirebaseFirestore.DocumentData): P
     odooCurrencyCode: data.odooCurrencyCode ?? 'MXN',
     odooCategory: data.odooCategory ?? '',
     odooDescriptionSale: data.odooDescriptionSale ?? '',
+    odooRatingAvg: data.odooRatingAvg ?? 0,
+    odooRatingCount: data.odooRatingCount ?? 0,
     slug: data.slug ?? '',
     emotionalCopy: data.emotionalCopy ?? '',
     tags: data.tags ?? [],

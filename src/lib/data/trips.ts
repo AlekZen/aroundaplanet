@@ -1,3 +1,5 @@
+// TODO: eliminar cuando homepage use datos de Firestore (Story 2-3 ya no usa STATIC_TRIPS para landing)
+
 export interface StaticTrip {
   title: string
   slug: string

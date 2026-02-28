@@ -36,6 +36,8 @@ function makeTrip(overrides: Partial<PublicTrip> = {}): PublicTrip {
     odooCurrencyCode: 'MXN',
     odooCategory: 'Internacional',
     odooDescriptionSale: 'Viaje increible',
+    odooRatingAvg: 0,
+    odooRatingCount: 0,
     slug: 'vuelta-al-mundo',
     emotionalCopy: '',
     tags: [],

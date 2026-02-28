@@ -346,6 +346,12 @@ Claude Opus 4.6
 4. **[MEDIUM] aria-live en results count** — CatalogContent.tsx: aria-live="polite" en conteo de resultados filtrados
 5. **[LOW] Dead aria-disabled en span CTA** — TripCard.tsx: removed (siempre undefined en esa rama)
 
+### Post-Review Fix: Image Migration + Aspect Ratio (607cdbe)
+
+1. **Odoo image migration** — Script `scripts/migrate-odoo-images-to-storage.mjs` reads `odooImageBase64` from 62 Firestore trips, uploads to Firebase Storage (`trips/{tripId}/hero/odoo-original.{ext}`), updates `heroImages[]` with public URLs
+2. **TripCard aspect-square** — Changed from `aspect-video` (16:9) to `aspect-square` (1:1) because all Odoo images are 1080x1080 (social media flyers). Images now show complete without cropping
+3. **next.config.ts** — Added `storage.googleapis.com` to `images.remotePatterns` for Next.js Image optimization of Storage URLs
+
 ### File List
 
 **New files:**
@@ -355,10 +361,13 @@ Claude Opus 4.6
 - `src/app/(public)/viajes/CatalogContent.test.tsx` — 14 tests (10 original + 4 code review)
 - `src/app/(public)/viajes/CatalogSkeleton.tsx` — Skeleton loading grid
 - `src/app/(public)/viajes/loading.tsx` — Next.js loading state
+- `scripts/migrate-odoo-images-to-storage.mjs` — One-time Odoo image migration
+- `public/images/trips/placeholder.svg` — Fallback for trips without images
 
 **Modified files:**
 - `src/types/trip.ts` — Added PublicTrip interface
-- `src/components/custom/TripCard.tsx` — Added isSoldOut, TripCardSkeleton, placeholder image
+- `src/components/custom/TripCard.tsx` — Added isSoldOut, TripCardSkeleton, aspect-square, placeholder SVG
 - `src/components/custom/TripCard.test.tsx` — Added 8 new tests (sold-out, skeleton, placeholder)
 - `src/app/(public)/viajes/page.tsx` — Rewritten: static → ISR with Firestore data
+- `next.config.ts` — Added storage.googleapis.com to remotePatterns
 - `package.json` — Added server-only dependency

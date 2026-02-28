@@ -62,7 +62,7 @@ development_status:
   2-1a-trip-sync-odoo-firestore: done
   2-1b-admin-trip-crud-document-uploads: done
   2-2-public-trip-catalog-with-filters: done
-  2-3-trip-landing-page: backlog
+  2-3-trip-landing-page: done
   2-4-conversion-flow: backlog
   2-5-agent-attribution-lead-routing: backlog
   2-6-analytics-attribution-tracking: backlog
