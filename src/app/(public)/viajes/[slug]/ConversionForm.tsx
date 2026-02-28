@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { toast } from 'sonner'
+import { TermsContent } from '@/components/shared/TermsContent'
+import { PrivacyContent } from '@/components/shared/PrivacyContent'
 import {
   Sheet,
   SheetContent,
@@ -91,6 +93,7 @@ export function ConversionForm({
   const [touchedName, setTouchedName] = useState(false)
   const [touchedPhone, setTouchedPhone] = useState(false)
   const [formStep, setFormStep] = useState<'form' | 'success'>('form')
+  const [legalModal, setLegalModal] = useState<'terms' | 'privacy' | null>(null)
 
   // Sync preselection when prop changes
   if (selectedDepartureId && selectedDepartureId !== departureId && !isSubmitting) {
@@ -307,16 +310,16 @@ export function ConversionForm({
             {isSubmitting ? 'Procesando...' : 'Confirmar Cotizacion'}
           </Button>
 
-          {/* Legal text */}
+          {/* Legal text — opens modal instead of navigating away */}
           <p className="text-center text-xs text-muted-foreground">
             Al confirmar, aceptas nuestros{' '}
-            <Link href="/terms" className="underline hover:text-foreground">
+            <button type="button" className="underline hover:text-foreground" onClick={() => setLegalModal('terms')}>
               Terminos y Condiciones
-            </Link>{' '}
+            </button>{' '}
             y{' '}
-            <Link href="/privacy" className="underline hover:text-foreground">
+            <button type="button" className="underline hover:text-foreground" onClick={() => setLegalModal('privacy')}>
               Aviso de Privacidad
-            </Link>
+            </button>
           </p>
         </>
       )}
@@ -324,6 +327,8 @@ export function ConversionForm({
   )
 
   const content = formStep === 'form' ? formContent : successContent
+
+  const legalModalTitle = legalModal === 'terms' ? 'Terminos y Condiciones' : 'Aviso de Privacidad'
 
   return (
     <>
@@ -356,6 +361,18 @@ export function ConversionForm({
           </DialogContent>
         </Dialog>
       </div>
+
+      {/* Legal modal — opens over the conversion form without navigating away */}
+      <Dialog open={!!legalModal} onOpenChange={(open) => !open && setLegalModal(null)}>
+        <DialogContent className="max-h-[80vh] max-w-lg overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{legalModalTitle}</DialogTitle>
+            <DialogDescription>Ultima actualizacion: 28 de febrero de 2026</DialogDescription>
+          </DialogHeader>
+          {legalModal === 'terms' && <TermsContent />}
+          {legalModal === 'privacy' && <PrivacyContent />}
+        </DialogContent>
+      </Dialog>
     </>
   )
 }
