@@ -5,13 +5,13 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import { trackEvent } from '@/lib/analytics'
 import type { PublicDeparture } from '@/types/trip'
 
 interface TripDeparturesProps {
   departures: PublicDeparture[]
   tripId: string
   tripName: string
+  onSelectDeparture?: (departureId: string) => void
 }
 
 interface OccupancyInfo {
@@ -45,16 +45,7 @@ function formatDepartureDate(isoDate: string): string {
   })
 }
 
-function handleDepartureCTAClick(tripId: string, tripName: string, dep: PublicDeparture) {
-  trackEvent('select_item', {
-    item_id: tripId,
-    item_name: tripName,
-    departure_id: dep.id,
-    departure_date: dep.startDate,
-  })
-}
-
-export function TripDepartures({ departures, tripId, tripName }: TripDeparturesProps) {
+export function TripDepartures({ departures, tripId, tripName, onSelectDeparture }: TripDeparturesProps) {
   if (departures.length === 0) {
     return (
       <section className="space-y-4" aria-label="Proximas salidas">
@@ -105,7 +96,6 @@ export function TripDepartures({ departures, tripId, tripName }: TripDeparturesP
                   </Badge>
                 </div>
                 <Button
-                  asChild={!isSoldOut}
                   size="sm"
                   disabled={isSoldOut}
                   className={cn(
@@ -114,13 +104,13 @@ export function TripDepartures({ departures, tripId, tripName }: TripDeparturesP
                       ? 'bg-muted text-muted-foreground'
                       : 'bg-accent text-accent-foreground hover:bg-accent/90'
                   )}
-                  onClick={() => !isSoldOut && handleDepartureCTAClick(tripId, tripName, dep)}
+                  onClick={() => {
+                    if (!isSoldOut) {
+                      onSelectDeparture?.(dep.id)
+                    }
+                  }}
                 >
-                  {isSoldOut ? (
-                    'Agotado'
-                  ) : (
-                    <Link href="/login">Apartar Lugar</Link>
-                  )}
+                  {isSoldOut ? 'Agotado' : 'Apartar Lugar'}
                 </Button>
               </CardContent>
             </Card>
@@ -156,7 +146,6 @@ export function TripDepartures({ departures, tripId, tripName }: TripDeparturesP
                   </td>
                   <td className="py-4 text-right">
                     <Button
-                      asChild={!isSoldOut}
                       size="sm"
                       disabled={isSoldOut}
                       className={cn(
@@ -165,13 +154,13 @@ export function TripDepartures({ departures, tripId, tripName }: TripDeparturesP
                           ? 'bg-muted text-muted-foreground'
                           : 'bg-accent text-accent-foreground hover:bg-accent/90'
                       )}
-                      onClick={() => !isSoldOut && handleDepartureCTAClick(tripId, tripName, dep)}
+                      onClick={() => {
+                        if (!isSoldOut) {
+                          onSelectDeparture?.(dep.id)
+                        }
+                      }}
                     >
-                      {isSoldOut ? (
-                        'Agotado'
-                      ) : (
-                        <Link href="/login">Apartar Lugar</Link>
-                      )}
+                      {isSoldOut ? 'Agotado' : 'Apartar Lugar'}
                     </Button>
                   </td>
                 </tr>

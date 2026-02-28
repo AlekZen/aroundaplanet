@@ -1,14 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
-
-const { mockTrackEvent } = vi.hoisted(() => ({
-  mockTrackEvent: vi.fn(),
-}))
-
-vi.mock('@/lib/analytics', () => ({
-  trackEvent: mockTrackEvent,
-}))
-
 import { TripDepartures } from './TripDepartures'
 import type { PublicDeparture } from '@/types/trip'
 
@@ -102,28 +93,55 @@ describe('TripDepartures', () => {
     expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent('Proximas Salidas')
   })
 
-  it('tracks select_item on CTA click', () => {
+  it('has accessible section label', () => {
+    render(<TripDepartures departures={[]} tripId="t1" tripName="Test Trip" />)
+    expect(screen.getByLabelText('Proximas salidas')).toBeInTheDocument()
+  })
+
+  it('calls onSelectDeparture callback on CTA click', () => {
+    const onSelect = vi.fn()
     render(
       <TripDepartures
-        departures={[makeDep({ id: 'dep-x' })]}
+        departures={[makeDep({ id: 'dep-callback' })]}
         tripId="t1"
         tripName="Test Trip"
+        onSelectDeparture={onSelect}
       />
     )
 
     const ctaButtons = screen.getAllByText('Apartar Lugar')
     fireEvent.click(ctaButtons[0])
 
-    expect(mockTrackEvent).toHaveBeenCalledWith('select_item', expect.objectContaining({
-      item_id: 't1',
-      item_name: 'Test Trip',
-      departure_id: 'dep-x',
-      departure_date: FUTURE_DATE,
-    }))
+    expect(onSelect).toHaveBeenCalledWith('dep-callback')
   })
 
-  it('has accessible section label', () => {
-    render(<TripDepartures departures={[]} tripId="t1" tripName="Test Trip" />)
-    expect(screen.getByLabelText('Proximas salidas')).toBeInTheDocument()
+  it('does not call onSelectDeparture for sold out departure', () => {
+    const onSelect = vi.fn()
+    render(
+      <TripDepartures
+        departures={[makeDep({ seatsAvailable: 0 })]}
+        tripId="t1"
+        tripName="Test Trip"
+        onSelectDeparture={onSelect}
+      />
+    )
+
+    const agotadoButtons = screen.getAllByText('Agotado')
+    fireEvent.click(agotadoButtons[0])
+
+    expect(onSelect).not.toHaveBeenCalled()
+  })
+
+  it('works without onSelectDeparture (backward compat)', () => {
+    render(
+      <TripDepartures
+        departures={[makeDep()]}
+        tripId="t1"
+        tripName="Test Trip"
+      />
+    )
+
+    const ctaButtons = screen.getAllByText('Apartar Lugar')
+    expect(() => fireEvent.click(ctaButtons[0])).not.toThrow()
   })
 })

@@ -10,9 +10,8 @@ import {
 import { TripHero } from './TripHero'
 import { TripInfo } from './TripInfo'
 import { TripDescription } from './TripDescription'
-import { TripDepartures } from './TripDepartures'
 import { TripTestimonials } from './TripTestimonials'
-import { TripStickyCTA } from './TripStickyCTA'
+import { ConversionFlow } from './ConversionFlow'
 import { TripAnalytics } from './TripAnalytics'
 
 export const revalidate = 3600
@@ -78,9 +77,14 @@ export default async function TripPage({ params }: TripPageProps) {
       <TripHero trip={trip} />
       <TripInfo trip={trip} />
       <TripDescription description={trip.odooDescriptionSale} />
-      <TripDepartures departures={departures} tripId={trip.id} tripName={trip.odooName} />
+      <ConversionFlow
+        tripId={trip.id}
+        tripName={trip.odooName}
+        tripSlug={slug}
+        tripPrice={trip.odooListPriceCentavos}
+        departures={departures}
+      />
       <TripTestimonials testimonials={[]} />
-      <TripStickyCTA tripId={trip.id} tripName={trip.odooName} />
       <TripAnalytics trip={trip} />
     </div>
   )

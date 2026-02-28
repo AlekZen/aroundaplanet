@@ -1,20 +1,14 @@
 'use client'
 
-import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { trackEvent } from '@/lib/analytics'
 
 interface TripStickyCTAProps {
-  tripId: string
-  tripName: string
+  onQuoteClick?: () => void
 }
 
-export function TripStickyCTA({ tripId, tripName }: TripStickyCTAProps) {
+export function TripStickyCTA({ onQuoteClick }: TripStickyCTAProps) {
   function handleClick() {
-    trackEvent('begin_checkout', {
-      item_id: tripId,
-      item_name: tripName,
-    })
+    onQuoteClick?.()
   }
 
   return (
@@ -22,12 +16,11 @@ export function TripStickyCTA({ tripId, tripName }: TripStickyCTAProps) {
       {/* Desktop: inline CTA at bottom of page */}
       <div className="hidden lg:block">
         <Button
-          asChild
           size="lg"
           className="min-h-12 bg-accent px-8 text-lg font-semibold text-accent-foreground shadow-lg hover:bg-accent/90"
           onClick={handleClick}
         >
-          <Link href="/login">Cotizar Ahora</Link>
+          Cotizar Ahora
         </Button>
       </div>
 
@@ -38,11 +31,10 @@ export function TripStickyCTA({ tripId, tripName }: TripStickyCTAProps) {
         aria-label="Accion principal"
       >
         <Button
-          asChild
           className="h-12 w-full bg-accent text-lg font-semibold text-accent-foreground shadow-lg hover:bg-accent/90"
           onClick={handleClick}
         >
-          <Link href="/login">Cotizar</Link>
+          Cotizar
         </Button>
       </div>
     </>
