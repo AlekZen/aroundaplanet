@@ -27,7 +27,23 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { tripId, departureId, contactName, contactPhone, utmSource, utmMedium, utmCampaign, agentId } = parsed.data
+    const { tripId, departureId, contactName, contactPhone, utmSource, utmMedium, utmCampaign, agentId: rawAgentId } = parsed.data
+
+    // Validate agentId server-side: must be active user with 'agente' role
+    let validatedAgentId: string | null = null
+    if (rawAgentId) {
+      const agentSnap = await adminDb.collection('users').doc(rawAgentId).get()
+      if (agentSnap.exists) {
+        const agentData = agentSnap.data()
+        const isActiveAgent =
+          agentData?.isActive === true &&
+          Array.isArray(agentData?.roles) &&
+          agentData.roles.includes('agente')
+        if (isActiveAgent) {
+          validatedAgentId = rawAgentId
+        }
+      }
+    }
 
     // Rate limit for guest users (no auth)
     if (!claims) {
@@ -85,7 +101,7 @@ export async function POST(request: NextRequest) {
       userId: claims?.uid ?? null,
       guestToken,
       guestIp: claims ? null : ip,
-      agentId: agentId ?? null,
+      agentId: validatedAgentId,
       tripId,
       departureId,
       contactName,

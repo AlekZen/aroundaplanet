@@ -3,10 +3,10 @@
 import { useEffect, useRef } from 'react'
 import { usePathname } from 'next/navigation'
 import Script from 'next/script'
-import { trackPageView, captureAttribution } from '@/lib/analytics'
+import { trackPageView, captureAttribution, initFirebaseAnalytics } from '@/lib/analytics'
 
 const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID
-const GOOGLE_TAG_ID = process.env.NEXT_PUBLIC_GOOGLE_TAG_ID
+const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID
 
 /**
  * Renders analytics scripts and tracks page views.
@@ -17,8 +17,9 @@ export function AnalyticsProvider() {
   const pathname = usePathname()
   const isFirstRender = useRef(true)
 
-  // Capture attribution params on first load
+  // Initialize Firebase Analytics SDK + capture attribution on first load
   useEffect(() => {
+    initFirebaseAnalytics()
     captureAttribution()
   }, [])
 
@@ -35,7 +36,7 @@ export function AnalyticsProvider() {
   return (
     <>
       {/* Google Tag Manager */}
-      {GOOGLE_TAG_ID && (
+      {GTM_ID && (
         <Script
           id="gtm-script"
           strategy="afterInteractive"
@@ -44,7 +45,7 @@ export function AnalyticsProvider() {
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','${GOOGLE_TAG_ID}');`,
+})(window,document,'script','dataLayer','${GTM_ID}');`,
           }}
         />
       )}

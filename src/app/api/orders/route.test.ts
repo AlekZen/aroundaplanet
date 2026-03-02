@@ -96,6 +96,7 @@ function setupFirestoreMocks(options: {
   depActive?: boolean
   seatsAvailable?: number
   odooListPriceCentavos?: number
+  agentUser?: { exists: boolean; isActive?: boolean; roles?: string[] } | null
 }) {
   const {
     tripExists = true,
@@ -104,6 +105,7 @@ function setupFirestoreMocks(options: {
     depActive = true,
     seatsAvailable = 10,
     odooListPriceCentavos = 14500000,
+    agentUser = null,
   } = options
 
   const mockDepGet = vi.fn().mockResolvedValue({
@@ -122,6 +124,20 @@ function setupFirestoreMocks(options: {
     collection: mockTripCollection,
   })
 
+  // Agent user lookup mock
+  const mockAgentGet = vi.fn().mockResolvedValue(
+    agentUser
+      ? {
+          exists: agentUser.exists,
+          data: () =>
+            agentUser.exists
+              ? { isActive: agentUser.isActive ?? true, roles: agentUser.roles ?? ['agente'] }
+              : undefined,
+        }
+      : { exists: false, data: () => undefined }
+  )
+  const mockUserDoc = vi.fn().mockReturnValue({ get: mockAgentGet })
+
   // Rate limit query mock (for guest orders) — uses .count().get()
   const mockCountGet = vi.fn().mockResolvedValue({ data: () => ({ count: 0 }) })
   const mockCount = vi.fn().mockReturnValue({ get: mockCountGet })
@@ -132,13 +148,14 @@ function setupFirestoreMocks(options: {
   // Top-level collection routing
   mockCollection.mockImplementation((name: string) => {
     if (name === 'trips') return { doc: mockTripDoc }
+    if (name === 'users') return { doc: mockUserDoc }
     if (name === 'orders') return { add: mockAdd, where: mockRateLimitWhere1 }
     return {}
   })
 
   mockAdd.mockResolvedValue({ id: 'order-new-1' })
 
-  return { mockCountGet }
+  return { mockCountGet, mockAgentGet }
 }
 
 // === Tests ===
@@ -179,6 +196,7 @@ describe('POST /api/orders', () => {
   })
 
   it('saves attribution data in order document', async () => {
+    setupFirestoreMocks({ agentUser: { exists: true, isActive: true, roles: ['agente'] } })
     const req = makeRequest({
       ...VALID_BODY,
       utmSource: 'google',
@@ -395,5 +413,60 @@ describe('POST /api/orders', () => {
     const res = await POST(req)
 
     expect(res.status).toBe(201)
+  })
+
+  // --- agentId server-side validation tests ---
+
+  it('stores valid agentId when agent exists, is active, and has agente role', async () => {
+    setupFirestoreMocks({ agentUser: { exists: true, isActive: true, roles: ['agente'] } })
+    const req = makeRequest({ ...VALID_BODY, agentId: 'agent-lupita' })
+    await POST(req)
+
+    expect(mockAdd).toHaveBeenCalledWith(
+      expect.objectContaining({ agentId: 'agent-lupita' })
+    )
+  })
+
+  it('silently sets agentId to null when agent user does not exist', async () => {
+    setupFirestoreMocks({ agentUser: { exists: false } })
+    const req = makeRequest({ ...VALID_BODY, agentId: 'agent-fake' })
+    const res = await POST(req)
+    const data = await res.json()
+
+    expect(res.status).toBe(201)
+    expect(mockAdd).toHaveBeenCalledWith(
+      expect.objectContaining({ agentId: null })
+    )
+    expect(data.orderId).toBeDefined()
+  })
+
+  it('silently sets agentId to null when agent is inactive', async () => {
+    setupFirestoreMocks({ agentUser: { exists: true, isActive: false, roles: ['agente'] } })
+    const req = makeRequest({ ...VALID_BODY, agentId: 'agent-inactive' })
+    await POST(req)
+
+    expect(mockAdd).toHaveBeenCalledWith(
+      expect.objectContaining({ agentId: null })
+    )
+  })
+
+  it('silently sets agentId to null when user exists but lacks agente role', async () => {
+    setupFirestoreMocks({ agentUser: { exists: true, isActive: true, roles: ['cliente'] } })
+    const req = makeRequest({ ...VALID_BODY, agentId: 'user-not-agent' })
+    await POST(req)
+
+    expect(mockAdd).toHaveBeenCalledWith(
+      expect.objectContaining({ agentId: null })
+    )
+  })
+
+  it('does not validate agentId when not provided (remains null)', async () => {
+    setupFirestoreMocks({})
+    const req = makeRequest(VALID_BODY)
+    await POST(req)
+
+    expect(mockAdd).toHaveBeenCalledWith(
+      expect.objectContaining({ agentId: null })
+    )
   })
 })

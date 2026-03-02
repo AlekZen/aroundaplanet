@@ -22,6 +22,32 @@ import { getFirebaseErrorMessage } from '@/lib/firebase/errors'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { validateReturnUrl } from '@/lib/utils/validateReturnUrl'
 import { GoogleIcon } from '@/components/shared/GoogleIcon'
+import { trackEvent } from '@/lib/analytics'
+
+async function getRegistrationAttribution() {
+  if (typeof window === 'undefined') return undefined
+  const ref = sessionStorage.getItem('attribution_ref')
+  if (!ref) return undefined
+
+  // Validate agentId server-side before trusting sessionStorage value
+  let validatedAgentId: string | undefined
+  try {
+    const res = await fetch(`/api/agents/${encodeURIComponent(ref)}/validate`)
+    if (res.ok) {
+      const data = await res.json()
+      if (data.valid) validatedAgentId = ref
+    }
+  } catch {
+    // Silent failure — don't block registration for attribution
+  }
+
+  return {
+    assignedAgentId: validatedAgentId,
+    utmSource: sessionStorage.getItem('attribution_utm_source') ?? undefined,
+    utmMedium: sessionStorage.getItem('attribution_utm_medium') ?? undefined,
+    utmCampaign: sessionStorage.getItem('attribution_utm_campaign') ?? undefined,
+  }
+}
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -69,7 +95,9 @@ export default function RegisterPage() {
         data.password,
         data.displayName
       )
-      await createUserProfile(credential.user, 'email')
+      const attribution = await getRegistrationAttribution()
+      await createUserProfile(credential.user, 'email', attribution)
+      trackEvent('sign_up', { method: 'email' })
       // Refresh profile in store after creation (onIdTokenChanged fires before doc exists)
       const freshProfile = await getUserProfile(credential.user.uid)
       useAuthStore.getState().setProfile(freshProfile)
@@ -88,7 +116,9 @@ export default function RegisterPage() {
       const credential = await loginWithGoogle()
       const existingProfile = await getUserProfile(credential.user.uid)
       if (!existingProfile) {
-        await createUserProfile(credential.user, 'google')
+        const attribution = await getRegistrationAttribution()
+        await createUserProfile(credential.user, 'google', attribution)
+        trackEvent('sign_up', { method: 'google' })
       } else {
         await updateLastLogin(credential.user.uid)
       }

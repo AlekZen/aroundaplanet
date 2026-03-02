@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { TripCard } from '@/components/custom/TripCard'
 import { trackEvent } from '@/lib/analytics'
 import { formatCurrency } from '@/lib/utils'
+import { toast } from 'sonner'
 import type { PublicTrip } from '@/types/trip'
 
 const PRICE_RANGES = [
@@ -35,9 +36,10 @@ function getDepartureMonth(isoDate: string): string {
 
 interface CatalogContentProps {
   trips: PublicTrip[]
+  agentId?: string
 }
 
-export function CatalogContent({ trips }: CatalogContentProps) {
+export function CatalogContent({ trips, agentId }: CatalogContentProps) {
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()
@@ -159,6 +161,25 @@ export function CatalogContent({ trips }: CatalogContentProps) {
     })
   }, [])
 
+  const handleCopyAgentLink = useCallback(async (trip: PublicTrip) => {
+    if (!agentId || !trip.slug) return
+    const link = `${window.location.origin}/viajes/${trip.slug}?ref=${agentId}`
+    try {
+      await navigator.clipboard.writeText(link)
+      toast.success('Link copiado al portapapeles', { duration: 4000 })
+    } catch {
+      // Fallback for older browsers
+      const textarea = document.createElement('textarea')
+      textarea.value = link
+      document.body.appendChild(textarea)
+      textarea.select()
+      document.execCommand('copy')
+      document.body.removeChild(textarea)
+      toast.success('Link copiado al portapapeles', { duration: 4000 })
+    }
+    trackEvent('agent_copy_link', { trip_id: trip.id, trip_name: trip.odooName, agent_id: agentId })
+  }, [agentId])
+
   return (
     <div className="space-y-6">
       {/* Filters */}
@@ -257,7 +278,7 @@ export function CatalogContent({ trips }: CatalogContentProps) {
           {filteredTrips.map((trip) => {
             const isSoldOut = trip.totalSeatsAvailable === 0 && trip.totalDepartures > 0
             return (
-              <li key={trip.id} onClick={isSoldOut ? undefined : () => handleTripClick(trip)}>
+              <li key={trip.id} onClick={isSoldOut ? undefined : agentId ? undefined : () => handleTripClick(trip)}>
                 <TripCard
                   trip={{
                     title: trip.odooName,
@@ -267,9 +288,10 @@ export function CatalogContent({ trips }: CatalogContentProps) {
                     dates: trip.nextDepartureDate ? formatDepartureDate(trip.nextDepartureDate) : 'Proximamente',
                     destination: trip.odooCategory || 'Destino',
                   }}
-                  variant="public"
+                  variant={agentId ? 'agent' : 'public'}
                   isSoldOut={isSoldOut}
-                  href={trip.slug ? `/viajes/${trip.slug}` : undefined}
+                  href={agentId ? undefined : trip.slug ? `/viajes/${trip.slug}` : undefined}
+                  onClick={agentId ? () => handleCopyAgentLink(trip) : undefined}
                 />
               </li>
             )

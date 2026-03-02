@@ -19,6 +19,7 @@ import { getFirebaseErrorMessage } from '@/lib/firebase/errors'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { validateReturnUrl } from '@/lib/utils/validateReturnUrl'
 import { GoogleIcon } from '@/components/shared/GoogleIcon'
+import { trackEvent } from '@/lib/analytics'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -63,6 +64,7 @@ export default function LoginPage() {
       const existingProfile = await getUserProfile(credential.user.uid)
       if (!existingProfile) {
         await createUserProfile(credential.user, 'email')
+        trackEvent('sign_up', { method: 'email' })
       } else {
         await updateLastLogin(credential.user.uid)
       }
@@ -84,6 +86,7 @@ export default function LoginPage() {
       const existingProfile = await getUserProfile(credential.user.uid)
       if (!existingProfile) {
         await createUserProfile(credential.user, 'google')
+        trackEvent('sign_up', { method: 'google' })
       } else {
         await updateLastLogin(credential.user.uid)
       }

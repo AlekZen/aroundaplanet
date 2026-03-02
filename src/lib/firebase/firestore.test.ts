@@ -107,6 +107,47 @@ describe('Firestore User Profile', () => {
     expect(result).toBeNull()
   })
 
+  it('createUserProfile stores attribution data when provided', async () => {
+    mockGetDoc.mockResolvedValue({ exists: () => false })
+    mockSetDoc.mockResolvedValue(undefined)
+
+    const { createUserProfile } = await import('./firestore')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const mockUser = { uid: 'user-456', email: 'new@test.com', displayName: 'New User', photoURL: null } as any
+
+    await createUserProfile(mockUser, 'email', {
+      assignedAgentId: 'agent-lupita',
+      utmSource: 'facebook',
+      utmMedium: 'social',
+      utmCampaign: 'spring-2026',
+    })
+
+    expect(mockSetDoc).toHaveBeenCalledWith('mock-doc-ref', expect.objectContaining({
+      uid: 'user-456',
+      assignedAgentId: 'agent-lupita',
+      attributionSource: {
+        utmSource: 'facebook',
+        utmMedium: 'social',
+        utmCampaign: 'spring-2026',
+      },
+    }))
+  })
+
+  it('createUserProfile omits attribution fields when not provided', async () => {
+    mockGetDoc.mockResolvedValue({ exists: () => false })
+    mockSetDoc.mockResolvedValue(undefined)
+
+    const { createUserProfile } = await import('./firestore')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const mockUser = { uid: 'user-789', email: 'plain@test.com', displayName: 'Plain', photoURL: null } as any
+
+    await createUserProfile(mockUser, 'google')
+
+    const calledWith = mockSetDoc.mock.calls[0][1]
+    expect(calledWith).not.toHaveProperty('assignedAgentId')
+    expect(calledWith).not.toHaveProperty('attributionSource')
+  })
+
   it('updateLastLogin merges timestamp fields', async () => {
     mockSetDoc.mockResolvedValue(undefined)
 

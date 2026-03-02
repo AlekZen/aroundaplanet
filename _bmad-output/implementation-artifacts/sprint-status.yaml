@@ -64,8 +64,8 @@ development_status:
   2-2-public-trip-catalog-with-filters: done
   2-3-trip-landing-page: done
   2-4-conversion-flow: done
-  2-5-agent-attribution-lead-routing: backlog
-  2-6-analytics-attribution-tracking: backlog
+  2-5-agent-attribution-lead-routing: done
+  2-6-analytics-attribution-tracking: done
   epic-2-retrospective: optional
 
   # =============================================

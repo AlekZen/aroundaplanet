@@ -12,9 +12,17 @@ import { userProfileSchema } from '@/schemas/userProfileSchema'
 
 export const db = getFirestore(firebaseApp)
 
+interface AttributionData {
+  assignedAgentId?: string
+  utmSource?: string
+  utmMedium?: string
+  utmCampaign?: string
+}
+
 export async function createUserProfile(
   user: User,
-  provider: 'email' | 'google'
+  provider: 'email' | 'google',
+  attribution?: AttributionData
 ): Promise<void> {
   const userRef = doc(db, 'users', user.uid)
   const existing = await getDoc(userRef)
@@ -28,7 +36,7 @@ export async function createUserProfile(
     return
   }
 
-  await setDoc(userRef, {
+  const profileData: Record<string, unknown> = {
     uid: user.uid,
     email: user.email,
     displayName: user.displayName || '',
@@ -39,7 +47,18 @@ export async function createUserProfile(
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
     lastLoginAt: serverTimestamp(),
-  })
+  }
+
+  if (attribution?.assignedAgentId) {
+    profileData.assignedAgentId = attribution.assignedAgentId
+    profileData.attributionSource = {
+      utmSource: attribution.utmSource ?? null,
+      utmMedium: attribution.utmMedium ?? null,
+      utmCampaign: attribution.utmCampaign ?? null,
+    }
+  }
+
+  await setDoc(userRef, profileData)
 }
 
 export async function getUserProfile(

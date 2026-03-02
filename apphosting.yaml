@@ -32,6 +32,14 @@ env:
     value: https://aroundaplanet--arounda-planet.us-east4.hosted.app
     availability: [BUILD, RUNTIME]
 
+  # === Analytics (public IDs, not secrets) ===
+  - variable: NEXT_PUBLIC_META_PIXEL_ID
+    value: ""  # TODO: set Meta Pixel ID from Facebook Business Manager
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_GTM_ID
+    value: ""  # TODO: set GTM container ID (GTM-XXXXXXX)
+    availability: [BUILD, RUNTIME]
+
   # === Server (RUNTIME only — never exposed to client) ===
   - variable: ODOO_URL
     value: https://aroundaplanet.odoo.com

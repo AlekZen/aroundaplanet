@@ -61,3 +61,8 @@ export const createOrderSchema = z.object({
 })
 
 export type CreateOrderFormData = z.infer<typeof createOrderSchema>
+
+/** Schema for PATCH /api/orders/[orderId]/assign — admin assigns agent to order */
+export const assignOrderSchema = z.object({
+  agentId: z.string().min(1, 'agentId es requerido'),
+})

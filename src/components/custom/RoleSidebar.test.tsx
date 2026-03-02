@@ -88,8 +88,8 @@ describe('RoleSidebar', () => {
     mockUsePathname.mockReturnValue('/admin/verification')
     render(<RoleSidebar roles={['admin']} />)
     const buttons = document.querySelectorAll('[data-active="false"]')
-    // Admin tiene 4 items, 1 activo = 3 inactivos
-    expect(buttons.length).toBe(3)
+    // Admin tiene 5 items, 1 activo = 4 inactivos
+    expect(buttons.length).toBe(4)
   })
 
   it('renders combined sections for multiple roles', () => {

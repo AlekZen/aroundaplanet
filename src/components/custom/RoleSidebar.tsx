@@ -19,7 +19,7 @@ import { cn } from '@/lib/utils'
 import { staggerChildren } from '@/lib/animations/variants'
 import { spring } from '@/lib/animations/transitions'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
-import { LayoutDashboard, CreditCard, BarChart3, Shield, UserCircle, RefreshCw, Map } from 'lucide-react'
+import { LayoutDashboard, CreditCard, BarChart3, Shield, UserCircle, RefreshCw, Map, Users } from 'lucide-react'
 
 interface RoleSidebarProps {
   roles: string[]
@@ -28,6 +28,7 @@ interface RoleSidebarProps {
 
 const SECTIONS_BY_ROLE: Record<string, Array<{ id: string; label: string; icon: React.ReactNode; href: string }>> = {
   admin: [
+    { id: 'leads', label: 'Leads', icon: <Users className="h-5 w-5" />, href: '/admin/leads' },
     { id: 'verification', label: 'Verificacion', icon: <CreditCard className="h-5 w-5" />, href: '/admin/verification' },
     { id: 'trips', label: 'Viajes', icon: <Map className="h-5 w-5" />, href: '/admin/trips' },
     { id: 'odoo-sync', label: 'Sync Odoo', icon: <RefreshCw className="h-5 w-5" />, href: '/admin/odoo-sync' },
@@ -45,6 +46,7 @@ const SECTIONS_BY_ROLE: Record<string, Array<{ id: string; label: string; icon: 
   ],
   superadmin: [
     { id: 'users', label: 'Usuarios', icon: <Shield className="h-5 w-5" />, href: '/superadmin/users' },
+    { id: 'leads', label: 'Leads', icon: <Users className="h-5 w-5" />, href: '/superadmin/leads' },
     { id: 'verification', label: 'Verificacion', icon: <CreditCard className="h-5 w-5" />, href: '/superadmin/verification' },
     { id: 'trips', label: 'Viajes', icon: <Map className="h-5 w-5" />, href: '/superadmin/trips' },
     { id: 'odoo-sync', label: 'Sync Odoo', icon: <RefreshCw className="h-5 w-5" />, href: '/superadmin/odoo-sync' },
