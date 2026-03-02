@@ -1,9 +1,9 @@
 runConfig:
   minInstances: 1
-  maxInstances: 3       # MVP: 3 suficiente para ~100 agentes (era 10, excesivo)
+  maxInstances: 4       # MVP: 4 suficiente para ~100 agentes (era 10)
   concurrency: 80
   cpu: 1
-  memoryMiB: 512        # Next.js SSR + API routes: 512MB suficiente para MVP
+  memoryMiB: 1024       # Next.js SSR necesita ~1GB (512MB causa OOM)
 
 env:
   # === Client (NEXT_PUBLIC_ = frozen at build time) ===
