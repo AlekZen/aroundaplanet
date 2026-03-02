@@ -86,11 +86,12 @@ export class OdooClient {
   async read(
     model: string,
     ids: number[],
-    fields: string[] = []
+    fields: string[] = [],
+    options?: { timeoutMs?: number }
   ): Promise<OdooRecord[]> {
     return this.executeKw<OdooRecord[]>(model, 'read', [ids], {
       fields,
-    })
+    }, options)
   }
 
   async searchRead(
@@ -149,14 +150,16 @@ export class OdooClient {
     model: string,
     method: string,
     args: unknown[],
-    kwargs: Record<string, unknown>
+    kwargs: Record<string, unknown>,
+    options?: { timeoutMs?: number }
   ): Promise<T> {
     const uid = await this.authenticate()
     return this.withRetry(() =>
       this.rateLimitedCall<T>(
         this.objectClient,
         'execute_kw',
-        [this.config.db, uid, this.config.apiKey, model, method, args, kwargs]
+        [this.config.db, uid, this.config.apiKey, model, method, args, kwargs],
+        options?.timeoutMs
       )
     )
   }
@@ -164,12 +167,14 @@ export class OdooClient {
   private xmlRpcCall<T>(
     client: XmlRpcClient,
     method: string,
-    params: unknown[]
+    params: unknown[],
+    timeoutMs?: number
   ): Promise<T> {
+    const effectiveTimeout = timeoutMs ?? ODOO_TIMEOUT_MS
     return new Promise<T>((resolve, reject) => {
       const timeout = setTimeout(() => {
-        reject(new AppError('ODOO_TIMEOUT', 'Odoo no respondio en 5s', 503, true))
-      }, ODOO_TIMEOUT_MS)
+        reject(new AppError('ODOO_TIMEOUT', `Odoo no respondio en ${effectiveTimeout / 1000}s`, 503, true))
+      }, effectiveTimeout)
 
       client.methodCall(method, params, (error: object | null, value: T) => {
         clearTimeout(timeout)
@@ -187,7 +192,8 @@ export class OdooClient {
   private rateLimitedCall<T>(
     client: XmlRpcClient,
     method: string,
-    params: unknown[]
+    params: unknown[],
+    timeoutMs?: number
   ): Promise<T> {
     return new Promise<T>((resolve, reject) => {
       const execute = () => {
@@ -198,7 +204,7 @@ export class OdooClient {
 
         setTimeout(() => {
           this.lastRequestTime = Date.now()
-          this.xmlRpcCall<T>(client, method, params).then(resolve).catch(reject)
+          this.xmlRpcCall<T>(client, method, params, timeoutMs).then(resolve).catch(reject)
           this.processQueue()
         }, waitTime)
       }

@@ -86,6 +86,7 @@ export function mapOdooToTripFields(record: Record<string, unknown>): Omit<Trip,
     odooImageBase64: typeof data.image_1920 === 'string' && data.image_1920.length > 0
       ? data.image_1920
       : null,
+    hasOdooImage: typeof data.image_1920 === 'string' && data.image_1920.length > 0,
     odooDefaultCode: typeof data.default_code === 'string' ? data.default_code : null,
     odooSalesCount: data.sales_count,
     odooIsFavorite: data.is_favorite,

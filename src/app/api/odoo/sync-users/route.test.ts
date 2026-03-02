@@ -51,6 +51,13 @@ const mockQueryChain = vi.hoisted(() => {
   return chain
 })
 
+const mockLockDocRef = vi.hoisted(() => ({
+  get: vi.fn(),
+  set: vi.fn(),
+}))
+
+const mockRunTransaction = vi.hoisted(() => vi.fn())
+
 vi.mock('@/lib/firebase/admin', () => ({
   adminDb: {
     collection: vi.fn((name: string) => {
@@ -59,6 +66,8 @@ vi.mock('@/lib/firebase/admin', () => ({
       }
       return mockQueryChain
     }),
+    doc: vi.fn(() => mockLockDocRef),
+    runTransaction: mockRunTransaction,
   },
 }))
 
@@ -127,6 +136,16 @@ describe('POST /api/odoo/sync-users', () => {
 
     mockDocUpdate.mockResolvedValue(undefined)
     mockDocSet.mockResolvedValue(undefined)
+
+    // Lock mock: always acquire lock (default happy path)
+    mockRunTransaction.mockImplementation(async (fn: (tx: unknown) => Promise<boolean>) => {
+      const fakeTx = {
+        get: vi.fn().mockResolvedValue({ data: () => null }),
+        set: vi.fn(),
+      }
+      return fn(fakeTx)
+    })
+    mockLockDocRef.set.mockResolvedValue(undefined)
   })
 
   // --- Auth guard ---

@@ -75,6 +75,7 @@ export interface Trip {
   odooRatingCount: number
   odooRatingAvg: number
   odooImageBase64: string | null
+  hasOdooImage: boolean
   odooDefaultCode: string | null
   odooSalesCount: number
   odooIsFavorite: boolean

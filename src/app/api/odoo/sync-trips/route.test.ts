@@ -16,11 +16,24 @@ vi.mock('@/lib/odoo/sync/trip-sync', () => ({
 
 vi.mock('firebase-admin/firestore', () => ({
   Timestamp: {
-    now: vi.fn(() => ({ _seconds: 1000, _nanoseconds: 0 })),
+    now: vi.fn(() => ({ _seconds: 1000, _nanoseconds: 0, toMillis: () => 1000000 })),
     fromDate: vi.fn((d: Date) => ({ _seconds: Math.floor(d.getTime() / 1000), _nanoseconds: 0 })),
   },
   FieldValue: { serverTimestamp: vi.fn(() => ({})) },
   getFirestore: vi.fn(),
+}))
+
+const mockLockDocRef = vi.hoisted(() => ({
+  set: vi.fn().mockResolvedValue(undefined),
+}))
+
+const mockRunTransaction = vi.hoisted(() => vi.fn())
+
+vi.mock('@/lib/firebase/admin', () => ({
+  adminDb: {
+    doc: vi.fn(() => mockLockDocRef),
+    runTransaction: mockRunTransaction,
+  },
 }))
 
 import { POST } from './route'
@@ -54,6 +67,16 @@ describe('POST /api/odoo/sync-trips', () => {
   beforeEach(() => {
     mockRequirePermission.mockReset()
     mockSyncTrips.mockReset()
+
+    // Lock mock: always acquire lock (default happy path)
+    mockRunTransaction.mockImplementation(async (fn: (tx: unknown) => Promise<boolean>) => {
+      const fakeTx = {
+        get: vi.fn().mockResolvedValue({ data: () => null }),
+        set: vi.fn(),
+      }
+      return fn(fakeTx)
+    })
+    mockLockDocRef.set.mockResolvedValue(undefined)
   })
 
   it('syncs trips successfully with default options', async () => {

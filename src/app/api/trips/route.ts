@@ -29,7 +29,19 @@ export async function GET(request: NextRequest) {
     const tripsRef = adminDb.collection(TRIPS_COLLECTION)
 
     // Small dataset (<200 trips) — fetch all, filter in memory
-    let query: FirebaseFirestore.Query = tripsRef.orderBy('odooName')
+    // select() excludes odooImageBase64 (multi-MB) to reduce bandwidth
+    const ADMIN_TRIP_LIST_FIELDS = [
+      'odooName', 'odooListPriceCentavos', 'odooCurrencyCode', 'odooCategory',
+      'isPublished', 'isActive', 'slug', 'emotionalCopy', 'tags', 'highlights',
+      'difficulty', 'seoTitle', 'seoDescription', 'heroImages', 'hasOdooImage',
+      'odooProductId', 'odooSalesCount', 'odooIsFavorite', 'odooDocumentCount',
+      'lastSyncAt', 'nextDepartureDate', 'nextDepartureEndDate',
+      'totalDepartures', 'totalSeatsMax', 'totalSeatsAvailable',
+    ] as const
+
+    let query: FirebaseFirestore.Query = tripsRef
+      .orderBy('odooName')
+      .select(...ADMIN_TRIP_LIST_FIELDS)
 
     if (filter === 'published') {
       query = query.where('isPublished', '==', true)
@@ -56,7 +68,7 @@ export async function GET(request: NextRequest) {
         seoTitle: d.seoTitle ?? '',
         seoDescription: d.seoDescription ?? '',
         heroImages: d.heroImages ?? [],
-        hasOdooImage: typeof d.odooImageBase64 === 'string' && d.odooImageBase64.length > 0,
+        hasOdooImage: d.hasOdooImage ?? false,
         odooProductId: d.odooProductId ?? null,
         odooSalesCount: d.odooSalesCount ?? 0,
         odooIsFavorite: d.odooIsFavorite ?? false,

@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server'
 
 // === Hoisted mocks ===
 
-const { mockRequirePermission, mockGet, mockDoc, mockCollection, mockWhere, mockOrderBy, mockLimit } = vi.hoisted(() => {
+const { mockRequirePermission, mockGet, mockDoc, mockCollection, mockWhere, mockOrderBy, mockLimit, mockSelect } = vi.hoisted(() => {
   const mockRequirePermission = vi.fn()
   const mockGet = vi.fn()
   const mockDoc = vi.fn()
@@ -11,7 +11,8 @@ const { mockRequirePermission, mockGet, mockDoc, mockCollection, mockWhere, mock
   const mockWhere = vi.fn()
   const mockOrderBy = vi.fn()
   const mockLimit = vi.fn()
-  return { mockRequirePermission, mockGet, mockDoc, mockCollection, mockWhere, mockOrderBy, mockLimit }
+  const mockSelect = vi.fn()
+  return { mockRequirePermission, mockGet, mockDoc, mockCollection, mockWhere, mockOrderBy, mockLimit, mockSelect }
 })
 
 vi.mock('@/lib/auth/requirePermission', () => ({
@@ -84,6 +85,7 @@ function setupChainableMock(docs: ReturnType<typeof makeTrip>[] = []) {
   mockGet.mockResolvedValue(snapshot)
   mockWhere.mockReturnThis()
   mockOrderBy.mockReturnThis()
+  mockSelect.mockReturnThis()
   mockLimit.mockReturnThis()
 
   // For with-departures subcollection checks
@@ -101,6 +103,7 @@ function setupChainableMock(docs: ReturnType<typeof makeTrip>[] = []) {
 
   const queryRef = {
     orderBy: mockOrderBy,
+    select: mockSelect,
     where: mockWhere,
     get: mockGet,
     doc: mockDoc,
@@ -119,6 +122,7 @@ describe('GET /api/trips', () => {
     mockCollection.mockReset()
     mockWhere.mockReset()
     mockOrderBy.mockReset()
+    mockSelect.mockReset()
     mockLimit.mockReset()
 
     mockRequirePermission.mockResolvedValue(MOCK_CLAIMS)
