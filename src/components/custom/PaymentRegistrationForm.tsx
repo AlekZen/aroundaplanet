@@ -58,6 +58,7 @@ function FormContent({
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10))
   const [notes, setNotes] = useState('')
   const [receiptFile, setReceiptFile] = useState<File | null>(null)
+  const [receiptUrl, setReceiptUrl] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [ocrConfidence, setOcrConfidence] = useState<number | null>(null)
@@ -76,17 +77,6 @@ function FormContent({
 
     setIsSubmitting(true)
     try {
-      // Upload receipt if present
-      let receiptUrl: string | null = null
-      if (receiptFile) {
-        const formData = new FormData()
-        formData.append('file', receiptFile)
-        formData.append('path', `payments/${orderId}/${Date.now()}-${receiptFile.name}`)
-        // Receipt upload will be handled via Storage — for now, skip
-        // TODO: implement receipt upload to Firebase Storage
-        receiptUrl = null
-      }
-
       const res = await fetch('/api/payments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -95,6 +85,7 @@ function FormContent({
           amountCents,
           paymentMethod,
           date,
+          receiptUrl: receiptUrl ?? undefined,
           notes: notes.trim() || undefined,
         }),
       })
@@ -232,39 +223,54 @@ function FormContent({
             setReceiptFile(file)
             if (!file) return
 
-            // OCR: analyze receipt with Gemini
             setIsAnalyzing(true)
             setOcrConfidence(null)
             setOcrBankName(null)
             setOcrBankRef(null)
-            try {
-              const formData = new FormData()
-              formData.append('file', file)
-              const res = await fetch('/api/payments/ocr', { method: 'POST', body: formData })
-              if (!res.ok) {
-                const err = await res.json().catch(() => ({}))
-                throw new Error(err.message ?? 'Error en OCR')
-              }
-              const ocr = await res.json()
-              // Pre-fill fields with OCR data
-              if (ocr.amountCents && ocr.amountCents > 0) {
-                setAmountStr((ocr.amountCents / 100).toFixed(2))
-              }
-              if (ocr.date) setDate(ocr.date)
-              if (ocr.confidence) setOcrConfidence(ocr.confidence)
-              if (ocr.bankName) setOcrBankName(ocr.bankName)
-              if (ocr.bankReference) setOcrBankRef(ocr.bankReference)
-              // Add bank info to notes
-              const bankInfo = [
-                ocr.bankName ? `Banco: ${ocr.bankName}` : null,
-                ocr.bankReference ? `Ref: ${ocr.bankReference}` : null,
-                ocr.beneficiaryName ? `Beneficiario: ${ocr.beneficiaryName}` : null,
-              ].filter(Boolean).join(' | ')
-              if (bankInfo && !notes) setNotes(bankInfo)
+            setReceiptUrl(null)
 
-              toast.success('Datos extraidos del comprobante')
+            try {
+              // Upload to Storage + OCR in parallel
+              const uploadForm = new FormData()
+              uploadForm.append('file', file)
+              uploadForm.append('orderId', orderId || 'pending')
+
+              const ocrForm = new FormData()
+              ocrForm.append('file', file)
+
+              const [uploadRes, ocrRes] = await Promise.all([
+                fetch('/api/payments/upload', { method: 'POST', body: uploadForm }),
+                fetch('/api/payments/ocr', { method: 'POST', body: ocrForm }),
+              ])
+
+              // Handle upload result
+              if (uploadRes.ok) {
+                const uploadData = await uploadRes.json()
+                setReceiptUrl(uploadData.receiptUrl ?? null)
+              }
+
+              // Handle OCR result
+              if (ocrRes.ok) {
+                const ocr = await ocrRes.json()
+                if (ocr.amountCents && ocr.amountCents > 0) {
+                  setAmountStr((ocr.amountCents / 100).toFixed(2))
+                }
+                if (ocr.date) setDate(ocr.date)
+                if (ocr.confidence) setOcrConfidence(ocr.confidence)
+                if (ocr.bankName) setOcrBankName(ocr.bankName)
+                if (ocr.bankReference) setOcrBankRef(ocr.bankReference)
+                const bankInfo = [
+                  ocr.bankName ? `Banco: ${ocr.bankName}` : null,
+                  ocr.bankReference ? `Ref: ${ocr.bankReference}` : null,
+                  ocr.beneficiaryName ? `Beneficiario: ${ocr.beneficiaryName}` : null,
+                ].filter(Boolean).join(' | ')
+                if (bankInfo && !notes) setNotes(bankInfo)
+                toast.success('Comprobante subido y datos extraidos')
+              } else {
+                toast.success('Comprobante subido — llena los datos manualmente')
+              }
             } catch {
-              toast.error('No se pudo analizar el comprobante — llena los datos manualmente')
+              toast.error('Error al procesar el comprobante')
             } finally {
               setIsAnalyzing(false)
             }

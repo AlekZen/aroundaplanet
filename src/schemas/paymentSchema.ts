@@ -47,6 +47,7 @@ export const createPaymentSchema = z.object({
   amountCents: z.number().int().positive('El monto debe ser mayor a 0'),
   paymentMethod: paymentMethodSchema,
   date: z.string().min(1, 'La fecha del pago es requerida'),
+  receiptUrl: z.string().url().optional(),
   notes: z.string().max(500).optional(),
 })
 

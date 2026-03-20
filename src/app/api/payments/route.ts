@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { orderId, amountCents, paymentMethod, date, notes } = parsed.data
+    const { orderId, amountCents, paymentMethod, date, receiptUrl, notes } = parsed.data
 
     // Verify order exists
     const orderSnap = await adminDb.collection(ORDERS_COLLECTION).doc(orderId).get()
@@ -148,7 +148,7 @@ export async function POST(request: NextRequest) {
       date: new Date(date),
       registeredBy: claims.uid,
       registeredByName,
-      receiptUrl: null,
+      receiptUrl: receiptUrl ?? null,
       status: 'pending_verification' as const,
       verifiedBy: null,
       verifiedAt: null,
