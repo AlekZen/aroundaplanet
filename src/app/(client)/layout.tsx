@@ -1,5 +1,8 @@
+'use client'
+
 import { ArrowLeft } from 'lucide-react'
 import { PageTransition } from '@/components/shared/PageTransition'
+import { RoleSwitcher } from '@/components/custom/RoleSwitcher'
 
 export default function ClientLayout({
   children,
@@ -26,11 +29,7 @@ export default function ClientLayout({
             >
               <ArrowLeft className="h-5 w-5" aria-hidden="true" />
             </button>
-            <div
-              className="h-10 w-10 rounded-full bg-muted"
-              aria-label="Avatar de usuario"
-              role="img"
-            />
+            <RoleSwitcher />
           </nav>
         </header>
         <main id="main-content">

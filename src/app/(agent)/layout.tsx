@@ -1,5 +1,8 @@
+'use client'
+
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { RoleSidebar } from '@/components/custom/RoleSidebar'
+import { RoleSwitcher } from '@/components/custom/RoleSwitcher'
 import { BottomNavBar } from '@/components/custom/BottomNavBar'
 import { PageTransition } from '@/components/shared/PageTransition'
 import { LayoutDashboard, Globe, Users, User } from 'lucide-react'
@@ -26,6 +29,10 @@ export default function AgentMobileLayout({
       </a>
       <RoleSidebar roles={['agente']} className="hidden lg:block" />
       <div className="flex flex-1 flex-col">
+        <header className="flex h-14 items-center justify-between border-b px-4 lg:hidden">
+          <span className="font-heading text-sm font-semibold">AroundaPlanet</span>
+          <RoleSwitcher />
+        </header>
         <main id="main-content" className="flex-1 p-4 pb-20 lg:pb-4 lg:p-6">
           <PageTransition>{children}</PageTransition>
         </main>

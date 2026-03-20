@@ -2,6 +2,7 @@
 
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar'
 import { RoleSidebar } from '@/components/custom/RoleSidebar'
+import { RoleSwitcher } from '@/components/custom/RoleSwitcher'
 import { PageTransition } from '@/components/shared/PageTransition'
 
 interface AdminShellProps {
@@ -22,7 +23,8 @@ export function AdminShell({ roles, children }: AdminShellProps) {
       <SidebarInset>
         <header className="flex h-14 items-center gap-2 border-b px-4 lg:hidden">
           <SidebarTrigger />
-          <span className="font-heading text-sm font-semibold">AroundaPlanet</span>
+          <span className="flex-1 font-heading text-sm font-semibold">AroundaPlanet</span>
+          <RoleSwitcher />
         </header>
         <main id="main-content" className="flex-1 p-4 lg:p-6">
           <PageTransition>{children}</PageTransition>

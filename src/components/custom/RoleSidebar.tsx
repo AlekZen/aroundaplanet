@@ -15,6 +15,7 @@ import {
   SidebarMenuButton,
   SidebarFooter,
 } from '@/components/ui/sidebar'
+import { RoleSwitcher } from '@/components/custom/RoleSwitcher'
 import { cn } from '@/lib/utils'
 import { staggerChildren } from '@/lib/animations/variants'
 import { spring } from '@/lib/animations/transitions'
@@ -97,7 +98,10 @@ export function RoleSidebar({ roles, className }: RoleSidebarProps) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="border-t border-sidebar-border p-2">
+      <SidebarFooter className="border-t border-sidebar-border p-2 space-y-2">
+        <div className="group-data-[collapsible=icon]:hidden">
+          <RoleSwitcher />
+        </div>
         <span className="text-xs text-sidebar-foreground/50 group-data-[collapsible=icon]:hidden">AroundaPlanet v1.0</span>
       </SidebarFooter>
     </Sidebar>
