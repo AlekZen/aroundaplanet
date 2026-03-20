@@ -13,7 +13,6 @@ import {
   SheetFooter,
 } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
 /** Roles that can be toggled (all except cliente which is always on) */
@@ -61,20 +60,19 @@ export function RoleAssignmentSheet({
       } else {
         next.add(role)
       }
+      // Auto-fill agentId with user UID when Agente is toggled on
+      if (role === 'agente' && next.has('agente') && !agentId && user) {
+        setAgentId(user.uid)
+      }
       return next
     })
-  }, [])
-
-  const handleAgentIdChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setAgentId(e.target.value)
-  }, [])
+  }, [agentId, user])
 
   const isAgenteSelected = selectedRoles.has('agente')
-  const isAgentIdRequired = isAgenteSelected && agentId.trim() === ''
 
   const handleSave = useCallback(async () => {
     if (!user) return
-    if (isAgentIdRequired) return
+    if (isAgenteSelected && !agentId.trim()) return
 
     setIsSaving(true)
     setSaveError(null)
@@ -86,7 +84,7 @@ export function RoleAssignmentSheet({
     } finally {
       setIsSaving(false)
     }
-  }, [user, selectedRoles, agentId, isAgenteSelected, isAgentIdRequired, onSave])
+  }, [user, selectedRoles, agentId, isAgenteSelected, onSave])
 
   if (!user) return null
 
@@ -144,25 +142,16 @@ export function RoleAssignmentSheet({
             </div>
           </fieldset>
 
-          {/* Agent ID input — only when Agente is selected */}
+          {/* Agent ID — auto-filled with user UID when Agente is selected */}
           {isAgenteSelected && (
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="agent-id-input">
-                ID de Agente <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                id="agent-id-input"
-                value={agentId}
-                onChange={handleAgentIdChange}
-                placeholder="Ej: AGT-001"
-                aria-required="true"
-                aria-invalid={isAgentIdRequired}
-              />
-              {isAgentIdRequired && (
-                <p className="text-xs text-destructive">
-                  El ID de agente es requerido cuando el rol Agente esta asignado
+              <Label>ID de Agente</Label>
+              <div className="rounded-md border bg-muted/50 px-3 py-2 text-sm">
+                <p className="font-mono text-xs text-muted-foreground">{agentId || user.uid}</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  Se asigna automaticamente al usuario
                 </p>
-              )}
+              </div>
             </div>
           )}
         </div>
@@ -181,7 +170,7 @@ export function RoleAssignmentSheet({
           </Button>
           <Button
             onClick={handleSave}
-            disabled={isSaving || isAgentIdRequired}
+            disabled={isSaving}
           >
             {isSaving ? 'Guardando...' : 'Guardar'}
           </Button>

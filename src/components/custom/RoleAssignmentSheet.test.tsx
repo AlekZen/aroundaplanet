@@ -79,8 +79,7 @@ describe('RoleAssignmentSheet', () => {
     expect(within(currentRolesSection).getByLabelText('Agente')).toBeInTheDocument()
   })
 
-  it('toggling Agente shows agentId input', () => {
-    // Start with a user that does NOT have agente role
+  it('toggling Agente shows agentId section', () => {
     renderSheet({
       user: {
         uid: 'user-456',
@@ -89,34 +88,28 @@ describe('RoleAssignmentSheet', () => {
       },
     })
 
-    // agentId input should not be visible
-    expect(screen.queryByLabelText(/ID de Agente/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/ID de Agente/)).not.toBeInTheDocument()
 
-    // Check Agente
     fireEvent.click(screen.getByRole('checkbox', { name: 'Agente' }))
 
-    // Now agentId input should appear
-    expect(screen.getByLabelText(/ID de Agente/)).toBeInTheDocument()
+    expect(screen.getByText(/ID de Agente/)).toBeInTheDocument()
+    // Auto-fills with UID
+    expect(screen.getByText('user-456')).toBeInTheDocument()
   })
 
-  it('toggling Agente off hides agentId input', () => {
-    // User already has agente role
+  it('toggling Agente off hides agentId section', () => {
     renderSheet()
 
-    // agentId input should be visible
-    expect(screen.getByLabelText(/ID de Agente/)).toBeInTheDocument()
+    expect(screen.getByText(/ID de Agente/)).toBeInTheDocument()
 
-    // Uncheck Agente
     fireEvent.click(screen.getByRole('checkbox', { name: 'Agente' }))
 
-    // Now agentId input should be gone
-    expect(screen.queryByLabelText(/ID de Agente/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/ID de Agente/)).not.toBeInTheDocument()
   })
 
-  it('pre-fills agentId from user prop', () => {
+  it('shows agentId from user prop when available', () => {
     renderSheet()
-    const input = screen.getByLabelText(/ID de Agente/) as HTMLInputElement
-    expect(input.value).toBe('AGT-001')
+    expect(screen.getByText('AGT-001')).toBeInTheDocument()
   })
 
   it('calls onSave with correct roles on submit', async () => {
@@ -191,7 +184,7 @@ describe('RoleAssignmentSheet', () => {
     })
   })
 
-  it('disables save when Agente selected but agentId is empty', () => {
+  it('auto-fills agentId with UID when Agente toggled on', () => {
     renderSheet({
       user: {
         uid: 'user-456',
@@ -200,18 +193,11 @@ describe('RoleAssignmentSheet', () => {
       },
     })
 
-    // Check Agente without filling agentId
     fireEvent.click(screen.getByRole('checkbox', { name: 'Agente' }))
 
-    // Save should be disabled
+    // Save should be enabled because agentId auto-filled with UID
     const saveButton = screen.getByRole('button', { name: 'Guardar' })
-    expect(saveButton).toBeDisabled()
-
-    // Fill agentId
-    fireEvent.change(screen.getByLabelText(/ID de Agente/), { target: { value: 'AGT-NEW' } })
-
-    // Save should be enabled now
-    expect(screen.getByRole('button', { name: 'Guardar' })).toBeEnabled()
+    expect(saveButton).not.toBeDisabled()
   })
 
   it('calls onOpenChange when Cancelar is clicked', () => {
