@@ -8,8 +8,35 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { formatCurrency } from '@/lib/utils'
 import { STATUS_COLORS } from '@/config/orderStatus'
-import { Globe, Users, Plus } from 'lucide-react'
+import { Globe, Users, Plus, CreditCard, CheckCircle2, XCircle, Clock, MessageSquare } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { PaymentRegistrationForm } from '@/components/custom/PaymentRegistrationForm'
+import { PAYMENT_STATUS_LABELS, PAYMENT_METHOD_LABELS, type PaymentStatus, type PaymentMethod } from '@/schemas/paymentSchema'
+
+interface AgentPayment {
+  id: string
+  orderId: string
+  tripName: string | null
+  amountCents: number
+  paymentMethod: PaymentMethod
+  status: PaymentStatus
+  rejectionNote: string | null
+  createdAt: string | null
+}
+
+const PAYMENT_STATUS_ICONS: Record<PaymentStatus, React.ReactNode> = {
+  pending_verification: <Clock className="h-3.5 w-3.5 text-yellow-600" />,
+  verified: <CheckCircle2 className="h-3.5 w-3.5 text-green-600" />,
+  rejected: <XCircle className="h-3.5 w-3.5 text-red-600" />,
+  info_requested: <MessageSquare className="h-3.5 w-3.5 text-blue-600" />,
+}
+
+const PAYMENT_STATUS_COLORS: Record<PaymentStatus, string> = {
+  pending_verification: 'bg-yellow-100 text-yellow-800',
+  verified: 'bg-green-100 text-green-800',
+  rejected: 'bg-red-100 text-red-800',
+  info_requested: 'bg-blue-100 text-blue-800',
+}
 
 interface AgentOrder {
   id: string
@@ -35,6 +62,7 @@ export default function AgentLeadsPage() {
   const { claims } = useAuthStore()
   const agentId = claims?.agentId
   const [orders, setOrders] = useState<AgentOrder[]>([])
+  const [payments, setPayments] = useState<AgentPayment[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isPaymentFormOpen, setIsPaymentFormOpen] = useState(false)
@@ -47,12 +75,20 @@ export default function AgentLeadsPage() {
 
     let cancelled = false
 
-    async function fetchOrders() {
+    async function fetchData() {
       try {
-        const res = await fetch(`/api/agents/${agentId}/orders`)
-        if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        const data = await res.json()
-        if (!cancelled) setOrders(data.orders ?? [])
+        const [ordersRes, paymentsRes] = await Promise.all([
+          fetch(`/api/agents/${agentId}/orders`),
+          fetch('/api/my-payments'),
+        ])
+        if (!ordersRes.ok) throw new Error(`HTTP ${ordersRes.status}`)
+        const ordersData = await ordersRes.json()
+        if (!cancelled) setOrders(ordersData.orders ?? [])
+
+        if (paymentsRes.ok) {
+          const paymentsData = await paymentsRes.json()
+          if (!cancelled) setPayments(paymentsData.payments ?? [])
+        }
       } catch (err) {
         if (!cancelled) setError(err instanceof Error ? err.message : 'Error cargando leads')
       } finally {
@@ -60,7 +96,7 @@ export default function AgentLeadsPage() {
       }
     }
 
-    fetchOrders()
+    fetchData()
     return () => { cancelled = true }
   }, [agentId])
 
@@ -165,6 +201,44 @@ export default function AgentLeadsPage() {
                   <span className="text-muted-foreground">{formatDate(order.createdAt)}</span>
                 </div>
               </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Mis Pagos Registrados */}
+      {payments.length > 0 && (
+        <div className="space-y-3">
+          <h2 className="font-heading text-lg font-semibold text-foreground">Mis Pagos Registrados</h2>
+          <div className="space-y-2">
+            {payments.map((payment) => (
+              <Card key={payment.id} className="p-3">
+                <CardContent className="flex items-center gap-3 p-0">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted">
+                    {PAYMENT_STATUS_ICONS[payment.status]}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium">
+                        {new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 0 }).format(payment.amountCents / 100)}
+                      </p>
+                      <span className="text-xs text-muted-foreground">
+                        {PAYMENT_METHOD_LABELS[payment.paymentMethod]}
+                      </span>
+                    </div>
+                    <p className="truncate text-xs text-muted-foreground">{payment.tripName ?? 'Sin viaje'}</p>
+                    {payment.status === 'rejected' && payment.rejectionNote && (
+                      <p className="mt-1 text-xs text-red-600">Motivo: {payment.rejectionNote}</p>
+                    )}
+                    {payment.status === 'info_requested' && payment.rejectionNote && (
+                      <p className="mt-1 text-xs text-blue-600">Solicitud: {payment.rejectionNote}</p>
+                    )}
+                  </div>
+                  <Badge className={PAYMENT_STATUS_COLORS[payment.status]}>
+                    {PAYMENT_STATUS_LABELS[payment.status]}
+                  </Badge>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </div>

@@ -104,7 +104,7 @@ export function VerificationPanel() {
   const [payments, setPayments] = useState<PaymentItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [statusFilter, setStatusFilter] = useState<string>('pending_verification')
+  const [statusFilter, setStatusFilter] = useState<string>('all')
   const [selectedPayment, setSelectedPayment] = useState<PaymentItem | null>(null)
   const [actionDialog, setActionDialog] = useState<{ type: ActionType; payment: PaymentItem } | null>(null)
   const [rejectionNote, setRejectionNote] = useState('')
