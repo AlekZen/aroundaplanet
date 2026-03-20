@@ -71,10 +71,10 @@ development_status:
   # =============================================
   # Epic 3: Payment Flow & Verification (4 stories)
   # =============================================
-  epic-3: backlog
-  3-1-payment-report-flow: backlog
+  epic-3: in-progress
+  3-1-payment-report-flow: done
   3-2-agent-admin-payment-proxy: backlog
-  3-3-admin-verification-queue-actions: backlog
+  3-3-admin-verification-queue-actions: done
   3-4-payment-plan-history-status-tracking: backlog
   epic-3-retrospective: optional
 
