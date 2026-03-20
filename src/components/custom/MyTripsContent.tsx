@@ -33,6 +33,13 @@ interface MyPayment {
   tripName: string | null
   amountCents: number
   paymentMethod: PaymentMethod
+  bankName: string | null
+  bankReference: string | null
+  beneficiaryName: string | null
+  concept: string | null
+  sourceAccount: string | null
+  destinationAccount: string | null
+  receiptUrl: string | null
   status: PaymentStatus
   rejectionNote: string | null
   createdAt: string | null
@@ -171,26 +178,42 @@ function OrderCard({ order, payments, onRegisterPayment }: OrderCardProps) {
         {isExpanded && payments.length > 0 && (
           <div className="space-y-2 border-t pt-3">
             {payments.map((payment) => (
-              <div key={payment.id} className="flex items-center gap-3 rounded-lg bg-muted/30 p-2.5 text-sm">
-                {PAYMENT_STATUS_ICONS[payment.status]}
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono font-medium">{formatCurrency(payment.amountCents)}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {PAYMENT_METHOD_LABELS[payment.paymentMethod]}
-                    </span>
+              <div key={payment.id} className="rounded-lg bg-muted/30 p-3 text-sm">
+                <div className="flex items-center gap-3">
+                  {PAYMENT_STATUS_ICONS[payment.status]}
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono font-medium">{formatCurrency(payment.amountCents)}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {PAYMENT_METHOD_LABELS[payment.paymentMethod]}
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">{formatDate(payment.createdAt)}</p>
                   </div>
-                  <p className="text-xs text-muted-foreground">{formatDate(payment.createdAt)}</p>
-                  {payment.status === 'rejected' && payment.rejectionNote && (
-                    <p className="mt-0.5 text-xs text-red-600">Motivo: {payment.rejectionNote}</p>
-                  )}
-                  {payment.status === 'info_requested' && payment.rejectionNote && (
-                    <p className="mt-0.5 text-xs text-blue-600">Solicitud: {payment.rejectionNote}</p>
-                  )}
+                  <Badge className={`text-[10px] ${PAYMENT_STATUS_COLORS[payment.status]}`}>
+                    {PAYMENT_STATUS_LABELS[payment.status]}
+                  </Badge>
                 </div>
-                <Badge className={`text-[10px] ${PAYMENT_STATUS_COLORS[payment.status]}`}>
-                  {PAYMENT_STATUS_LABELS[payment.status]}
-                </Badge>
+                {/* Bank details */}
+                {(payment.bankName || payment.bankReference || payment.concept) && (
+                  <div className="mt-2 space-y-1 border-t pt-2 text-xs text-muted-foreground">
+                    {payment.concept && (
+                      <p>Concepto: <strong className="text-foreground">{payment.concept}</strong></p>
+                    )}
+                    <div className="flex flex-wrap gap-x-3 gap-y-0.5">
+                      {payment.bankName && <span>Banco: <strong className="text-foreground">{payment.bankName}</strong></span>}
+                      {payment.bankReference && <span>Folio: <strong className="font-mono text-foreground">{payment.bankReference}</strong></span>}
+                      {payment.sourceAccount && <span>Origen: <strong className="font-mono text-foreground">•{payment.sourceAccount}</strong></span>}
+                      {payment.destinationAccount && <span>Destino: <strong className="font-mono text-foreground">•{payment.destinationAccount}</strong></span>}
+                    </div>
+                  </div>
+                )}
+                {payment.status === 'rejected' && payment.rejectionNote && (
+                  <p className="mt-1.5 text-xs text-red-600">Motivo: {payment.rejectionNote}</p>
+                )}
+                {payment.status === 'info_requested' && payment.rejectionNote && (
+                  <p className="mt-1.5 text-xs text-blue-600">Solicitud: {payment.rejectionNote}</p>
+                )}
               </div>
             ))}
           </div>

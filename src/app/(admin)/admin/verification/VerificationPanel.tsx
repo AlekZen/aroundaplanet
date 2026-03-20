@@ -34,6 +34,12 @@ interface PaymentItem {
   registeredBy: string
   registeredByName: string | null
   receiptUrl: string | null
+  bankName: string | null
+  bankReference: string | null
+  beneficiaryName: string | null
+  concept: string | null
+  sourceAccount: string | null
+  destinationAccount: string | null
   status: PaymentStatus
   verifiedBy: string | null
   verifiedAt: string | null
@@ -333,6 +339,40 @@ export function VerificationPanel() {
                   <span className="text-muted-foreground">Agente</span>
                   <span>{selectedPayment.agentName ?? 'Sin asignar'}</span>
                 </div>
+                {selectedPayment.bankName && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Banco</span>
+                    <span className="font-medium">{selectedPayment.bankName}</span>
+                  </div>
+                )}
+                {selectedPayment.bankReference && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Referencia</span>
+                    <span className="font-mono font-medium">{selectedPayment.bankReference}</span>
+                  </div>
+                )}
+                {selectedPayment.beneficiaryName && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Beneficiario</span>
+                    <span>{selectedPayment.beneficiaryName}</span>
+                  </div>
+                )}
+                {selectedPayment.concept && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Concepto</span>
+                    <span className="truncate pl-4 text-right font-medium">{selectedPayment.concept}</span>
+                  </div>
+                )}
+                {(selectedPayment.sourceAccount || selectedPayment.destinationAccount) && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Cuentas</span>
+                    <span className="font-mono text-xs">
+                      {selectedPayment.sourceAccount && `Origen: •${selectedPayment.sourceAccount}`}
+                      {selectedPayment.sourceAccount && selectedPayment.destinationAccount && ' → '}
+                      {selectedPayment.destinationAccount && `Destino: •${selectedPayment.destinationAccount}`}
+                    </span>
+                  </div>
+                )}
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Registrado</span>
                   <span>{formatDate(selectedPayment.createdAt)}</span>

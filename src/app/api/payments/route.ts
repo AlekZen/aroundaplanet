@@ -65,6 +65,12 @@ export async function GET(request: NextRequest) {
         registeredBy: d.registeredBy ?? '',
         registeredByName: d.registeredByName ?? null,
         receiptUrl: d.receiptUrl ?? null,
+        bankName: d.bankName ?? null,
+        bankReference: d.bankReference ?? null,
+        beneficiaryName: d.beneficiaryName ?? null,
+        concept: d.concept ?? null,
+        sourceAccount: d.sourceAccount ?? null,
+        destinationAccount: d.destinationAccount ?? null,
         status: d.status ?? 'pending_verification',
         verifiedBy: d.verifiedBy ?? null,
         verifiedAt: d.verifiedAt?.toDate?.()?.toISOString() ?? null,
@@ -99,7 +105,24 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { orderId, amountCents, paymentMethod, date, receiptUrl, notes } = parsed.data
+    const { orderId, amountCents, paymentMethod, date, receiptUrl, bankName, bankReference, beneficiaryName, concept, sourceAccount, destinationAccount, notes } = parsed.data
+
+    // Duplicate detection: check if a payment with the same bankReference already exists
+    if (bankReference) {
+      const duplicateSnap = await adminDb.collection(PAYMENTS_COLLECTION)
+        .where('bankReference', '==', bankReference)
+        .limit(1)
+        .get()
+
+      if (!duplicateSnap.empty) {
+        throw new AppError(
+          'DUPLICATE_REFERENCE',
+          `Ya existe un pago registrado con la referencia ${bankReference}. Verifica que no sea un comprobante duplicado.`,
+          409,
+          false
+        )
+      }
+    }
 
     // Verify order exists
     const orderSnap = await adminDb.collection(ORDERS_COLLECTION).doc(orderId).get()
@@ -149,6 +172,12 @@ export async function POST(request: NextRequest) {
       registeredBy: claims.uid,
       registeredByName,
       receiptUrl: receiptUrl ?? null,
+      bankName: bankName ?? null,
+      bankReference: bankReference ?? null,
+      beneficiaryName: beneficiaryName ?? null,
+      concept: concept ?? null,
+      sourceAccount: sourceAccount ?? null,
+      destinationAccount: destinationAccount ?? null,
       status: 'pending_verification' as const,
       verifiedBy: null,
       verifiedAt: null,

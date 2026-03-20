@@ -48,6 +48,12 @@ export const createPaymentSchema = z.object({
   paymentMethod: paymentMethodSchema,
   date: z.string().min(1, 'La fecha del pago es requerida'),
   receiptUrl: z.string().url().optional(),
+  bankName: z.string().max(100).optional(),
+  bankReference: z.string().max(100).optional(),
+  beneficiaryName: z.string().max(200).optional(),
+  concept: z.string().max(300).optional(),
+  sourceAccount: z.string().max(20).optional(),
+  destinationAccount: z.string().max(20).optional(),
   notes: z.string().max(500).optional(),
 })
 

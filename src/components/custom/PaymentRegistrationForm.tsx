@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import {
   Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription,
@@ -64,6 +64,10 @@ function FormContent({
   const [ocrConfidence, setOcrConfidence] = useState<number | null>(null)
   const [ocrBankName, setOcrBankName] = useState<string | null>(null)
   const [ocrBankRef, setOcrBankRef] = useState<string | null>(null)
+  const [ocrConcept, setOcrConcept] = useState<string | null>(null)
+  const [ocrSourceAccount, setOcrSourceAccount] = useState<string | null>(null)
+  const [ocrDestAccount, setOcrDestAccount] = useState<string | null>(null)
+  const [ocrBeneficiary, setOcrBeneficiary] = useState<string | null>(null)
   const [touched, setTouched] = useState(false)
 
   const amountCents = Math.round(parseFloat(amountStr || '0') * 100)
@@ -86,6 +90,12 @@ function FormContent({
           paymentMethod,
           date,
           receiptUrl: receiptUrl ?? undefined,
+          bankName: ocrBankName ?? undefined,
+          bankReference: ocrBankRef ?? undefined,
+          beneficiaryName: ocrBeneficiary ?? undefined,
+          concept: ocrConcept ?? undefined,
+          sourceAccount: ocrSourceAccount ?? undefined,
+          destinationAccount: ocrDestAccount ?? undefined,
           notes: notes.trim() || undefined,
         }),
       })
@@ -256,15 +266,16 @@ function FormContent({
                   setAmountStr((ocr.amountCents / 100).toFixed(2))
                 }
                 if (ocr.date) setDate(ocr.date)
+                if (ocr.paymentMethod && PAYMENT_METHODS.includes(ocr.paymentMethod)) {
+                  setPaymentMethod(ocr.paymentMethod as PaymentMethod)
+                }
                 if (ocr.confidence) setOcrConfidence(ocr.confidence)
                 if (ocr.bankName) setOcrBankName(ocr.bankName)
                 if (ocr.bankReference) setOcrBankRef(ocr.bankReference)
-                const bankInfo = [
-                  ocr.bankName ? `Banco: ${ocr.bankName}` : null,
-                  ocr.bankReference ? `Ref: ${ocr.bankReference}` : null,
-                  ocr.beneficiaryName ? `Beneficiario: ${ocr.beneficiaryName}` : null,
-                ].filter(Boolean).join(' | ')
-                if (bankInfo && !notes) setNotes(bankInfo)
+                if (ocr.concept) setOcrConcept(ocr.concept)
+                if (ocr.sourceAccount) setOcrSourceAccount(ocr.sourceAccount)
+                if (ocr.destinationAccount) setOcrDestAccount(ocr.destinationAccount)
+                if (ocr.beneficiaryName) setOcrBeneficiary(ocr.beneficiaryName)
                 toast.success('Comprobante subido y datos extraidos')
               } else {
                 toast.success('Comprobante subido — llena los datos manualmente')
@@ -278,20 +289,26 @@ function FormContent({
         />
         {/* OCR confidence indicator */}
         {ocrConfidence !== null && (
-          <div className="flex items-center gap-2 rounded-md bg-muted/50 p-2 text-xs">
-            <Sparkles className="h-3.5 w-3.5 text-primary" />
-            <span>
-              IA extrajo los datos
+          <div className="space-y-1.5 rounded-md bg-muted/50 p-2.5 text-xs">
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-3.5 w-3.5 text-primary" />
+              <span>IA extrajo los datos</span>
               {ocrConfidence >= 90 ? (
-                <Badge className="ml-1.5 bg-green-100 text-green-800 text-[10px]">Alta confianza</Badge>
+                <Badge className="bg-green-100 text-green-800 text-[10px]">Alta confianza</Badge>
               ) : ocrConfidence >= 70 ? (
-                <Badge className="ml-1.5 bg-yellow-100 text-yellow-800 text-[10px]">Verificar datos</Badge>
+                <Badge className="bg-yellow-100 text-yellow-800 text-[10px]">Verificar datos</Badge>
               ) : (
-                <Badge className="ml-1.5 bg-red-100 text-red-800 text-[10px]">Baja confianza</Badge>
+                <Badge className="bg-red-100 text-red-800 text-[10px]">Baja confianza</Badge>
               )}
-            </span>
-            {ocrBankName && <span className="text-muted-foreground">— {ocrBankName}</span>}
-            {ocrBankRef && <span className="font-mono text-muted-foreground">{ocrBankRef}</span>}
+            </div>
+            <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-muted-foreground">
+              {ocrBankName && <span>Banco: <strong className="text-foreground">{ocrBankName}</strong></span>}
+              {ocrBankRef && <span>Folio: <strong className="font-mono text-foreground">{ocrBankRef}</strong></span>}
+              {ocrConcept && <span>Concepto: <strong className="text-foreground">{ocrConcept}</strong></span>}
+              {ocrSourceAccount && <span>Origen: <strong className="font-mono text-foreground">•{ocrSourceAccount}</strong></span>}
+              {ocrDestAccount && <span>Destino: <strong className="font-mono text-foreground">•{ocrDestAccount}</strong></span>}
+              {ocrBeneficiary && <span>Beneficiario: <strong className="text-foreground">{ocrBeneficiary}</strong></span>}
+            </div>
           </div>
         )}
       </div>
@@ -349,6 +366,19 @@ function SuccessContent({ onClose }: { onClose: () => void }) {
   )
 }
 
+function useIsDesktop() {
+  const [isDesktop, setIsDesktop] = useState(false)
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return
+    const mq = window.matchMedia('(min-width: 1024px)')
+    setIsDesktop(mq.matches)
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
+  return isDesktop
+}
+
 export function PaymentRegistrationForm({
   isOpen,
   onClose,
@@ -356,6 +386,7 @@ export function PaymentRegistrationForm({
   preselectedOrderId,
 }: PaymentRegistrationFormProps) {
   const [formStep, setFormStep] = useState<'form' | 'success'>('form')
+  const isDesktop = useIsDesktop()
 
   function handleClose() {
     setFormStep('form')
@@ -376,37 +407,33 @@ export function PaymentRegistrationForm({
     />
   )
 
-  return (
-    <>
-      {/* Mobile: Sheet (bottom) */}
-      <div className="lg:hidden">
-        <Sheet open={isOpen} onOpenChange={(open) => { if (!open) handleClose() }}>
-          <SheetContent side="bottom" className="max-h-[90vh] overflow-y-auto rounded-t-2xl pb-8">
-            <SheetHeader className="pb-4 text-left">
-              <SheetTitle>Registrar Pago</SheetTitle>
-              <SheetDescription>
-                Registra un pago para que el admin lo verifique
-              </SheetDescription>
-            </SheetHeader>
-            {content}
-          </SheetContent>
-        </Sheet>
-      </div>
+  if (isDesktop) {
+    return (
+      <Dialog open={isOpen} onOpenChange={(open) => { if (!open) handleClose() }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Registrar Pago</DialogTitle>
+            <DialogDescription>
+              Registra un pago para que el admin lo verifique
+            </DialogDescription>
+          </DialogHeader>
+          {content}
+        </DialogContent>
+      </Dialog>
+    )
+  }
 
-      {/* Desktop: Dialog (centered) */}
-      <div className="hidden lg:block">
-        <Dialog open={isOpen} onOpenChange={(open) => { if (!open) handleClose() }}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle>Registrar Pago</DialogTitle>
-              <DialogDescription>
-                Registra un pago para que el admin lo verifique
-              </DialogDescription>
-            </DialogHeader>
-            {content}
-          </DialogContent>
-        </Dialog>
-      </div>
-    </>
+  return (
+    <Sheet open={isOpen} onOpenChange={(open) => { if (!open) handleClose() }}>
+      <SheetContent side="bottom" className="max-h-[90vh] overflow-y-auto rounded-t-2xl pb-8">
+        <SheetHeader className="pb-4 text-left">
+          <SheetTitle>Registrar Pago</SheetTitle>
+          <SheetDescription>
+            Registra un pago para que el admin lo verifique
+          </SheetDescription>
+        </SheetHeader>
+        {content}
+      </SheetContent>
+    </Sheet>
   )
 }
