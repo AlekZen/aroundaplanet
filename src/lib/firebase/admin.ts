@@ -18,7 +18,10 @@ function initAdmin(): App {
 
   try {
     const serviceAccount = JSON.parse(fs.readFileSync(keyPath, "utf8"));
-    return initializeApp({ credential: cert(serviceAccount) });
+    return initializeApp({
+      credential: cert(serviceAccount),
+      storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET ?? "arounda-planet.firebasestorage.app",
+    });
   } catch {
     console.warn(
       `Firebase Admin SDK key not found at ${keyPath}. Some server features may not work.`

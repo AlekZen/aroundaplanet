@@ -8,7 +8,7 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic']
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY ?? ''
-const MODEL_NAME = 'gemini-2.0-flash-lite'
+const MODEL_NAME = 'gemini-2.5-flash'
 
 const OCR_PROMPT = `Analiza esta imagen de un comprobante de pago bancario mexicano.
 Extrae los siguientes datos del comprobante y responde SOLAMENTE con un JSON valido (sin markdown, sin backticks):
