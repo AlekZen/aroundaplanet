@@ -1,5 +1,5 @@
 import { MyTripsContent } from '@/components/custom/MyTripsContent'
 
-export default function ClientMyTripsPage() {
+export default function AgentMyTripsPage() {
   return <MyTripsContent />
 }

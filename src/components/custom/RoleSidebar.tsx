@@ -20,7 +20,7 @@ import { cn } from '@/lib/utils'
 import { staggerChildren } from '@/lib/animations/variants'
 import { spring } from '@/lib/animations/transitions'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
-import { LayoutDashboard, CreditCard, BarChart3, Shield, UserCircle, RefreshCw, Map, Users } from 'lucide-react'
+import { LayoutDashboard, CreditCard, BarChart3, Shield, UserCircle, RefreshCw, Map, Users, Plane } from 'lucide-react'
 
 interface RoleSidebarProps {
   roles: string[]
@@ -34,16 +34,19 @@ const SECTIONS_BY_ROLE: Record<string, Array<{ id: string; label: string; icon: 
     { id: 'verification', label: 'Verificacion', icon: <CreditCard className="h-5 w-5" />, href: '/admin/verification' },
     { id: 'trips', label: 'Viajes', icon: <Map className="h-5 w-5" />, href: '/admin/trips' },
     { id: 'odoo-sync', label: 'Sync Odoo', icon: <RefreshCw className="h-5 w-5" />, href: '/admin/odoo-sync' },
+    { id: 'admin-my-trips', label: 'Mis Viajes', icon: <Plane className="h-5 w-5" />, href: '/admin/my-trips' },
     { id: 'admin-profile', label: 'Mi Perfil', icon: <UserCircle className="h-5 w-5" />, href: '/admin/profile' },
   ],
   director: [
     { id: 'dashboard', label: 'Dashboard', icon: <BarChart3 className="h-5 w-5" />, href: '/director/dashboard' },
     { id: 'trips', label: 'Viajes', icon: <Map className="h-5 w-5" />, href: '/director/trips' },
     { id: 'odoo-sync', label: 'Sync Odoo', icon: <RefreshCw className="h-5 w-5" />, href: '/director/odoo-sync' },
+    { id: 'director-my-trips', label: 'Mis Viajes', icon: <Plane className="h-5 w-5" />, href: '/director/my-trips' },
     { id: 'director-profile', label: 'Mi Perfil', icon: <UserCircle className="h-5 w-5" />, href: '/director/profile' },
   ],
   agente: [
     { id: 'dashboard', label: 'Mi Negocio', icon: <LayoutDashboard className="h-5 w-5" />, href: '/agent/dashboard' },
+    { id: 'agent-my-trips', label: 'Mis Viajes', icon: <Plane className="h-5 w-5" />, href: '/agent/my-trips' },
     { id: 'agent-profile', label: 'Mi Perfil', icon: <UserCircle className="h-5 w-5" />, href: '/agent/profile' },
   ],
   superadmin: [
@@ -52,6 +55,7 @@ const SECTIONS_BY_ROLE: Record<string, Array<{ id: string; label: string; icon: 
     { id: 'verification', label: 'Verificacion', icon: <CreditCard className="h-5 w-5" />, href: '/superadmin/verification' },
     { id: 'trips', label: 'Viajes', icon: <Map className="h-5 w-5" />, href: '/superadmin/trips' },
     { id: 'odoo-sync', label: 'Sync Odoo', icon: <RefreshCw className="h-5 w-5" />, href: '/superadmin/odoo-sync' },
+    { id: 'superadmin-my-trips', label: 'Mis Viajes', icon: <Plane className="h-5 w-5" />, href: '/superadmin/my-trips' },
     { id: 'superadmin-profile', label: 'Mi Perfil', icon: <UserCircle className="h-5 w-5" />, href: '/superadmin/profile' },
   ],
 }
