@@ -19,6 +19,7 @@ export interface OdooReadGroupOptions {
   offset?: number
   limit?: number
   orderby?: string
+  timeoutMs?: number
 }
 
 export type OdooDomainOperator =

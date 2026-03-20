@@ -121,7 +121,7 @@ export class OdooClient {
       ...(options.offset !== undefined ? { offset: options.offset } : {}),
       ...(options.limit !== undefined ? { limit: options.limit } : {}),
       ...(options.orderby ? { orderby: options.orderby } : {}),
-    })
+    }, options.timeoutMs ? { timeoutMs: options.timeoutMs } : undefined)
   }
 
   async create(

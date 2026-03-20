@@ -20,7 +20,7 @@ import { cn } from '@/lib/utils'
 import { staggerChildren } from '@/lib/animations/variants'
 import { spring } from '@/lib/animations/transitions'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
-import { LayoutDashboard, CreditCard, BarChart3, Shield, UserCircle, RefreshCw, Map, Users, Plane } from 'lucide-react'
+import { LayoutDashboard, CreditCard, BarChart3, Shield, UserCircle, RefreshCw, Map, Users, Plane, Contact } from 'lucide-react'
 
 interface RoleSidebarProps {
   roles: string[]
@@ -51,6 +51,7 @@ const SECTIONS_BY_ROLE: Record<string, Array<{ id: string; label: string; icon: 
   ],
   superadmin: [
     { id: 'users', label: 'Usuarios', icon: <Shield className="h-5 w-5" />, href: '/superadmin/users' },
+    { id: 'agents', label: 'Agentes', icon: <Contact className="h-5 w-5" />, href: '/superadmin/agents' },
     { id: 'leads', label: 'Leads', icon: <Users className="h-5 w-5" />, href: '/superadmin/leads' },
     { id: 'verification', label: 'Verificacion', icon: <CreditCard className="h-5 w-5" />, href: '/superadmin/verification' },
     { id: 'trips', label: 'Viajes', icon: <Map className="h-5 w-5" />, href: '/superadmin/trips' },

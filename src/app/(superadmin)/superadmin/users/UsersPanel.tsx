@@ -69,6 +69,7 @@ export function UsersPanel() {
           displayName: editUser.displayName,
           roles: editUser.roles,
           agentId: editUser.agentId,
+          odooTeamId: editUser.odooTeamId,
         } : null}
         onSave={handleSaveRoles}
       />
