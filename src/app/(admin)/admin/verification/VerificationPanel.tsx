@@ -110,6 +110,7 @@ export function VerificationPanel() {
   const [payments, setPayments] = useState<PaymentItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [selectedPayment, setSelectedPayment] = useState<PaymentItem | null>(null)
   const [actionDialog, setActionDialog] = useState<{ type: ActionType; payment: PaymentItem } | null>(null)
@@ -294,24 +295,34 @@ export function VerificationPanel() {
               <CardTitle className="text-base">Detalle del Pago</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Receipt image */}
-              <div className="flex h-48 items-center justify-center rounded-lg bg-muted">
+              {/* Receipt image — click to enlarge */}
+              <button
+                type="button"
+                className="flex h-48 w-full items-center justify-center rounded-lg bg-muted transition-opacity hover:opacity-80"
+                onClick={() => selectedPayment.receiptUrl && setImagePreview(selectedPayment.receiptUrl)}
+                disabled={!selectedPayment.receiptUrl}
+              >
                 {selectedPayment.receiptUrl ? (
-                  <Image
-                    src={selectedPayment.receiptUrl}
-                    alt="Comprobante de pago"
-                    width={320}
-                    height={192}
-                    className="h-full w-full rounded-lg object-contain"
-                    unoptimized
-                  />
+                  <>
+                    <Image
+                      src={selectedPayment.receiptUrl}
+                      alt="Comprobante de pago"
+                      width={320}
+                      height={192}
+                      className="h-full w-full rounded-lg object-contain"
+                      unoptimized
+                    />
+                  </>
                 ) : (
                   <div className="text-center">
                     <ImageIcon className="mx-auto h-8 w-8 text-muted-foreground/40" />
                     <p className="mt-1 text-xs text-muted-foreground">Sin comprobante</p>
                   </div>
                 )}
-              </div>
+              </button>
+              {selectedPayment.receiptUrl && (
+                <p className="text-center text-[10px] text-muted-foreground">Click en la imagen para ampliar</p>
+              )}
 
               {/* Payment details */}
               <div className="space-y-2 text-sm">
@@ -494,6 +505,28 @@ export function VerificationPanel() {
               {actionDialog?.type === 'request_info' && 'Enviar Solicitud'}
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Fullscreen image preview */}
+      <Dialog open={!!imagePreview} onOpenChange={(open) => { if (!open) setImagePreview(null) }}>
+        <DialogContent className="max-w-[95vw] max-h-[95vh] p-2">
+          <DialogHeader className="sr-only">
+            <DialogTitle>Comprobante de pago</DialogTitle>
+            <DialogDescription>Vista ampliada del comprobante</DialogDescription>
+          </DialogHeader>
+          {imagePreview && (
+            <div className="flex items-center justify-center overflow-auto">
+              <Image
+                src={imagePreview}
+                alt="Comprobante de pago ampliado"
+                width={1200}
+                height={1600}
+                className="max-h-[85vh] w-auto object-contain"
+                unoptimized
+              />
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>
