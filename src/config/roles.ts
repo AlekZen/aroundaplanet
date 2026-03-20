@@ -71,7 +71,7 @@ export const ROLE_NAVIGATION_MAP: Record<UserRole, RoleNavItem[]> = {
     { role: 'agente', label: 'Perfil', href: '/agent/profile', priority: 2 },
   ],
   admin: [
-    { role: 'admin', label: 'Admin', href: '/admin/dashboard', priority: 3 },
+    { role: 'admin', label: 'Panel Admin', href: '/admin/dashboard', priority: 3 },
   ],
   director: [
     { role: 'director', label: 'Dashboard BI', href: '/director/dashboard', priority: 4 },

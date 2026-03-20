@@ -47,6 +47,8 @@ describe('RoleSidebar', () => {
     mockUsePathname.mockReturnValue('/admin/verification')
     render(<RoleSidebar roles={['admin']} />)
     expect(screen.getByRole('navigation', { name: /sidebar/i })).toBeInTheDocument()
+    expect(screen.getByText('Panel')).toBeInTheDocument()
+    expect(screen.getByText('Leads')).toBeInTheDocument()
     expect(screen.getByText('Verificacion')).toBeInTheDocument()
     expect(screen.getByText('Viajes')).toBeInTheDocument()
     expect(screen.getByText('Sync Odoo')).toBeInTheDocument()
@@ -88,8 +90,8 @@ describe('RoleSidebar', () => {
     mockUsePathname.mockReturnValue('/admin/verification')
     render(<RoleSidebar roles={['admin']} />)
     const buttons = document.querySelectorAll('[data-active="false"]')
-    // Admin tiene 5 items, 1 activo = 4 inactivos
-    expect(buttons.length).toBe(4)
+    // Admin tiene 6 items, 1 activo = 5 inactivos
+    expect(buttons.length).toBe(5)
   })
 
   it('renders combined sections for multiple roles', () => {
@@ -127,6 +129,7 @@ describe('RoleSidebar', () => {
     mockUsePathname.mockReturnValue('/superadmin/users')
     render(<RoleSidebar roles={['superadmin']} />)
     expect(screen.getByText('Usuarios')).toBeInTheDocument()
+    expect(screen.getByText('Leads')).toBeInTheDocument()
     expect(screen.getByText('Verificacion')).toBeInTheDocument()
     expect(screen.getByText('Viajes')).toBeInTheDocument()
     expect(screen.getByText('Sync Odoo')).toBeInTheDocument()

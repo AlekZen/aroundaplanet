@@ -58,7 +58,7 @@ development_status:
   # =============================================
   # Epic 2: Trip Discovery & Public Content (7 stories)
   # =============================================
-  epic-2: in-progress
+  epic-2: done
   2-1a-trip-sync-odoo-firestore: done
   2-1b-admin-trip-crud-document-uploads: done
   2-2-public-trip-catalog-with-filters: done

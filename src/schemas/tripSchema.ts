@@ -179,6 +179,7 @@ export const tripDepartureCreateSchema = z.object({
   startDate: z.string().datetime({ message: 'startDate debe ser ISO 8601' }),
   endDate: z.string().datetime({ message: 'endDate debe ser ISO 8601' }),
   seatsMax: z.number().int().min(1).max(1000),
+  isPublished: z.boolean().optional().default(false),
 }).refine((data) => new Date(data.endDate) > new Date(data.startDate), {
   message: 'endDate debe ser posterior a startDate',
   path: ['endDate'],
@@ -189,6 +190,7 @@ export const tripDepartureCreateSchema = z.object({
 export const tripDepartureUpdateSchema = z.object({
   seatsMax: z.number().int().min(1).max(1000).optional(),
   isActive: z.boolean().optional(),
+  isPublished: z.boolean().optional(),
 }).strict()
 
 // === Trip list query (GET /api/trips) ===

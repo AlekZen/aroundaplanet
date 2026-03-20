@@ -416,6 +416,24 @@ describe('tripDepartureCreateSchema', () => {
     expect(result.success).toBe(true)
   })
 
+  it('defaults isPublished to false when omitted', () => {
+    const result = tripDepartureCreateSchema.safeParse(validDeparture)
+    expect(result.success).toBe(true)
+    expect(result.data?.isPublished).toBe(false)
+  })
+
+  it('accepts isPublished true', () => {
+    const result = tripDepartureCreateSchema.safeParse({ ...validDeparture, isPublished: true })
+    expect(result.success).toBe(true)
+    expect(result.data?.isPublished).toBe(true)
+  })
+
+  it('accepts isPublished false explicitly', () => {
+    const result = tripDepartureCreateSchema.safeParse({ ...validDeparture, isPublished: false })
+    expect(result.success).toBe(true)
+    expect(result.data?.isPublished).toBe(false)
+  })
+
   it('rejects missing name', () => {
     const { name: _, ...noName } = validDeparture
     const result = tripDepartureCreateSchema.safeParse(noName)
@@ -464,6 +482,16 @@ describe('tripDepartureUpdateSchema', () => {
 
   it('accepts partial update with isActive', () => {
     const result = tripDepartureUpdateSchema.safeParse({ isActive: false })
+    expect(result.success).toBe(true)
+  })
+
+  it('accepts partial update with isPublished', () => {
+    const result = tripDepartureUpdateSchema.safeParse({ isPublished: true })
+    expect(result.success).toBe(true)
+  })
+
+  it('accepts isPublished combined with isActive', () => {
+    const result = tripDepartureUpdateSchema.safeParse({ isPublished: true, isActive: false })
     expect(result.success).toBe(true)
   })
 

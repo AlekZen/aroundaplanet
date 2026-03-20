@@ -28,6 +28,7 @@ interface RoleSidebarProps {
 
 const SECTIONS_BY_ROLE: Record<string, Array<{ id: string; label: string; icon: React.ReactNode; href: string }>> = {
   admin: [
+    { id: 'dashboard', label: 'Panel', icon: <LayoutDashboard className="h-5 w-5" />, href: '/admin/dashboard' },
     { id: 'leads', label: 'Leads', icon: <Users className="h-5 w-5" />, href: '/admin/leads' },
     { id: 'verification', label: 'Verificacion', icon: <CreditCard className="h-5 w-5" />, href: '/admin/verification' },
     { id: 'trips', label: 'Viajes', icon: <Map className="h-5 w-5" />, href: '/admin/trips' },

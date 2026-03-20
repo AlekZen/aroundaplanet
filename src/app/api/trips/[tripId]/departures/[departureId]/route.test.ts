@@ -3,13 +3,14 @@ import { NextRequest } from 'next/server'
 
 // === Hoisted mocks ===
 
-const { mockRequirePermission, mockDoc, mockCollection, mockUpdate, mockDepGet } = vi.hoisted(() => {
+const { mockRequirePermission, mockDoc, mockCollection, mockUpdate, mockDepGet, mockRecalculate } = vi.hoisted(() => {
   const mockRequirePermission = vi.fn()
   const mockDoc = vi.fn()
   const mockCollection = vi.fn()
   const mockUpdate = vi.fn()
   const mockDepGet = vi.fn()
-  return { mockRequirePermission, mockDoc, mockCollection, mockUpdate, mockDepGet }
+  const mockRecalculate = vi.fn()
+  return { mockRequirePermission, mockDoc, mockCollection, mockUpdate, mockDepGet, mockRecalculate }
 })
 
 vi.mock('@/lib/auth/requirePermission', () => ({
@@ -32,6 +33,10 @@ vi.mock('firebase-admin/firestore', () => ({
     fromDate: vi.fn((d: Date) => ({ _seconds: Math.floor(d.getTime() / 1000) })),
     now: vi.fn(() => ({ _seconds: Math.floor(Date.now() / 1000) })),
   },
+}))
+
+vi.mock('@/lib/firebase/departure-aggregates', () => ({
+  recalculateTripAggregates: mockRecalculate,
 }))
 
 vi.mock('@/lib/errors/AppError', () => ({
@@ -120,9 +125,11 @@ describe('PATCH /api/trips/[tripId]/departures/[departureId]', () => {
     mockCollection.mockReset()
     mockUpdate.mockReset()
     mockDepGet.mockReset()
+    mockRecalculate.mockReset()
 
     mockRequirePermission.mockResolvedValue(MOCK_CLAIMS)
     mockUpdate.mockResolvedValue(undefined)
+    mockRecalculate.mockResolvedValue(undefined)
   })
 
   it('updates departure fields (manual departure)', async () => {
@@ -269,5 +276,58 @@ describe('PATCH /api/trips/[tripId]/departures/[departureId]', () => {
     // Empty object is valid for strict() — no unknown fields, all optional
     // The route will proceed but update with just updatedAt
     expect(response.status).toBe(200)
+  })
+
+  it('allows updating isPublished on manual departure', async () => {
+    setupFirestoreMock({ depExists: true, syncSource: 'manual' })
+
+    const request = makeRequest('trip-1', 'dep-1', { isPublished: true })
+    const response = await PATCH(request, makeParams('trip-1', 'dep-1'))
+    const data = await response.json()
+
+    expect(response.status).toBe(200)
+    expect(data.isPublished).toBe(true)
+    expect(mockUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({ isPublished: true })
+    )
+  })
+
+  it('rejects isPublished update for Odoo-synced departure', async () => {
+    setupFirestoreMock({ depExists: true, syncSource: 'odoo' })
+
+    const request = makeRequest('trip-1', 'dep-1', { isPublished: true })
+    const response = await PATCH(request, makeParams('trip-1', 'dep-1'))
+    const data = await response.json()
+
+    expect(response.status).toBe(400)
+    expect(data.code).toBe('ODOO_FIELD_READONLY')
+    expect(mockUpdate).not.toHaveBeenCalled()
+  })
+
+  it('calls recalculateTripAggregates when isPublished changes', async () => {
+    setupFirestoreMock({ depExists: true, syncSource: 'manual' })
+
+    const request = makeRequest('trip-1', 'dep-1', { isPublished: true })
+    await PATCH(request, makeParams('trip-1', 'dep-1'))
+
+    expect(mockRecalculate).toHaveBeenCalledWith('trip-1')
+  })
+
+  it('calls recalculateTripAggregates when isActive changes', async () => {
+    setupFirestoreMock({ depExists: true, syncSource: 'manual' })
+
+    const request = makeRequest('trip-1', 'dep-1', { isActive: false })
+    await PATCH(request, makeParams('trip-1', 'dep-1'))
+
+    expect(mockRecalculate).toHaveBeenCalledWith('trip-1')
+  })
+
+  it('does not recalculate aggregates for seatsMax-only update', async () => {
+    setupFirestoreMock({ depExists: true, syncSource: 'manual' })
+
+    const request = makeRequest('trip-1', 'dep-1', { seatsMax: 50 })
+    await PATCH(request, makeParams('trip-1', 'dep-1'))
+
+    expect(mockRecalculate).not.toHaveBeenCalled()
   })
 })

@@ -70,7 +70,7 @@ describe('useRoleNavigation', () => {
     expect(result.current).toHaveLength(1)
     expect(result.current[0]).toEqual({
       role: 'admin',
-      label: 'Admin',
+      label: 'Panel Admin',
       href: '/admin/dashboard',
       priority: 3,
     })

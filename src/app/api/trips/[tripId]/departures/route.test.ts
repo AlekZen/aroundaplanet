@@ -3,12 +3,13 @@ import { NextRequest } from 'next/server'
 
 // === Hoisted mocks ===
 
-const { mockRequirePermission, mockDoc, mockCollection, mockAdd } = vi.hoisted(() => {
+const { mockRequirePermission, mockDoc, mockCollection, mockAdd, mockRecalculate } = vi.hoisted(() => {
   const mockRequirePermission = vi.fn()
   const mockDoc = vi.fn()
   const mockCollection = vi.fn()
   const mockAdd = vi.fn()
-  return { mockRequirePermission, mockDoc, mockCollection, mockAdd }
+  const mockRecalculate = vi.fn()
+  return { mockRequirePermission, mockDoc, mockCollection, mockAdd, mockRecalculate }
 })
 
 vi.mock('@/lib/auth/requirePermission', () => ({
@@ -31,6 +32,10 @@ vi.mock('firebase-admin/firestore', () => ({
     fromDate: vi.fn((d: Date) => ({ _seconds: Math.floor(d.getTime() / 1000) })),
     now: vi.fn(() => ({ _seconds: Math.floor(Date.now() / 1000) })),
   },
+}))
+
+vi.mock('@/lib/firebase/departure-aggregates', () => ({
+  recalculateTripAggregates: mockRecalculate,
 }))
 
 vi.mock('@/lib/errors/AppError', () => ({
@@ -116,9 +121,11 @@ describe('POST /api/trips/[tripId]/departures', () => {
     mockDoc.mockReset()
     mockCollection.mockReset()
     mockAdd.mockReset()
+    mockRecalculate.mockReset()
 
     mockRequirePermission.mockResolvedValue(MOCK_CLAIMS)
     mockAdd.mockResolvedValue({ id: 'dep-new-1' })
+    mockRecalculate.mockResolvedValue(undefined)
   })
 
   it('creates manual departure successfully', async () => {
@@ -273,5 +280,42 @@ describe('POST /api/trips/[tripId]/departures', () => {
         seatsAvailable: 50,
       })
     )
+  })
+
+  it('defaults isPublished to false when not provided', async () => {
+    setupFirestoreMock({ tripExists: true })
+
+    const request = makeRequest('trip-1', VALID_DEPARTURE)
+    const response = await POST(request, makeParams('trip-1'))
+    const data = await response.json()
+
+    expect(response.status).toBe(201)
+    expect(data.isPublished).toBe(false)
+    expect(mockAdd).toHaveBeenCalledWith(
+      expect.objectContaining({ isPublished: false })
+    )
+  })
+
+  it('accepts isPublished true and persists it', async () => {
+    setupFirestoreMock({ tripExists: true })
+
+    const request = makeRequest('trip-1', { ...VALID_DEPARTURE, isPublished: true })
+    const response = await POST(request, makeParams('trip-1'))
+    const data = await response.json()
+
+    expect(response.status).toBe(201)
+    expect(data.isPublished).toBe(true)
+    expect(mockAdd).toHaveBeenCalledWith(
+      expect.objectContaining({ isPublished: true })
+    )
+  })
+
+  it('calls recalculateTripAggregates after creation', async () => {
+    setupFirestoreMock({ tripExists: true })
+
+    const request = makeRequest('trip-1', VALID_DEPARTURE)
+    await POST(request, makeParams('trip-1'))
+
+    expect(mockRecalculate).toHaveBeenCalledWith('trip-1')
   })
 })

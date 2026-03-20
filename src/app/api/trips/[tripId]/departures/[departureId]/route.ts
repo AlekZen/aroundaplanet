@@ -5,6 +5,7 @@ import { requirePermission } from '@/lib/auth/requirePermission'
 import { handleApiError } from '@/lib/errors/handleApiError'
 import { AppError } from '@/lib/errors/AppError'
 import { tripDepartureUpdateSchema } from '@/schemas/tripSchema'
+import { recalculateTripAggregates } from '@/lib/firebase/departure-aggregates'
 
 const TRIPS_COLLECTION = 'trips'
 const DEPARTURES_SUBCOLLECTION = 'departures'
@@ -50,6 +51,13 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         400
       )
     }
+    if (isOdooSynced && parsed.data.isPublished !== undefined) {
+      throw new AppError(
+        'ODOO_FIELD_READONLY',
+        'No se puede cambiar isPublished en salidas sincronizadas de Odoo',
+        400
+      )
+    }
 
     const updateData: Record<string, unknown> = {
       ...parsed.data,
@@ -57,6 +65,11 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     }
 
     await depRef.update(updateData)
+
+    // Recalculate trip aggregates when isActive or isPublished changes
+    if (parsed.data.isActive !== undefined || parsed.data.isPublished !== undefined) {
+      await recalculateTripAggregates(tripId)
+    }
 
     return NextResponse.json({
       id: departureId,

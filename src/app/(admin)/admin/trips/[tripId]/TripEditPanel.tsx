@@ -70,6 +70,7 @@ interface DepartureData {
   seatsMax: number
   seatsAvailable: number
   isActive: boolean
+  isPublished: boolean
   syncSource?: string
 }
 
@@ -218,7 +219,10 @@ export function TripEditPanel() {
         heroImages: data.heroImages ?? [],
         documents: data.documents ?? [],
         odooDocuments: data.odooDocuments ?? [],
-        departures: data.departures ?? [],
+        departures: (data.departures ?? []).map((d: DepartureData) => ({
+          ...d,
+          isPublished: d.isPublished ?? false,
+        })),
       })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error desconocido')
@@ -386,6 +390,25 @@ export function TripEditPanel() {
         throw new Error(err.message ?? 'Error al actualizar salida')
       }
       toast.success(isActive ? 'Salida activada' : 'Salida desactivada')
+      fetchTrip()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Error')
+    }
+  }, [tripId, fetchTrip])
+
+  // Toggle departure published
+  const handleToggleDeparturePublished = useCallback(async (depId: string, isPublished: boolean) => {
+    try {
+      const res = await fetch(`/api/trips/${tripId}/departures/${depId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isPublished }),
+      })
+      if (!res.ok) {
+        const err = await res.json()
+        throw new Error(err.message ?? 'Error al actualizar salida')
+      }
+      toast.success(isPublished ? 'Salida publicada' : 'Salida despublicada')
       fetchTrip()
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Error')
@@ -672,23 +695,38 @@ export function TripEditPanel() {
                   {trip.departures.map((dep) => {
                     const start = timestampToDate(dep.startDate)
                     const end = timestampToDate(dep.endDate)
+                    const isOdoo = dep.syncSource === 'odoo'
                     return (
                       <div key={dep.id} className="flex items-center justify-between rounded-lg border p-3">
                         <div className="space-y-1">
                           <div className="flex items-center gap-2">
                             <p className="text-sm font-medium">{dep.odooName}</p>
-                            {dep.syncSource === 'odoo' && <Badge variant="outline">Odoo</Badge>}
+                            {isOdoo && <Badge variant="outline">Odoo</Badge>}
                             {!dep.isActive && <Badge variant="secondary">Inactiva</Badge>}
+                            {!dep.isPublished && <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100">No publicada</Badge>}
                           </div>
                           <p className="text-xs text-muted-foreground">
                             {start?.toLocaleDateString('es-MX') ?? '?'} — {end?.toLocaleDateString('es-MX') ?? '?'}
                             {' · '}{dep.seatsAvailable}/{dep.seatsMax} asientos
                           </p>
                         </div>
-                        <Switch
-                          checked={dep.isActive}
-                          onCheckedChange={(v) => handleToggleDepartureActive(dep.id, v)}
-                        />
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-1.5">
+                            <Label className="text-xs text-muted-foreground">Publica</Label>
+                            <Switch
+                              checked={dep.isPublished}
+                              onCheckedChange={(v) => handleToggleDeparturePublished(dep.id, v)}
+                              disabled={isOdoo}
+                            />
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <Label className="text-xs text-muted-foreground">Activa</Label>
+                            <Switch
+                              checked={dep.isActive}
+                              onCheckedChange={(v) => handleToggleDepartureActive(dep.id, v)}
+                            />
+                          </div>
+                        </div>
                       </div>
                     )
                   })}

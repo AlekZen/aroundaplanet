@@ -5,6 +5,7 @@ import { requirePermission } from '@/lib/auth/requirePermission'
 import { handleApiError } from '@/lib/errors/handleApiError'
 import { AppError } from '@/lib/errors/AppError'
 import { tripDepartureCreateSchema } from '@/schemas/tripSchema'
+import { recalculateTripAggregates } from '@/lib/firebase/departure-aggregates'
 
 const TRIPS_COLLECTION = 'trips'
 const DEPARTURES_SUBCOLLECTION = 'departures'
@@ -37,7 +38,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       )
     }
 
-    const { name, startDate, endDate, seatsMax } = parsed.data
+    const { name, startDate, endDate, seatsMax, isPublished } = parsed.data
     const now = FieldValue.serverTimestamp()
 
     const departureData = {
@@ -52,7 +53,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       seatsReserved: 0,
       seatsTaken: 0,
       isActive: true,
-      isPublished: false,
+      isPublished,
       syncSource: 'manual' as const,
       odooWriteDate: null,
       lastSyncAt: now,
@@ -62,12 +63,16 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
     const depRef = await tripRef.collection(DEPARTURES_SUBCOLLECTION).add(departureData)
 
+    // Recalculate trip aggregates (totalDepartures, nextDepartureDate, etc.)
+    await recalculateTripAggregates(tripId)
+
     return NextResponse.json({
       id: depRef.id,
       name,
       startDate,
       endDate,
       seatsMax,
+      isPublished,
       syncSource: 'manual',
       createdAt: new Date().toISOString(),
     }, { status: 201 })
