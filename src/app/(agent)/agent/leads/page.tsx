@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { formatCurrency } from '@/lib/utils'
 import { STATUS_COLORS } from '@/config/orderStatus'
-import { Globe, Users } from 'lucide-react'
+import { Globe, Users, Plus } from 'lucide-react'
+import { PaymentRegistrationForm } from '@/components/custom/PaymentRegistrationForm'
 
 interface AgentOrder {
   id: string
@@ -36,6 +37,7 @@ export default function AgentLeadsPage() {
   const [orders, setOrders] = useState<AgentOrder[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [isPaymentFormOpen, setIsPaymentFormOpen] = useState(false)
 
   useEffect(() => {
     if (!agentId) {
@@ -167,6 +169,28 @@ export default function AgentLeadsPage() {
           </div>
         </div>
       )}
+
+      {/* FAB: Registrar Pago */}
+      {orders.length > 0 && (
+        <Button
+          className="fixed bottom-20 right-4 z-40 h-14 gap-2 rounded-full bg-accent px-6 text-accent-foreground shadow-lg hover:bg-accent/90 md:bottom-6"
+          onClick={() => setIsPaymentFormOpen(true)}
+        >
+          <Plus className="h-5 w-5" />
+          <span className="hidden sm:inline">Registrar Pago</span>
+        </Button>
+      )}
+
+      <PaymentRegistrationForm
+        isOpen={isPaymentFormOpen}
+        onClose={() => setIsPaymentFormOpen(false)}
+        orders={orders.map((o) => ({
+          id: o.id,
+          tripName: o.tripName,
+          amountTotalCents: o.amountTotalCents,
+          contactName: o.contactName,
+        }))}
+      />
     </div>
   )
 }
