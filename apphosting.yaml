@@ -48,4 +48,7 @@ env:
   - variable: ODOO_API_KEY
     secret: prod-odoo-api-key
     availability: [RUNTIME]
+  - variable: GEMINI_API_KEY
+    secret: prod-gemini-api-key
+    availability: [RUNTIME]
   # Firebase Admin SDK: uses ADC automatically in Cloud Run — no variable needed

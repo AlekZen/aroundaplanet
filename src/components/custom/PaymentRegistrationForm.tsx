@@ -14,7 +14,8 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Loader2, CheckCircle2, Upload } from 'lucide-react'
+import { Loader2, CheckCircle2, Upload, Sparkles, AlertTriangle } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
 import {
   PAYMENT_METHODS, PAYMENT_METHOD_LABELS,
   type PaymentMethod,
@@ -58,6 +59,10 @@ function FormContent({
   const [notes, setNotes] = useState('')
   const [receiptFile, setReceiptFile] = useState<File | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [ocrConfidence, setOcrConfidence] = useState<number | null>(null)
+  const [ocrBankName, setOcrBankName] = useState<string | null>(null)
+  const [ocrBankRef, setOcrBankRef] = useState<string | null>(null)
   const [touched, setTouched] = useState(false)
 
   const amountCents = Math.round(parseFloat(amountStr || '0') * 100)
@@ -187,22 +192,32 @@ function FormContent({
         />
       </div>
 
-      {/* Receipt upload */}
-      <div className="space-y-1">
+      {/* Receipt upload + OCR */}
+      <div className="space-y-2">
         <label htmlFor="receipt-upload" className="text-sm font-medium">
-          Comprobante <span className="text-muted-foreground">(opcional)</span>
+          Comprobante
         </label>
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
             size="sm"
             type="button"
+            disabled={isAnalyzing}
             onClick={() => document.getElementById('receipt-upload')?.click()}
           >
-            <Upload className="mr-1.5 h-4 w-4" />
-            {receiptFile ? 'Cambiar' : 'Subir foto'}
+            {isAnalyzing ? (
+              <>
+                <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
+                Analizando...
+              </>
+            ) : (
+              <>
+                <Upload className="mr-1.5 h-4 w-4" />
+                {receiptFile ? 'Cambiar foto' : 'Subir comprobante'}
+              </>
+            )}
           </Button>
-          {receiptFile && (
+          {receiptFile && !isAnalyzing && (
             <span className="truncate text-xs text-muted-foreground">{receiptFile.name}</span>
           )}
         </div>
@@ -212,8 +227,67 @@ function FormContent({
           accept="image/*"
           capture="environment"
           className="hidden"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setReceiptFile(e.target.files?.[0] ?? null)}
+          onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {
+            const file = e.target.files?.[0] ?? null
+            setReceiptFile(file)
+            if (!file) return
+
+            // OCR: analyze receipt with Gemini
+            setIsAnalyzing(true)
+            setOcrConfidence(null)
+            setOcrBankName(null)
+            setOcrBankRef(null)
+            try {
+              const formData = new FormData()
+              formData.append('file', file)
+              const res = await fetch('/api/payments/ocr', { method: 'POST', body: formData })
+              if (!res.ok) {
+                const err = await res.json().catch(() => ({}))
+                throw new Error(err.message ?? 'Error en OCR')
+              }
+              const ocr = await res.json()
+              // Pre-fill fields with OCR data
+              if (ocr.amountCents && ocr.amountCents > 0) {
+                setAmountStr((ocr.amountCents / 100).toFixed(2))
+              }
+              if (ocr.date) setDate(ocr.date)
+              if (ocr.confidence) setOcrConfidence(ocr.confidence)
+              if (ocr.bankName) setOcrBankName(ocr.bankName)
+              if (ocr.bankReference) setOcrBankRef(ocr.bankReference)
+              // Add bank info to notes
+              const bankInfo = [
+                ocr.bankName ? `Banco: ${ocr.bankName}` : null,
+                ocr.bankReference ? `Ref: ${ocr.bankReference}` : null,
+                ocr.beneficiaryName ? `Beneficiario: ${ocr.beneficiaryName}` : null,
+              ].filter(Boolean).join(' | ')
+              if (bankInfo && !notes) setNotes(bankInfo)
+
+              toast.success('Datos extraidos del comprobante')
+            } catch {
+              toast.error('No se pudo analizar el comprobante — llena los datos manualmente')
+            } finally {
+              setIsAnalyzing(false)
+            }
+          }}
         />
+        {/* OCR confidence indicator */}
+        {ocrConfidence !== null && (
+          <div className="flex items-center gap-2 rounded-md bg-muted/50 p-2 text-xs">
+            <Sparkles className="h-3.5 w-3.5 text-primary" />
+            <span>
+              IA extrajo los datos
+              {ocrConfidence >= 90 ? (
+                <Badge className="ml-1.5 bg-green-100 text-green-800 text-[10px]">Alta confianza</Badge>
+              ) : ocrConfidence >= 70 ? (
+                <Badge className="ml-1.5 bg-yellow-100 text-yellow-800 text-[10px]">Verificar datos</Badge>
+              ) : (
+                <Badge className="ml-1.5 bg-red-100 text-red-800 text-[10px]">Baja confianza</Badge>
+              )}
+            </span>
+            {ocrBankName && <span className="text-muted-foreground">— {ocrBankName}</span>}
+            {ocrBankRef && <span className="font-mono text-muted-foreground">{ocrBankRef}</span>}
+          </div>
+        )}
       </div>
 
       {/* Notes */}
