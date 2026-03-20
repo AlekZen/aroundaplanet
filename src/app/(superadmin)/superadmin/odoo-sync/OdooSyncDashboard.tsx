@@ -36,8 +36,17 @@ export function OdooSyncDashboard() {
     }
   }, [])
 
+  const handleSyncAgents = useCallback(async (): Promise<OdooSyncResult> => {
+    const res = await fetch('/api/odoo/sync-agents', { method: 'POST' })
+    if (!res.ok) {
+      const err = await res.json()
+      throw new Error(err.message ?? 'Error en sincronizacion de agentes')
+    }
+    return res.json()
+  }, [])
+
   return (
-    <div className="grid gap-6 md:grid-cols-2">
+    <div className="grid gap-6 md:grid-cols-3">
       <div>
         <h2 className="mb-3 text-lg font-medium text-foreground">Usuarios</h2>
         <OdooSyncCard onSync={handleSyncUsers} />
@@ -45,6 +54,10 @@ export function OdooSyncDashboard() {
       <div>
         <h2 className="mb-3 text-lg font-medium text-foreground">Viajes (2026)</h2>
         <OdooSyncCard onSync={handleSyncTrips} />
+      </div>
+      <div>
+        <h2 className="mb-3 text-lg font-medium text-foreground">Agentes</h2>
+        <OdooSyncCard onSync={handleSyncAgents} />
       </div>
     </div>
   )
