@@ -37,7 +37,8 @@ export async function getUserClaims(uid: string): Promise<UserClaims | null> {
  */
 export async function setUserClaims(
   uid: string,
-  claims: { roles: UserRole[]; agentId?: string }
+  claims: { roles: UserRole[]; agentId?: string },
+  options?: { skipRevoke?: boolean }
 ): Promise<void> {
   // Ensure 'cliente' is always present
   const roles = claims.roles.includes('cliente')
@@ -55,7 +56,10 @@ export async function setUserClaims(
   await adminAuth.setCustomUserClaims(uid, customClaims)
 
   // Step 2: Revoke refresh tokens to force re-auth
-  await adminAuth.revokeRefreshTokens(uid)
+  // Skip when superadmin edits their own claims (would invalidate their session)
+  if (!options?.skipRevoke) {
+    await adminAuth.revokeRefreshTokens(uid)
+  }
 
   // Step 3: Sync roles to Firestore (copy for queries/UI)
   const updateData: Record<string, unknown> = {

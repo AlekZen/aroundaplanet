@@ -20,7 +20,7 @@ import { cn } from '@/lib/utils'
 import { staggerChildren } from '@/lib/animations/variants'
 import { spring } from '@/lib/animations/transitions'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
-import { LayoutDashboard, CreditCard, BarChart3, Shield, UserCircle, RefreshCw, Map, Users, Plane, Contact } from 'lucide-react'
+import { LayoutDashboard, CreditCard, BarChart3, Shield, UserCircle, RefreshCw, Map, Users, Plane, Contact, UserCheck } from 'lucide-react'
 
 interface RoleSidebarProps {
   roles: string[]
@@ -46,12 +46,14 @@ const SECTIONS_BY_ROLE: Record<string, Array<{ id: string; label: string; icon: 
   ],
   agente: [
     { id: 'dashboard', label: 'Mi Negocio', icon: <LayoutDashboard className="h-5 w-5" />, href: '/agent/dashboard' },
+    { id: 'agent-clients', label: 'Mis Clientes', icon: <UserCheck className="h-5 w-5" />, href: '/agent/clients' },
     { id: 'agent-my-trips', label: 'Mis Viajes', icon: <Plane className="h-5 w-5" />, href: '/agent/my-trips' },
     { id: 'agent-profile', label: 'Mi Perfil', icon: <UserCircle className="h-5 w-5" />, href: '/agent/profile' },
   ],
   superadmin: [
     { id: 'users', label: 'Usuarios', icon: <Shield className="h-5 w-5" />, href: '/superadmin/users' },
     { id: 'agents', label: 'Agentes', icon: <Contact className="h-5 w-5" />, href: '/superadmin/agents' },
+    { id: 'clients', label: 'Clientes', icon: <UserCheck className="h-5 w-5" />, href: '/superadmin/clients' },
     { id: 'leads', label: 'Leads', icon: <Users className="h-5 w-5" />, href: '/superadmin/leads' },
     { id: 'verification', label: 'Verificacion', icon: <CreditCard className="h-5 w-5" />, href: '/superadmin/verification' },
     { id: 'trips', label: 'Viajes', icon: <Map className="h-5 w-5" />, href: '/superadmin/trips' },

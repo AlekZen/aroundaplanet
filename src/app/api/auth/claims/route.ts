@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
+import { Timestamp } from 'firebase-admin/firestore'
 import { adminAuth, adminDb } from '@/lib/firebase/admin'
 import { getUserClaims, setUserClaims } from '@/lib/auth/claims'
 import { clearPermissionCache } from '@/lib/auth/permissions'
@@ -71,25 +72,42 @@ export async function POST(request: Request) {
       )
     }
 
-    const { uid, roles, agentId } = parsed.data
+    const { uid, roles, agentId, odooTeamId } = parsed.data
 
-    // Validate agentId exists in Firestore if provided
-    // NOTE: `agents` collection will be created in Story 2.1a (Trip Sync Odoo→Firestore)
-    if (agentId) {
+    // Bootstrap agents/{agentId} document if assigning agente role.
+    // This document is the root for agent-scoped subcollections (clients, commissions, etc.)
+    // and is required by Firestore security rules for agent isolation.
+    if (agentId && roles.includes('agente')) {
       const agentDoc = await adminDb.doc(`agents/${agentId}`).get()
       if (!agentDoc.exists) {
-        return NextResponse.json(
-          { code: 'AGENT_NOT_FOUND', message: 'El agentId no existe en el sistema', retryable: false },
-          { status: 400 }
-        )
+        const now = Timestamp.now()
+        await adminDb.doc(`agents/${agentId}`).set({
+          uid: uid,
+          createdAt: now,
+          updatedAt: now,
+        })
       }
     }
 
-    // Set claims (includes revokeRefreshTokens and Firestore sync)
-    await setUserClaims(uid, { roles, agentId })
+    // Set claims. When the superadmin edits their OWN roles, skip token
+    // revocation to avoid invalidating their current session cookie.
+    const isSelfEdit = decoded.uid === uid
+    await setUserClaims(uid, { roles, agentId }, { skipRevoke: isSelfEdit })
+
+    // Save odooTeamId to user profile if provided (links platform user to Odoo agent)
+    if (odooTeamId !== undefined) {
+      await adminDb.doc(`users/${uid}`).update({ odooTeamId })
+    }
 
     // Invalidate permission cache after role change
     clearPermissionCache()
+
+    // For self-edits: tell the client to refresh its ID token so the
+    // new claims (e.g. agentId) propagate to the Zustand store and
+    // a fresh session cookie is created.
+    if (isSelfEdit) {
+      return NextResponse.json({ refreshRequired: true })
+    }
 
     return new NextResponse(null, { status: 204 })
   } catch {

@@ -5,10 +5,11 @@ import { RoleSidebar } from '@/components/custom/RoleSidebar'
 import { RoleSwitcher } from '@/components/custom/RoleSwitcher'
 import { BottomNavBar } from '@/components/custom/BottomNavBar'
 import { PageTransition } from '@/components/shared/PageTransition'
-import { LayoutDashboard, Globe, Users, User } from 'lucide-react'
+import { LayoutDashboard, Globe, Users, User, UserCheck } from 'lucide-react'
 
 const AGENT_TABS = [
   { id: 'dashboard', label: 'Mi Negocio', icon: <LayoutDashboard className="h-5 w-5" />, href: '/agent/dashboard' },
+  { id: 'clients', label: 'Clientes', icon: <UserCheck className="h-5 w-5" />, href: '/agent/clients' },
   { id: 'catalog', label: 'Catalogo', icon: <Globe className="h-5 w-5" />, href: '/agent/catalog' },
   { id: 'leads', label: 'Mis Leads', icon: <Users className="h-5 w-5" />, href: '/agent/leads' },
   { id: 'profile', label: 'Perfil', icon: <User className="h-5 w-5" />, href: '/agent/profile' },

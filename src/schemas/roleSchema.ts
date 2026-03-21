@@ -11,6 +11,7 @@ export const setRolesSchema = z.object({
   uid: z.string().min(1, 'uid es requerido'),
   roles: z.array(z.enum(VALID_ROLES)).min(1, 'Al menos un rol es requerido'),
   agentId: z.string().optional(),
+  odooTeamId: z.number().int().positive().optional(),
 }).refine(
   (data) => {
     if (data.roles.includes('agente') && !data.agentId) return false

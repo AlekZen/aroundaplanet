@@ -6,7 +6,8 @@ const mockSetCustomUserClaims = vi.fn()
 const mockRevokeRefreshTokens = vi.fn()
 const mockDocGet = vi.fn()
 const mockDocUpdate = vi.fn()
-const mockDoc = vi.fn(() => ({ get: mockDocGet, update: mockDocUpdate }))
+const mockDocSet = vi.fn()
+const mockDoc = vi.fn(() => ({ get: mockDocGet, update: mockDocUpdate, set: mockDocSet }))
 const mockCookieGet = vi.fn()
 const mockClearPermissionCache = vi.fn()
 
@@ -174,13 +175,14 @@ describe('/api/auth/claims', () => {
       expect(mockClearPermissionCache).toHaveBeenCalledTimes(1)
     })
 
-    it('returns 400 when agentId not found in Firestore', async () => {
+    it('bootstraps agents/{agentId} document when it does not exist', async () => {
       mockCookieGet.mockReturnValue({ value: 'valid-session' })
       mockVerifySessionCookie.mockResolvedValue({
         uid: 'caller123',
         roles: ['cliente', 'superadmin'],
       })
       mockDocGet.mockResolvedValue({ exists: false })
+      mockDocSet.mockResolvedValue(undefined)
 
       const { POST } = await import('./route')
       const response = await POST(
@@ -190,14 +192,16 @@ describe('/api/auth/claims', () => {
           body: JSON.stringify({
             uid: 'user123',
             roles: ['cliente', 'agente'],
-            agentId: 'nonexistent',
+            agentId: 'new-agent-id',
           }),
         })
       )
 
-      expect(response.status).toBe(400)
-      const body = await response.json()
-      expect(body.code).toBe('AGENT_NOT_FOUND')
+      expect(response.status).toBe(204)
+      expect(mockDoc).toHaveBeenCalledWith('agents/new-agent-id')
+      expect(mockDocSet).toHaveBeenCalledWith(
+        expect.objectContaining({ uid: 'user123' })
+      )
     })
   })
 })

@@ -12,16 +12,26 @@ export function UsersPanel() {
   const [deactivateUser, setDeactivateUser] = useState<UserProfile | null>(null)
   const [refreshKey, setRefreshKey] = useState(0)
 
-  const handleSaveRoles = useCallback(async (uid: string, roles: UserRole[], agentId?: string) => {
+  const handleSaveRoles = useCallback(async (uid: string, roles: UserRole[], agentId?: string, odooTeamId?: number) => {
     const res = await fetch('/api/auth/claims', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ uid, roles, agentId }),
+      body: JSON.stringify({ uid, roles, agentId, odooTeamId }),
     })
+    // Self-edit returns 200 with { refreshRequired: true }.
+    // Other-edit returns 204.
+    if (res.status === 200) {
+      // Self-edit: reload page to pick up new claims via AuthInitializer
+      setEditUser(null)
+      window.location.reload()
+      return
+    }
+
     if (!res.ok) {
       const err = await res.json()
       throw new Error(err.message ?? 'Error al actualizar roles')
     }
+
     setEditUser(null)
     setRefreshKey((k) => k + 1)
   }, [])

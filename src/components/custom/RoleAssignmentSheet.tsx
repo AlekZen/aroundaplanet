@@ -49,7 +49,7 @@ export interface RoleAssignmentSheetProps {
     agentId?: string
     odooTeamId?: number
   } | null
-  onSave: (uid: string, roles: UserRole[], agentId?: string) => Promise<void>
+  onSave: (uid: string, roles: UserRole[], agentId?: string, odooTeamId?: number) => Promise<void>
 }
 
 export function RoleAssignmentSheet({
@@ -167,7 +167,12 @@ export function RoleAssignmentSheet({
     setSaveError(null)
     try {
       const roles = Array.from(selectedRoles) as UserRole[]
-      await onSave(user.uid, roles, isAgenteSelected ? agentId.trim() : undefined)
+      await onSave(
+        user.uid,
+        roles,
+        isAgenteSelected ? agentId.trim() : undefined,
+        isAgenteSelected ? selectedOdooAgent?.odooTeamId : undefined
+      )
     } catch (err) {
       setSaveError(err instanceof Error ? err.message : 'Error al guardar roles')
     } finally {
