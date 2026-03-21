@@ -127,7 +127,8 @@ export async function syncTrips(
 
   // Step 4: Soft delete — mark trips that are no longer in Odoo results
   // Only in full mode (incremental mode doesn't have the complete list)
-  if (options.mode === 'full') {
+  // Guard: if Odoo returned 0 results, skip soft-delete to prevent wiping the catalog
+  if (options.mode === 'full' && odooTrips.length > 0) {
     for (const [odooId, doc] of existingDocs) {
       if (!processedOdooIds.has(odooId)) {
         try {

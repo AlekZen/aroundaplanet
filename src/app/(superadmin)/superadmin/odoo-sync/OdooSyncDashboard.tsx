@@ -18,7 +18,7 @@ export function OdooSyncDashboard() {
     const res = await fetch('/api/odoo/sync-trips', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mode: 'full', nameFilter: '2026', minPrice: 5000 }),
+      body: JSON.stringify({ mode: 'full', minPrice: 5000 }),
     })
     if (!res.ok) {
       const err = await res.json()
@@ -52,7 +52,7 @@ export function OdooSyncDashboard() {
         <OdooSyncCard onSync={handleSyncUsers} />
       </div>
       <div>
-        <h2 className="mb-3 text-lg font-medium text-foreground">Viajes (2026)</h2>
+        <h2 className="mb-3 text-lg font-medium text-foreground">Viajes</h2>
         <OdooSyncCard onSync={handleSyncTrips} />
       </div>
       <div>
