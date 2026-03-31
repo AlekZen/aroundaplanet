@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { tripId, departureId, contactName, contactPhone, utmSource, utmMedium, utmCampaign, agentId: rawAgentId } = parsed.data
+    const { tripId, departureId, contactName, contactPhone, utmSource, utmMedium, utmCampaign, agentId: rawAgentId, agentContactId } = parsed.data
 
     // Validate agentId server-side: must be active user with 'agente' role
     let validatedAgentId: string | null = null
@@ -104,6 +104,7 @@ export async function POST(request: NextRequest) {
       guestToken,
       guestIp: claims ? null : ip,
       agentId: validatedAgentId,
+      agentContactId: agentContactId ?? null,
       tripId,
       departureId: departureId ?? null,
       contactName,

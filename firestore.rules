@@ -97,6 +97,18 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // === AGENT CONTACTS ===
+    // Agent-created contacts (platform-side). Read: owner agent or admin+.
+    // Write: NEVER from client (Admin SDK only via API routes)
+    match /agentContacts/{contactId} {
+      allow read: if request.auth != null
+                  && (request.auth.token.agentId == resource.data.agentId
+                      || 'admin' in request.auth.token.roles
+                      || 'director' in request.auth.token.roles
+                      || 'superadmin' in request.auth.token.roles);
+      allow write: if false;
+    }
+
     // === AUDIT LOG ===
     // Read: admin/superadmin only. Write: NEVER from client (Admin SDK only)
     match /auditLog/{logId} {

@@ -58,6 +58,7 @@ export const createOrderSchema = z.object({
   utmMedium: z.string().optional(),
   utmCampaign: z.string().optional(),
   agentId: z.string().max(128).optional(),
+  agentContactId: z.string().max(128).optional(),
 })
 
 export type CreateOrderFormData = z.infer<typeof createOrderSchema>
