@@ -12,10 +12,10 @@ export async function createCommissionFromPayment(
   paymentId: string,
   paymentData: Record<string, unknown>
 ): Promise<void> {
-  const agentId = paymentData.agentId as string | undefined | null
+  const agentId = typeof paymentData.agentId === 'string' ? paymentData.agentId : null
   if (!agentId) return
 
-  const amountCents = paymentData.amountCents as number | undefined
+  const amountCents = typeof paymentData.amountCents === 'number' ? paymentData.amountCents : null
   if (!amountCents || amountCents <= 0) return
 
   // Read agent doc for commissionRate with Zod-style validation (F-04)
@@ -50,28 +50,35 @@ export async function createCommissionFromPayment(
   const commissionId = `comm_${paymentId}`
   const docRef = adminDb.doc(`agents/${agentId}/commissions/${commissionId}`)
 
-  // Check if already exists to avoid overwriting approved/paid commissions
-  const existing = await docRef.get()
-  if (existing.exists) {
-    console.info(`[Commission Hook] Commission already exists for paymentId=${paymentId}, skipping`)
-    return
-  }
+  const orderId = typeof paymentData.orderId === 'string' ? paymentData.orderId : ''
+  const clientName = typeof paymentData.clientName === 'string' ? paymentData.clientName
+    : typeof paymentData.agentName === 'string' ? paymentData.agentName : ''
+  const tripName = typeof paymentData.tripName === 'string' ? paymentData.tripName : ''
 
-  await docRef.set({
-    paymentId,
-    orderId: (paymentData.orderId as string) || '',
-    agentId,
-    clientName: (paymentData.clientName as string) || (paymentData.agentName as string) || '',
-    tripName: (paymentData.tripName as string) || '',
-    paymentAmountCents: amountCents,
-    commissionRate,
-    commissionAmountCents,
-    status: 'pending',
-    period,
-    createdAt: FieldValue.serverTimestamp(),
-    updatedAt: FieldValue.serverTimestamp(),
-    approvedBy: null,
-    approvedAt: null,
-    paidAt: null,
+  // Transaction: check-then-set atomically to prevent overwriting approved/paid commissions
+  await adminDb.runTransaction(async (tx) => {
+    const existing = await tx.get(docRef)
+    if (existing.exists) {
+      console.info(`[Commission Hook] Commission already exists for paymentId=${paymentId}, skipping`)
+      return
+    }
+
+    tx.set(docRef, {
+      paymentId,
+      orderId,
+      agentId,
+      clientName,
+      tripName,
+      paymentAmountCents: amountCents,
+      commissionRate,
+      commissionAmountCents,
+      status: 'pending',
+      period,
+      createdAt: FieldValue.serverTimestamp(),
+      updatedAt: FieldValue.serverTimestamp(),
+      approvedBy: null,
+      approvedAt: null,
+      paidAt: null,
+    })
   })
 }
