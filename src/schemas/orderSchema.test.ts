@@ -42,13 +42,13 @@ describe('orderSchema', () => {
       expect(result.success).toBe(false)
     })
 
-    it('rejects missing departureId', () => {
+    it('accepts missing departureId (optional for agent enrollments)', () => {
       const result = createOrderSchema.safeParse({
         tripId: 'trip-123',
         contactName: 'Juan',
         contactPhone: '+523411234567',
       })
-      expect(result.success).toBe(false)
+      expect(result.success).toBe(true)
     })
 
     it('rejects empty tripId', () => {
@@ -81,18 +81,18 @@ describe('orderSchema', () => {
       expect(result.success).toBe(false)
     })
 
-    it('rejects missing contactPhone', () => {
+    it('accepts missing contactPhone (optional for authenticated enrollments)', () => {
       const { contactPhone: _, ...withoutPhone } = VALID_ORDER
       const result = createOrderSchema.safeParse(withoutPhone)
-      expect(result.success).toBe(false)
+      expect(result.success).toBe(true)
     })
 
-    it('rejects contactPhone shorter than 10 characters', () => {
+    it('accepts contactPhone of any length when provided', () => {
       const result = createOrderSchema.safeParse({
         ...VALID_ORDER,
         contactPhone: '+52123456',
       })
-      expect(result.success).toBe(false)
+      expect(result.success).toBe(true)
     })
 
     it('rejects agentId longer than 128 characters', () => {

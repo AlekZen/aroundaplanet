@@ -30,21 +30,22 @@ describe('useRoleNavigation', () => {
     expect(result.current).toEqual([])
   })
 
-  it('returns exactly 2 items for cliente-only user', () => {
+  it('returns exactly 3 items for cliente-only user', () => {
     useAuthStore.setState({
       isAuthenticated: true,
       claims: { roles: ['cliente'] },
     })
 
     const { result } = renderHook(() => useRoleNavigation())
-    expect(result.current).toHaveLength(2)
+    expect(result.current).toHaveLength(3)
     expect(result.current[0]).toEqual({
       role: 'cliente',
       label: 'Mis Viajes',
       href: '/client/my-trips',
       priority: 1,
     })
-    expect(result.current[1].label).toBe('Perfil')
+    expect(result.current[1].label).toBe('Explorar Viajes')
+    expect(result.current[2].label).toBe('Perfil')
   })
 
   it('returns exactly 3 items for agente-only user', () => {
@@ -115,8 +116,8 @@ describe('useRoleNavigation', () => {
     })
 
     const { result } = renderHook(() => useRoleNavigation())
-    // admin(3): 1 item + agente(2): 3 items + cliente(1): 2 items = 6 total
-    expect(result.current).toHaveLength(6)
+    // admin(3): 1 item + agente(2): 3 items + cliente(1): 3 items = 7 total
+    expect(result.current).toHaveLength(7)
 
     // First item should be admin (priority 3)
     expect(result.current[0].role).toBe('admin')
@@ -127,6 +128,7 @@ describe('useRoleNavigation', () => {
     // Then cliente items (priority 1)
     expect(result.current[4].role).toBe('cliente')
     expect(result.current[5].role).toBe('cliente')
+    expect(result.current[6].role).toBe('cliente')
 
     // Verify strict descending order
     for (let i = 1; i < result.current.length; i++) {
@@ -141,8 +143,8 @@ describe('useRoleNavigation', () => {
     })
 
     const { result } = renderHook(() => useRoleNavigation())
-    // superadmin(1) + director(1) + admin(1) + agente(3) + cliente(2) = 8
-    expect(result.current).toHaveLength(8)
+    // superadmin(1) + director(1) + admin(1) + agente(3) + cliente(3) = 9
+    expect(result.current).toHaveLength(9)
     // First should be superadmin (priority 5)
     expect(result.current[0].role).toBe('superadmin')
   })

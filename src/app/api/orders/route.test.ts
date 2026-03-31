@@ -266,11 +266,13 @@ describe('POST /api/orders', () => {
     expect(res.status).toBe(400)
   })
 
-  it('returns 400 for short contactPhone', async () => {
-    const req = makeRequest({ ...VALID_BODY, contactPhone: '+521' })
+  it('accepts order without contactPhone (optional field)', async () => {
+    setupFirestoreMocks({})
+    const { contactPhone: _, ...withoutPhone } = VALID_BODY
+    const req = makeRequest(withoutPhone)
     const res = await POST(req)
 
-    expect(res.status).toBe(400)
+    expect(res.status).toBe(201)
   })
 
   it('returns 500 when trip has no price configured', async () => {

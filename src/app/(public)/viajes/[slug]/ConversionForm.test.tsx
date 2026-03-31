@@ -129,16 +129,17 @@ describe('ConversionForm', () => {
     expect(buttons.some((b) => (b as HTMLButtonElement).disabled || b.closest('button')?.disabled)).toBe(true)
   })
 
-  it('renders empty state when no departures available', () => {
+  it('hides departure selector when no departures available', () => {
     render(<ConversionForm {...DEFAULT_PROPS} departures={[]} />)
-    const msgs = screen.getAllByText(/Sin salidas disponibles/)
-    expect(msgs.length).toBeGreaterThanOrEqual(1)
+    // No departure selector rendered
+    expect(screen.queryByText('Fecha de salida')).not.toBeInTheDocument()
+    expect(screen.queryByText('Selecciona una fecha')).not.toBeInTheDocument()
   })
 
-  it('renders WhatsApp link in empty state', () => {
+  it('still renders contact form when no departures available', () => {
     render(<ConversionForm {...DEFAULT_PROPS} departures={[]} />)
-    const links = screen.getAllByText('Contactar por WhatsApp')
-    expect(links.length).toBeGreaterThanOrEqual(1)
+    const labels = screen.getAllByText('Nombre completo')
+    expect(labels.length).toBeGreaterThanOrEqual(1)
   })
 
   it('filters out sold-out departures', () => {

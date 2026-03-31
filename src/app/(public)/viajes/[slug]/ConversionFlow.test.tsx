@@ -3,10 +3,11 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 
 // === Hoisted mocks ===
 
-const { mockTrackEvent, mockSearchParams, mockUseAuthStore } = vi.hoisted(() => ({
+const { mockTrackEvent, mockSearchParams, mockUseAuthStore, mockRouterPush } = vi.hoisted(() => ({
   mockTrackEvent: vi.fn(),
   mockSearchParams: new URLSearchParams(),
   mockUseAuthStore: vi.fn(),
+  mockRouterPush: vi.fn(),
 }))
 
 vi.mock('@/lib/analytics', () => ({
@@ -15,6 +16,7 @@ vi.mock('@/lib/analytics', () => ({
 
 vi.mock('next/navigation', () => ({
   useSearchParams: () => mockSearchParams,
+  useRouter: () => ({ push: mockRouterPush }),
 }))
 
 vi.mock('@/stores/useAuthStore', () => ({
@@ -57,7 +59,7 @@ const mockSessionStorage: Record<string, string> = {}
 describe('ConversionFlow', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    mockUseAuthStore.mockReturnValue({ isAuthenticated: true, isLoading: false })
+    mockUseAuthStore.mockReturnValue({ isAuthenticated: false, isLoading: false, user: null, profile: null })
     // Reset search params
     for (const key of [...mockSearchParams.keys()]) {
       mockSearchParams.delete(key)
@@ -85,7 +87,7 @@ describe('ConversionFlow', () => {
     expect(screen.getByText('Cotizar')).toBeInTheDocument()
   })
 
-  it('opens form when authenticated user clicks CTA', async () => {
+  it('opens form when guest clicks CTA', async () => {
     render(<ConversionFlow {...DEFAULT_PROPS} />)
 
     fireEvent.click(screen.getByText('Cotizar Ahora'))
@@ -96,20 +98,33 @@ describe('ConversionFlow', () => {
     })
   })
 
-  it('opens form without auth when CTA is clicked (guest checkout)', async () => {
-    mockUseAuthStore.mockReturnValue({ isAuthenticated: false, isLoading: false })
+  it('calls handleAuthEnroll when authenticated user clicks CTA (no form)', async () => {
+    mockUseAuthStore.mockReturnValue({
+      isAuthenticated: true,
+      isLoading: false,
+      user: { displayName: 'Juan', email: 'juan@test.com' },
+      profile: { displayName: 'Juan Perez' },
+    })
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        orderId: 'order-1',
+        tripId: 'trip-1',
+        status: 'Interesado',
+      }),
+    })
+    vi.stubGlobal('fetch', mockFetch)
+
     render(<ConversionFlow {...DEFAULT_PROPS} />)
 
     fireEvent.click(screen.getByText('Cotizar Ahora'))
 
     await waitFor(() => {
-      const titles = screen.getAllByText('Cotizar Viaje')
-      expect(titles.length).toBeGreaterThanOrEqual(1)
+      expect(mockFetch).toHaveBeenCalledWith('/api/orders', expect.objectContaining({ method: 'POST' }))
     })
   })
 
-  it('auto-opens form from URL params without requiring auth', async () => {
-    mockUseAuthStore.mockReturnValue({ isAuthenticated: false, isLoading: false })
+  it('auto-opens form from URL params for guests', async () => {
     mockSearchParams.set('cotizar', 'true')
     mockSearchParams.set('salida', 'dep-1')
 
@@ -121,16 +136,22 @@ describe('ConversionFlow', () => {
     })
   })
 
-  it('passes isAuthenticated prop to ConversionForm', async () => {
-    mockUseAuthStore.mockReturnValue({ isAuthenticated: false, isLoading: false })
+  it('does not render ConversionForm for authenticated users', () => {
+    mockUseAuthStore.mockReturnValue({
+      isAuthenticated: true,
+      isLoading: false,
+      user: { displayName: 'Juan' },
+      profile: null,
+    })
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ orderId: 'x', tripId: 'trip-1', status: 'Interesado' }),
+    }))
+
     render(<ConversionFlow {...DEFAULT_PROPS} />)
 
-    fireEvent.click(screen.getByText('Cotizar Ahora'))
-
-    await waitFor(() => {
-      const titles = screen.getAllByText('Cotizar Viaje')
-      expect(titles.length).toBeGreaterThanOrEqual(1)
-    })
+    // ConversionForm is not rendered for authenticated users
+    expect(screen.queryByText('Cotizar Viaje')).not.toBeInTheDocument()
   })
 
   it('tracks begin_checkout when CTA is clicked', () => {
