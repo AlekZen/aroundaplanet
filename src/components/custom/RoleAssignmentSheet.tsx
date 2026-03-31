@@ -178,7 +178,7 @@ export function RoleAssignmentSheet({
     } finally {
       setIsSaving(false)
     }
-  }, [user, selectedRoles, agentId, isAgenteSelected, onSave])
+  }, [user, selectedRoles, agentId, isAgenteSelected, selectedOdooAgent, onSave])
 
   if (!user) return null
 
