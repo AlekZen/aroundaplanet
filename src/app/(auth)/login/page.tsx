@@ -208,7 +208,7 @@ export default function LoginPage() {
       <p className="text-center text-sm text-muted-foreground flex items-center justify-center min-h-11">
         No tienes cuenta?{' '}
         <Link
-          href="/register"
+          href={returnUrl !== '/dashboard' ? `/register?returnUrl=${encodeURIComponent(returnUrl)}` : '/register'}
           className="text-primary font-medium hover:underline ml-1"
         >
           Registrate

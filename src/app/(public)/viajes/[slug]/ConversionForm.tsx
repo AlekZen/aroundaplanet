@@ -102,7 +102,8 @@ export function ConversionForm({
 
   const nameError = touchedName && contactName.trim().length < 2 ? 'Minimo 2 caracteres' : null
   const phoneError = touchedPhone && phoneNumber.trim().length < MIN_PHONE_DIGITS ? `Minimo ${MIN_PHONE_DIGITS} digitos` : null
-  const isFormValid = contactName.trim().length >= 2 && phoneNumber.trim().length >= MIN_PHONE_DIGITS && !!departureId
+  const hasDepartures = availableDepartures.length > 0
+  const isFormValid = contactName.trim().length >= 2 && phoneNumber.trim().length >= MIN_PHONE_DIGITS && (hasDepartures ? !!departureId : true)
 
   function handleClose() {
     setFormStep('form')
@@ -128,7 +129,7 @@ export function ConversionForm({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           tripId,
-          departureId,
+          ...(departureId ? { departureId } : {}),
           contactName: contactName.trim(),
           contactPhone,
           ...attributionData,
@@ -186,9 +187,15 @@ export function ConversionForm({
         <p className="text-sm text-muted-foreground">Te contactaremos pronto por WhatsApp</p>
       </div>
       <div className="space-y-3">
-        {!isAuthenticated && (
+        {isAuthenticated ? (
           <Button asChild className="h-12 w-full bg-primary text-lg font-semibold text-primary-foreground hover:bg-primary/90">
-            <Link href={`/register?returnUrl=${encodeURIComponent(`/viajes/${tripSlug}`)}`}>
+            <Link href="/client/my-trips">
+              Ver mis viajes
+            </Link>
+          </Button>
+        ) : (
+          <Button asChild className="h-12 w-full bg-primary text-lg font-semibold text-primary-foreground hover:bg-primary/90">
+            <Link href={`/register?returnUrl=${encodeURIComponent('/client/my-trips')}`}>
               Crear cuenta para dar seguimiento
             </Link>
           </Button>
@@ -217,112 +224,96 @@ export function ConversionForm({
         <p className="font-mono text-2xl font-bold text-primary">{formatPrice(tripPrice)}</p>
       </div>
 
-      {/* Empty state: no departures */}
-      {availableDepartures.length === 0 ? (
-        <div className="space-y-3 text-center">
-          <p className="text-muted-foreground">Sin salidas disponibles — contactanos</p>
-          <Button asChild variant="outline" className="w-full">
-            <a
-              href={buildWhatsAppUrl(WHATSAPP_CONTACT_NUMBER)}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Contactar por WhatsApp
-            </a>
-          </Button>
+      {/* Contact name */}
+      <div className="space-y-1">
+        <label htmlFor="contact-name" className="text-sm font-medium text-foreground">
+          Nombre completo
+        </label>
+        <Input
+          id="contact-name"
+          placeholder="Tu nombre"
+          value={contactName}
+          onChange={(e) => setContactName(e.target.value)}
+          onBlur={() => setTouchedName(true)}
+          autoComplete="name"
+          aria-invalid={!!nameError}
+        />
+        {nameError && <p className="text-xs text-destructive">{nameError}</p>}
+      </div>
+
+      {/* Phone with country code */}
+      <div className="space-y-1">
+        <label htmlFor="phone-number" className="text-sm font-medium text-foreground">
+          WhatsApp / Telefono
+        </label>
+        <div className="flex gap-2">
+          <Select value={countryCode} onValueChange={setCountryCode}>
+            <SelectTrigger className="w-[130px] shrink-0" aria-label="Codigo de pais">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {PHONE_COUNTRY_CODES.map((c) => (
+                <SelectItem key={`${c.short}-${c.code}`} value={c.code}>
+                  {c.short} {c.code}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Input
+            id="phone-number"
+            type="tel"
+            placeholder="Numero de telefono"
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value.replace(/[^\d]/g, ''))}
+            onBlur={() => setTouchedPhone(true)}
+            autoComplete="tel-national"
+            aria-invalid={!!phoneError}
+          />
         </div>
-      ) : (
-        <>
-          {/* Contact name */}
-          <div className="space-y-1">
-            <label htmlFor="contact-name" className="text-sm font-medium text-foreground">
-              Nombre completo
-            </label>
-            <Input
-              id="contact-name"
-              placeholder="Tu nombre"
-              value={contactName}
-              onChange={(e) => setContactName(e.target.value)}
-              onBlur={() => setTouchedName(true)}
-              autoComplete="name"
-              aria-invalid={!!nameError}
-            />
-            {nameError && <p className="text-xs text-destructive">{nameError}</p>}
-          </div>
+        {phoneError && <p className="text-xs text-destructive">{phoneError}</p>}
+      </div>
 
-          {/* Phone with country code */}
-          <div className="space-y-1">
-            <label htmlFor="phone-number" className="text-sm font-medium text-foreground">
-              WhatsApp / Telefono
-            </label>
-            <div className="flex gap-2">
-              <Select value={countryCode} onValueChange={setCountryCode}>
-                <SelectTrigger className="w-[130px] shrink-0" aria-label="Codigo de pais">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {PHONE_COUNTRY_CODES.map((c) => (
-                    <SelectItem key={`${c.short}-${c.code}`} value={c.code}>
-                      {c.short} {c.code}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Input
-                id="phone-number"
-                type="tel"
-                placeholder="Numero de telefono"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value.replace(/[^\d]/g, ''))}
-                onBlur={() => setTouchedPhone(true)}
-                autoComplete="tel-national"
-                aria-invalid={!!phoneError}
-              />
-            </div>
-            {phoneError && <p className="text-xs text-destructive">{phoneError}</p>}
-          </div>
-
-          {/* Departure selector */}
-          <div className="space-y-2">
-            <label htmlFor="departure-select" className="text-sm font-medium text-foreground">
-              Fecha de salida
-            </label>
-            <Select value={departureId} onValueChange={setDepartureId}>
-              <SelectTrigger id="departure-select">
-                <SelectValue placeholder="Selecciona una fecha" />
-              </SelectTrigger>
-              <SelectContent>
-                {availableDepartures.map((dep) => (
-                  <SelectItem key={dep.id} value={dep.id}>
-                    {formatDepartureOption(dep)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Submit CTA */}
-          <Button
-            className="h-12 w-full bg-accent text-lg font-semibold text-accent-foreground hover:bg-accent/90"
-            disabled={!isFormValid || isSubmitting}
-            onClick={handleSubmit}
-          >
-            {isSubmitting ? 'Procesando...' : 'Confirmar Cotizacion'}
-          </Button>
-
-          {/* Legal text — opens modal instead of navigating away */}
-          <p className="text-center text-xs text-muted-foreground">
-            Al confirmar, aceptas nuestros{' '}
-            <button type="button" className="underline hover:text-foreground" onClick={() => setLegalModal('terms')}>
-              Terminos y Condiciones
-            </button>{' '}
-            y{' '}
-            <button type="button" className="underline hover:text-foreground" onClick={() => setLegalModal('privacy')}>
-              Aviso de Privacidad
-            </button>
-          </p>
-        </>
+      {/* Departure selector (only if departures exist) */}
+      {hasDepartures && (
+        <div className="space-y-2">
+          <label htmlFor="departure-select" className="text-sm font-medium text-foreground">
+            Fecha de salida
+          </label>
+          <Select value={departureId} onValueChange={setDepartureId}>
+            <SelectTrigger id="departure-select">
+              <SelectValue placeholder="Selecciona una fecha" />
+            </SelectTrigger>
+            <SelectContent>
+              {availableDepartures.map((dep) => (
+                <SelectItem key={dep.id} value={dep.id}>
+                  {formatDepartureOption(dep)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       )}
+
+      {/* Submit CTA */}
+      <Button
+        className="h-12 w-full bg-accent text-lg font-semibold text-accent-foreground hover:bg-accent/90"
+        disabled={!isFormValid || isSubmitting}
+        onClick={handleSubmit}
+      >
+        {isSubmitting ? 'Procesando...' : 'Confirmar Cotizacion'}
+      </Button>
+
+      {/* Legal text — opens modal instead of navigating away */}
+      <p className="text-center text-xs text-muted-foreground">
+        Al confirmar, aceptas nuestros{' '}
+        <button type="button" className="underline hover:text-foreground" onClick={() => setLegalModal('terms')}>
+          Terminos y Condiciones
+        </button>{' '}
+        y{' '}
+        <button type="button" className="underline hover:text-foreground" onClick={() => setLegalModal('privacy')}>
+          Aviso de Privacidad
+        </button>
+      </p>
     </div>
   )
 

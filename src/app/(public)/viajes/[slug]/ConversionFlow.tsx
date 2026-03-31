@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useState, useEffect, useCallback, Suspense } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { trackEvent } from '@/lib/analytics'
 import { TripDepartures } from './TripDepartures'
@@ -35,20 +36,71 @@ function ConversionFlowInner({
   departures,
 }: ConversionFlowProps) {
   const searchParams = useSearchParams()
-  const { isAuthenticated } = useAuthStore()
+  const router = useRouter()
+  const { isAuthenticated, user, profile } = useAuthStore()
 
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [selectedDepartureId, setSelectedDepartureId] = useState<string | null>(null)
+  const [isEnrolling, setIsEnrolling] = useState(false)
 
-  // Auto-open from URL params (no auth required)
+  /** Authenticated user: create order instantly, no form */
+  const handleAuthEnroll = useCallback(async () => {
+    if (isEnrolling) return
+    setIsEnrolling(true)
+
+    try {
+      const contactName = profile?.displayName ?? user?.displayName ?? user?.email ?? 'Cliente'
+      const contactPhone = profile?.phone ?? undefined
+      const attribution = getAttributionData()
+
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tripId,
+          contactName,
+          contactPhone,
+          ...attribution,
+        }),
+      })
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => null)
+        throw new Error(errorData?.message ?? 'Error al procesar la solicitud')
+      }
+
+      const data = await res.json()
+
+      trackEvent('generate_lead', {
+        trip_id: data.tripId,
+        agent_id: attribution.agentId ?? 'sin_asignar',
+        utm_source: attribution.utmSource ?? 'direct',
+        order_id: data.orderId,
+      })
+
+      toast.success('Te inscribiste al viaje')
+      router.push('/client/my-trips')
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'No pudimos procesar tu solicitud'
+      toast.error(message)
+    } finally {
+      setIsEnrolling(false)
+    }
+  }, [isEnrolling, profile, user, tripId, router])
+
+  // Auto-open from URL params
   useEffect(() => {
     const shouldOpen = searchParams.get('cotizar') === 'true'
     if (shouldOpen) {
-      const depId = searchParams.get('salida')
-      if (depId) setSelectedDepartureId(depId)
-      setIsFormOpen(true)
+      if (isAuthenticated) {
+        handleAuthEnroll()
+      } else {
+        const depId = searchParams.get('salida')
+        if (depId) setSelectedDepartureId(depId)
+        setIsFormOpen(true)
+      }
     }
-  }, [searchParams])
+  }, [searchParams, isAuthenticated, handleAuthEnroll])
 
   function handleQuoteClick() {
     trackEvent('begin_checkout', {
@@ -56,7 +108,11 @@ function ConversionFlowInner({
       item_name: tripName,
     })
 
-    setIsFormOpen(true)
+    if (isAuthenticated) {
+      handleAuthEnroll()
+    } else {
+      setIsFormOpen(true)
+    }
   }
 
   function handleSelectDeparture(departureId: string) {
@@ -70,8 +126,13 @@ function ConversionFlowInner({
       })
     }
 
-    setSelectedDepartureId(departureId)
-    setIsFormOpen(true)
+    if (isAuthenticated) {
+      setSelectedDepartureId(departureId)
+      handleAuthEnroll()
+    } else {
+      setSelectedDepartureId(departureId)
+      setIsFormOpen(true)
+    }
   }
 
   return (
@@ -84,19 +145,22 @@ function ConversionFlowInner({
       />
       <TripStickyCTA
         onQuoteClick={handleQuoteClick}
+        isLoading={isEnrolling}
       />
-      <ConversionForm
-        isOpen={isFormOpen}
-        onClose={() => setIsFormOpen(false)}
-        tripId={tripId}
-        tripName={tripName}
-        tripSlug={tripSlug}
-        tripPrice={tripPrice}
-        departures={departures}
-        selectedDepartureId={selectedDepartureId}
-        attributionData={getAttributionData()}
-        isAuthenticated={isAuthenticated}
-      />
+      {!isAuthenticated && (
+        <ConversionForm
+          isOpen={isFormOpen}
+          onClose={() => setIsFormOpen(false)}
+          tripId={tripId}
+          tripName={tripName}
+          tripSlug={tripSlug}
+          tripPrice={tripPrice}
+          departures={departures}
+          selectedDepartureId={selectedDepartureId}
+          attributionData={getAttributionData()}
+          isAuthenticated={false}
+        />
+      )}
     </>
   )
 }

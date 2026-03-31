@@ -279,7 +279,7 @@ export default function RegisterPage() {
       <p className="text-center text-sm text-muted-foreground flex items-center justify-center min-h-11">
         Ya tienes cuenta?{' '}
         <Link
-          href="/login"
+          href={returnUrl !== '/dashboard' ? `/login?returnUrl=${encodeURIComponent(returnUrl)}` : '/login'}
           className="text-primary font-medium hover:underline ml-1"
         >
           Inicia Sesion

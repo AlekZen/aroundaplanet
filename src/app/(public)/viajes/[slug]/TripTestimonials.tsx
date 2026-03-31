@@ -25,7 +25,7 @@ export function TripTestimonials({ testimonials }: TripTestimonialsProps) {
               y deja tu huella para futuros aventureros.
             </p>
             <Button asChild className="mt-2 bg-accent text-accent-foreground hover:bg-accent/90">
-              <Link href="/login">Unirse a la Aventura</Link>
+              <Link href="?cotizar=true" scroll={false}>Unirse a la Aventura</Link>
             </Button>
           </CardContent>
         </Card>

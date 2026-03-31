@@ -51,9 +51,9 @@ export const DEFAULT_COUNTRY_CODE = '+52'
 /** Schema for POST /api/orders — what the client sends */
 export const createOrderSchema = z.object({
   tripId: z.string().min(1, 'tripId es requerido'),
-  departureId: z.string().min(1, 'departureId es requerido'),
+  departureId: z.string().min(1).optional(),
   contactName: z.string().min(2, 'Nombre es requerido (minimo 2 caracteres)'),
-  contactPhone: z.string().min(10, 'Telefono completo es requerido'),
+  contactPhone: z.string().optional(),
   utmSource: z.string().optional(),
   utmMedium: z.string().optional(),
   utmCampaign: z.string().optional(),

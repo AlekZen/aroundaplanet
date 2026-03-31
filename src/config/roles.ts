@@ -63,6 +63,7 @@ export const ROLE_ICONS: Record<UserRole, string> = {
 export const ROLE_NAVIGATION_MAP: Record<UserRole, RoleNavItem[]> = {
   cliente: [
     { role: 'cliente', label: 'Mis Viajes', href: '/client/my-trips', priority: 1 },
+    { role: 'cliente', label: 'Explorar Viajes', href: '/viajes', priority: 1 },
     { role: 'cliente', label: 'Perfil', href: '/client/profile', priority: 1 },
   ],
   agente: [

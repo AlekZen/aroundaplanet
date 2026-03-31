@@ -373,6 +373,16 @@ export function MyTripsContent() {
               />
             ))}
           </div>
+
+          {/* Persistent CTA to explore more trips */}
+          <div className="flex justify-center pt-2">
+            <Button asChild variant="outline" size="sm">
+              <Link href="/viajes">
+                <Plus className="mr-2 h-4 w-4" />
+                Explorar mas viajes
+              </Link>
+            </Button>
+          </div>
         </>
       )}
 

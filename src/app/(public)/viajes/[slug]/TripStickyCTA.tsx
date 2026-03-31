@@ -4,9 +4,10 @@ import { Button } from '@/components/ui/button'
 
 interface TripStickyCTAProps {
   onQuoteClick?: () => void
+  isLoading?: boolean
 }
 
-export function TripStickyCTA({ onQuoteClick }: TripStickyCTAProps) {
+export function TripStickyCTA({ onQuoteClick, isLoading }: TripStickyCTAProps) {
   function handleClick() {
     onQuoteClick?.()
   }
@@ -19,8 +20,9 @@ export function TripStickyCTA({ onQuoteClick }: TripStickyCTAProps) {
           size="lg"
           className="min-h-12 bg-accent px-8 text-lg font-semibold text-accent-foreground shadow-lg hover:bg-accent/90"
           onClick={handleClick}
+          disabled={isLoading}
         >
-          Cotizar Ahora
+          {isLoading ? 'Inscribiendo...' : 'Cotizar Ahora'}
         </Button>
       </div>
 
@@ -33,8 +35,9 @@ export function TripStickyCTA({ onQuoteClick }: TripStickyCTAProps) {
         <Button
           className="h-12 w-full bg-accent text-lg font-semibold text-accent-foreground shadow-lg hover:bg-accent/90"
           onClick={handleClick}
+          disabled={isLoading}
         >
-          Cotizar
+          {isLoading ? 'Inscribiendo...' : 'Cotizar'}
         </Button>
       </div>
     </>

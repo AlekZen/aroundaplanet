@@ -72,17 +72,19 @@ export async function POST(request: NextRequest) {
       throw new AppError('TRIP_NOT_FOUND', 'Viaje no encontrado o no publicado', 404)
     }
 
-    // Verify departure exists, is active, and has seats
-    const depRef = tripRef.collection(DEPARTURES_SUBCOLLECTION).doc(departureId)
-    const depSnap = await depRef.get()
+    // Verify departure exists, is active, and has seats (only if departureId provided)
+    if (departureId) {
+      const depRef = tripRef.collection(DEPARTURES_SUBCOLLECTION).doc(departureId)
+      const depSnap = await depRef.get()
 
-    if (!depSnap.exists || depSnap.data()?.isActive !== true) {
-      throw new AppError('DEPARTURE_NOT_FOUND', 'Salida no encontrada o no activa', 404)
-    }
+      if (!depSnap.exists || depSnap.data()?.isActive !== true) {
+        throw new AppError('DEPARTURE_NOT_FOUND', 'Salida no encontrada o no activa', 404)
+      }
 
-    const depData = depSnap.data()!
-    if ((depData.seatsAvailable ?? 0) <= 0) {
-      throw new AppError('DEPARTURE_SOLD_OUT', 'Esta salida esta agotada', 409, true)
+      const depData = depSnap.data()!
+      if ((depData.seatsAvailable ?? 0) <= 0) {
+        throw new AppError('DEPARTURE_SOLD_OUT', 'Esta salida esta agotada', 409, true)
+      }
     }
 
     // Read price server-side (NEVER trust client)
@@ -103,9 +105,9 @@ export async function POST(request: NextRequest) {
       guestIp: claims ? null : ip,
       agentId: validatedAgentId,
       tripId,
-      departureId,
+      departureId: departureId ?? null,
       contactName,
-      contactPhone,
+      contactPhone: contactPhone ?? null,
       status: 'Interesado' as const,
       amountTotalCents,
       amountPaidCents: 0,

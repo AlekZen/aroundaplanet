@@ -1,8 +1,15 @@
 'use client'
 
-import { ArrowLeft } from 'lucide-react'
-import { PageTransition } from '@/components/shared/PageTransition'
+import { BottomNavBar } from '@/components/custom/BottomNavBar'
 import { RoleSwitcher } from '@/components/custom/RoleSwitcher'
+import { PageTransition } from '@/components/shared/PageTransition'
+import { Plane, Globe, User } from 'lucide-react'
+
+const CLIENT_TABS = [
+  { id: 'my-trips', label: 'Mis Viajes', icon: <Plane className="h-5 w-5" />, href: '/client/my-trips' },
+  { id: 'catalog', label: 'Explorar', icon: <Globe className="h-5 w-5" />, href: '/viajes' },
+  { id: 'profile', label: 'Perfil', icon: <User className="h-5 w-5" />, href: '/client/profile' },
+]
 
 export default function ClientLayout({
   children,
@@ -23,28 +30,19 @@ export default function ClientLayout({
             className="flex items-center justify-between px-4 h-14"
             aria-label="Navegacion de cliente"
           >
-            <button
-              aria-label="Regresar"
-              className="inline-flex items-center justify-center min-h-11 min-w-11 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-            >
-              <ArrowLeft className="h-5 w-5" aria-hidden="true" />
-            </button>
+            <span className="font-heading text-sm font-semibold">AroundaPlanet</span>
             <RoleSwitcher />
           </nav>
         </header>
-        <main id="main-content">
-          <section aria-label="Estado de tu viaje" className="bg-primary/5 p-6">
-            <div className="mt-4" aria-label="Progreso emocional">
-              {/* EmotionalProgress placeholder — se reemplaza en Story 1.5+ */}
-            </div>
-          </section>
+        <main id="main-content" className="p-4 pb-20 lg:pb-4">
           <section
             aria-label="Contenido principal"
-            className="max-w-3xl mx-auto p-4"
+            className="max-w-3xl mx-auto"
           >
             <PageTransition>{children}</PageTransition>
           </section>
         </main>
+        <BottomNavBar tabs={CLIENT_TABS} />
       </div>
     </>
   )
