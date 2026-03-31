@@ -104,7 +104,7 @@ export default function AgentDashboardPage() {
         </div>
       )}
 
-      <CommissionList />
+      <CommissionList agentId={claims?.agentId} />
     </div>
   )
 }

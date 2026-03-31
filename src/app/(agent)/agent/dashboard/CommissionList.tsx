@@ -35,14 +35,15 @@ const STATUS_CONFIG = {
   paid: { label: 'Pagada', variant: 'secondary' as const },
 }
 
-export function CommissionList() {
+export function CommissionList({ agentId }: { agentId?: string }) {
   const [commissions, setCommissions] = useState<CommissionItem[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch('/api/commissions')
+        const params = agentId ? `?agentId=${agentId}` : ''
+        const res = await fetch(`/api/commissions${params}`)
         if (!res.ok) return
         const data = await res.json()
         setCommissions(data.commissions ?? [])
