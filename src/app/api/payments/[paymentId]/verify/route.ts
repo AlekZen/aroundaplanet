@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { FieldValue } from 'firebase-admin/firestore'
+import { FieldValue, Timestamp } from 'firebase-admin/firestore'
 import { adminDb } from '@/lib/firebase/admin'
 import { requirePermission } from '@/lib/auth/requirePermission'
 import { handleApiError } from '@/lib/errors/handleApiError'
 import { AppError } from '@/lib/errors/AppError'
 import { verifyPaymentSchema } from '@/schemas/paymentSchema'
+import { createCommissionFromPayment } from './createCommission'
 
 const PAYMENTS_COLLECTION = 'payments'
 
@@ -75,6 +76,16 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     }
 
     await paymentRef.update(updateData)
+
+    // Fire-and-forget: create commission if payment verified with agentId
+    if (action === 'verify') {
+      const paymentData = paymentSnap.data()!
+      try {
+        await createCommissionFromPayment(paymentId, paymentData)
+      } catch (err) {
+        console.error('[Commission Hook] Error creating commission:', err)
+      }
+    }
 
     return NextResponse.json({
       paymentId,

@@ -10,9 +10,9 @@ describe('seedPermissions', () => {
       expect(Object.keys(PERMISSION_MATRIX)).toEqual(ALL_ROLES)
     })
 
-    it('all roles share the same permission keys (21 permissions)', () => {
+    it('all roles share the same permission keys (22 permissions)', () => {
       const baseKeys = Object.keys(PERMISSION_MATRIX.cliente).sort()
-      expect(baseKeys).toHaveLength(21)
+      expect(baseKeys).toHaveLength(22)
 
       for (const role of ALL_ROLES) {
         const roleKeys = Object.keys(PERMISSION_MATRIX[role]).sort()

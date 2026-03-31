@@ -2,7 +2,7 @@
 title: 'Comisiones y Métricas de Negocio del Agente'
 slug: 'agent-commissions-metrics'
 created: '2026-03-31'
-status: 'ready-for-dev'
+status: 'implementation-complete'
 stepsCompleted: [1, 2, 3, 4]
 adversarial_review: 'done — 14 hallazgos integrados'
 tech_stack: ['Next.js 16', 'Firestore', 'Zustand', 'Zod', 'shadcn/ui', 'Tailwind v4']

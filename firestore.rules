@@ -35,6 +35,18 @@ service cloud.firestore {
                    && request.auth.token.agentId == agentId;
     }
 
+    // === COMMISSIONS (agent subcollection) ===
+    // Write: NEVER from client (Admin SDK only via verify hook)
+    // Overrides wildcard rule above for this specific subcollection
+    match /agents/{agentId}/commissions/{commissionId} {
+      allow read: if request.auth != null
+                  && (request.auth.token.agentId == agentId
+                      || 'admin' in request.auth.token.roles
+                      || 'director' in request.auth.token.roles
+                      || 'superadmin' in request.auth.token.roles);
+      allow write: if false;
+    }
+
     // === USERS ===
     // Owner read/write. Admin/SuperAdmin read-only.
     // bankData requires agente role. fiscalData RFC validated.

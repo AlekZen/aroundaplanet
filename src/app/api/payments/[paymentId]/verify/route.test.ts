@@ -25,6 +25,14 @@ vi.mock('firebase-admin/firestore', () => ({
   FieldValue: {
     serverTimestamp: () => 'SERVER_TIMESTAMP',
   },
+  Timestamp: {
+    now: () => ({ seconds: 1234567890 }),
+  },
+}))
+
+const mockCreateCommission = vi.fn()
+vi.mock('./createCommission', () => ({
+  createCommissionFromPayment: (...args: unknown[]) => mockCreateCommission(...args),
 }))
 
 vi.mock('@/lib/errors/handleApiError', () => ({
@@ -47,6 +55,7 @@ describe('PATCH /api/payments/[paymentId]/verify', () => {
     mockRequirePermission.mockReset()
     mockGet.mockReset()
     mockUpdate.mockReset()
+    mockCreateCommission.mockReset()
   })
 
   it('approves a pending payment', async () => {
@@ -165,5 +174,83 @@ describe('PATCH /api/payments/[paymentId]/verify', () => {
 
     const res = await PATCH(req, makeContext('pay1'))
     expect(res.status).toBe(400)
+  })
+
+  // --- Commission Hook Tests (F14) ---
+
+  it('calls createCommission when verifying payment', async () => {
+    const paymentData = { status: 'pending_verification', agentId: 'agent1', amountCents: 50000 }
+    mockRequirePermission.mockResolvedValue({ uid: 'admin1', roles: ['admin'] })
+    mockGet.mockResolvedValue({ exists: true, data: () => paymentData })
+    mockUpdate.mockResolvedValue(undefined)
+    mockCreateCommission.mockResolvedValue(undefined)
+
+    const { PATCH } = await import('./route')
+    const req = new NextRequest('http://localhost/api/payments/pay1/verify', {
+      method: 'PATCH',
+      body: JSON.stringify({ action: 'verify' }),
+    })
+
+    await PATCH(req, makeContext('pay1'))
+    expect(mockCreateCommission).toHaveBeenCalledWith('pay1', paymentData)
+  })
+
+  it('does NOT call createCommission on reject action', async () => {
+    mockRequirePermission.mockResolvedValue({ uid: 'admin1', roles: ['admin'] })
+    mockGet.mockResolvedValue({
+      exists: true,
+      data: () => ({ status: 'pending_verification' }),
+    })
+    mockUpdate.mockResolvedValue(undefined)
+
+    const { PATCH } = await import('./route')
+    const req = new NextRequest('http://localhost/api/payments/pay1/verify', {
+      method: 'PATCH',
+      body: JSON.stringify({ action: 'reject', rejectionNote: 'Monto incorrecto' }),
+    })
+
+    await PATCH(req, makeContext('pay1'))
+    expect(mockCreateCommission).not.toHaveBeenCalled()
+  })
+
+  it('does NOT call createCommission on request_info action', async () => {
+    mockRequirePermission.mockResolvedValue({ uid: 'admin1', roles: ['admin'] })
+    mockGet.mockResolvedValue({
+      exists: true,
+      data: () => ({ status: 'pending_verification' }),
+    })
+    mockUpdate.mockResolvedValue(undefined)
+
+    const { PATCH } = await import('./route')
+    const req = new NextRequest('http://localhost/api/payments/pay1/verify', {
+      method: 'PATCH',
+      body: JSON.stringify({ action: 'request_info' }),
+    })
+
+    await PATCH(req, makeContext('pay1'))
+    expect(mockCreateCommission).not.toHaveBeenCalled()
+  })
+
+  it('completes verify even when createCommission throws', async () => {
+    mockRequirePermission.mockResolvedValue({ uid: 'admin1', roles: ['admin'] })
+    mockGet.mockResolvedValue({
+      exists: true,
+      data: () => ({ status: 'pending_verification', agentId: 'agent1', amountCents: 50000 }),
+    })
+    mockUpdate.mockResolvedValue(undefined)
+    mockCreateCommission.mockRejectedValue(new Error('Firestore unavailable'))
+
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+    const { PATCH } = await import('./route')
+    const req = new NextRequest('http://localhost/api/payments/pay1/verify', {
+      method: 'PATCH',
+      body: JSON.stringify({ action: 'verify' }),
+    })
+
+    const res = await PATCH(req, makeContext('pay1'))
+    expect(res.status).toBe(200)
+    expect(consoleSpy).toHaveBeenCalled()
+    consoleSpy.mockRestore()
   })
 })

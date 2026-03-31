@@ -83,6 +83,7 @@ export async function POST(request: Request) {
         const now = Timestamp.now()
         await adminDb.doc(`agents/${agentId}`).set({
           uid: uid,
+          commissionRate: 0.10,
           createdAt: now,
           updatedAt: now,
         })

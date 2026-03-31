@@ -20,7 +20,7 @@ import { cn } from '@/lib/utils'
 import { staggerChildren } from '@/lib/animations/variants'
 import { spring } from '@/lib/animations/transitions'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
-import { LayoutDashboard, CreditCard, BarChart3, Shield, UserCircle, RefreshCw, Map, Users, Plane, Contact, UserCheck } from 'lucide-react'
+import { LayoutDashboard, CreditCard, BarChart3, Shield, UserCircle, RefreshCw, Map, Users, Plane, Contact, UserCheck, DollarSign } from 'lucide-react'
 
 interface RoleSidebarProps {
   roles: string[]
@@ -32,6 +32,7 @@ const SECTIONS_BY_ROLE: Record<string, Array<{ id: string; label: string; icon: 
     { id: 'dashboard', label: 'Panel', icon: <LayoutDashboard className="h-5 w-5" />, href: '/admin/dashboard' },
     { id: 'leads', label: 'Leads', icon: <Users className="h-5 w-5" />, href: '/admin/leads' },
     { id: 'verification', label: 'Verificacion', icon: <CreditCard className="h-5 w-5" />, href: '/admin/verification' },
+    { id: 'commissions', label: 'Comisiones', icon: <DollarSign className="h-5 w-5" />, href: '/admin/commissions' },
     { id: 'trips', label: 'Viajes', icon: <Map className="h-5 w-5" />, href: '/admin/trips' },
     { id: 'odoo-sync', label: 'Sync Odoo', icon: <RefreshCw className="h-5 w-5" />, href: '/admin/odoo-sync' },
     { id: 'admin-my-trips', label: 'Mis Viajes', icon: <Plane className="h-5 w-5" />, href: '/admin/my-trips' },
@@ -56,6 +57,7 @@ const SECTIONS_BY_ROLE: Record<string, Array<{ id: string; label: string; icon: 
     { id: 'clients', label: 'Clientes', icon: <UserCheck className="h-5 w-5" />, href: '/superadmin/clients' },
     { id: 'leads', label: 'Leads', icon: <Users className="h-5 w-5" />, href: '/superadmin/leads' },
     { id: 'verification', label: 'Verificacion', icon: <CreditCard className="h-5 w-5" />, href: '/superadmin/verification' },
+    { id: 'commissions', label: 'Comisiones', icon: <DollarSign className="h-5 w-5" />, href: '/superadmin/commissions' },
     { id: 'trips', label: 'Viajes', icon: <Map className="h-5 w-5" />, href: '/superadmin/trips' },
     { id: 'odoo-sync', label: 'Sync Odoo', icon: <RefreshCw className="h-5 w-5" />, href: '/superadmin/odoo-sync' },
     { id: 'superadmin-my-trips', label: 'Mis Viajes', icon: <Plane className="h-5 w-5" />, href: '/superadmin/my-trips' },
