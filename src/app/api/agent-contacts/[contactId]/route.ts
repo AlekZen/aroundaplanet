@@ -42,7 +42,7 @@ export async function GET(
       .get()
 
     // Batch-fetch trip names
-    const tripIds = [...new Set(ordersSnap.docs.map((d) => d.data().tripId as string))]
+    const tripIds = [...new Set(ordersSnap.docs.map((d) => d.data().tripId).filter((id): id is string => typeof id === 'string'))]
     const tripNames: Record<string, string> = {}
     if (tripIds.length > 0) {
       const tripSnaps = await Promise.all(

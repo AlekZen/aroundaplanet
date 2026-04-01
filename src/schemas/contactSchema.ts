@@ -47,6 +47,7 @@ export type UnifiedOrder = {
   amountTotal: number
   dateOrder: string | null
   source: 'odoo' | 'platform'
+  tripId?: string
   // Odoo-specific
   paymentState?: string | null
   amountResidual?: number

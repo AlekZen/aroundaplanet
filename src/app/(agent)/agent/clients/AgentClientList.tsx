@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -18,55 +18,25 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from '@/components/ui/dialog'
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
-} from '@/components/ui/table'
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from '@/components/ui/select'
 import {
   Search, Users, RefreshCw, Phone, Mail, MapPin,
-  ChevronRight, ShoppingBag, CreditCard, Plus, AlertTriangle,
+  ShoppingBag, CreditCard, Plus, AlertTriangle,
   Loader2, Plane,
 } from 'lucide-react'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { PaymentRegistrationForm } from '@/components/custom/PaymentRegistrationForm'
-import type { AgentClient, AgentClientsResponse, AgentClientOrder } from '@/app/api/agents/[agentId]/clients/route'
+import type { AgentClientsResponse, AgentClientOrder } from '@/app/api/agents/[agentId]/clients/route'
 import type { UnifiedClient, UnifiedOrder } from '@/schemas/contactSchema'
+import { groupByTrip, groupByClient } from './grouping'
+import { GroupedByTripView } from './GroupedByTripView'
+import { GroupedByClientView } from './GroupedByClientView'
 
-// ── Odoo payment labels/colors ──
-
-const PAYMENT_STATE_LABELS: Record<string, string> = {
-  paid: 'Pagado',
-  partial: 'Parcial',
-  not_paid: 'Sin pagar',
-  in_payment: 'En proceso',
-}
-
-const PAYMENT_STATE_COLORS: Record<string, string> = {
-  paid: 'bg-green-100 text-green-800',
-  partial: 'bg-yellow-100 text-yellow-800',
-  not_paid: 'bg-red-100 text-red-800',
-  in_payment: 'bg-blue-100 text-blue-800',
-}
-
-// ── Helpers ──
-
-function formatMXN(amount: number): string {
-  return new Intl.NumberFormat('es-MX', {
-    style: 'currency',
-    currency: 'MXN',
-    minimumFractionDigits: 0,
-  }).format(amount)
-}
-
-function formatDate(dateStr: string | null): string {
-  if (!dateStr) return ''
-  try {
-    return new Date(dateStr).toLocaleDateString('es-MX', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-    })
-  } catch {
-    return dateStr
-  }
-}
+import {
+  formatMXN, formatDate,
+  PAYMENT_STATE_LABELS, PAYMENT_STATE_COLORS,
+} from './client-utils'
 
 // ── Types ──
 
@@ -90,17 +60,20 @@ function CreateContactSheet({
   onClose,
   agentId,
   onCreated,
+  trips,
 }: {
   isOpen: boolean
   onClose: () => void
   agentId: string
   onCreated: () => void
+  trips: PublishedTrip[]
 }) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [mobile, setMobile] = useState('')
   const [city, setCity] = useState('')
+  const [selectedTripId, setSelectedTripId] = useState<string>('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -110,6 +83,7 @@ function CreateContactSheet({
     setPhone('')
     setMobile('')
     setCity('')
+    setSelectedTripId('')
     setError(null)
   }
 
@@ -142,11 +116,43 @@ function CreateContactSheet({
       })
 
       if (!res.ok) {
-        const data = await res.json()
-        throw new Error(data.message ?? `Error ${res.status}`)
+        const errData = await res.json().catch(() => ({}))
+        throw new Error((errData as { message?: string }).message ?? `Error ${res.status}`)
       }
 
-      toast.success('Cliente creado exitosamente')
+      const created = await res.json() as { contactId?: string }
+
+      // (F6) Si hay viaje seleccionado, inscribir automáticamente
+      if (selectedTripId && selectedTripId !== 'none' && created.contactId) {
+        try {
+          const enrollRes = await fetch('/api/orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              tripId: selectedTripId,
+              contactName: name.trim(),
+              agentId,
+              agentContactId: created.contactId,
+            }),
+          })
+
+          if (!enrollRes.ok) {
+            // Contacto creado pero inscripción falló
+            handleClose()
+            onCreated()
+            toast.error('Contacto creado pero la inscripcion al viaje fallo. Puedes inscribirlo desde el detalle del cliente.')
+            return
+          }
+        } catch {
+          // Contacto creado pero inscripción falló por error de red
+          handleClose()
+          onCreated()
+          toast.error('Contacto creado pero la inscripcion al viaje fallo. Puedes inscribirlo desde el detalle del cliente.')
+          return
+        }
+      }
+
+      toast.success(selectedTripId && selectedTripId !== 'none' ? 'Cliente creado e inscrito al viaje' : 'Cliente creado exitosamente')
       handleClose()
       onCreated()
     } catch (err) {
@@ -155,9 +161,6 @@ function CreateContactSheet({
       setIsSubmitting(false)
     }
   }
-
-  // Suppress unused var — agentId is kept in props for future admin context
-  void agentId
 
   const formContent = (
     <form onSubmit={handleSubmit} className="space-y-4 mt-4">
@@ -185,6 +188,23 @@ function CreateContactSheet({
       <div>
         <label className="text-sm font-medium" htmlFor="contact-city">Ciudad</label>
         <Input id="contact-city" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Guadalajara" />
+      </div>
+      {/* (F14) Selector de viaje opcional */}
+      <div>
+        <label className="text-sm font-medium">Viaje (opcional)</label>
+        <Select value={selectedTripId} onValueChange={setSelectedTripId}>
+          <SelectTrigger>
+            <SelectValue placeholder={trips.length === 0 ? 'Cargando viajes...' : 'Sin viaje'} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="none">Sin viaje</SelectItem>
+            {trips.map((trip) => (
+              <SelectItem key={trip.id} value={trip.id}>
+                {trip.odooName}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
       <Button type="submit" className="w-full" disabled={isSubmitting}>
         {isSubmitting ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Creando...</> : 'Crear Cliente'}
@@ -576,9 +596,27 @@ export function AgentClientList({ agentId, title, hideHeader }: AgentClientListP
   const [search, setSearch] = useState('')
   const [selectedClient, setSelectedClient] = useState<UnifiedClient | null>(null)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
+  const [groupMode, setGroupMode] = useState<'trip' | 'client'>('trip')
+  const [trips, setTrips] = useState<PublishedTrip[]>([])
 
   // Summary stats from Odoo (kept for display)
   const [odooSummary, setOdooSummary] = useState<AgentClientsResponse['summary'] | null>(null)
+
+  // Fetch trips on mount (F3: fallback — if fails, tripMap stays empty)
+  useEffect(() => {
+    fetch('/api/trips/published')
+      .then((r) => r.ok ? r.json() : Promise.reject(new Error(`Error ${r.status}`)))
+      .then((data) => setTrips(data.trips ?? []))
+      .catch(() => { /* tripMap queda vacío — headers mostrarán tripId como fallback */ })
+  }, [])
+
+  const tripMap = useMemo(() => {
+    const map: Record<string, string> = {}
+    for (const t of trips) {
+      map[t.id] = t.odooName
+    }
+    return map
+  }, [trips])
 
   const fetchClients = useCallback(async () => {
     setIsLoading(true)
@@ -649,10 +687,11 @@ export function AgentClientList({ agentId, title, hideHeader }: AgentClientListP
         let totalAmount = 0
 
         if (detailResult.status === 'fulfilled') {
-          const detail = detailResult.value as { orders: Array<{ orderId: string; orderName: string; amountTotalCents: number; amountPaidCents: number; createdAt: string | null; status: string }> }
+          const detail = detailResult.value as { orders: Array<{ orderId: string; orderName: string; tripId?: string; amountTotalCents: number; amountPaidCents: number; createdAt: string | null; status: string }> }
           orders = detail.orders.map((o) => ({
             orderId: o.orderId,
             orderName: o.orderName,
+            tripId: o.tripId,
             amountTotal: o.amountTotalCents / 100,
             dateOrder: o.createdAt,
             source: 'platform' as const,
@@ -692,13 +731,30 @@ export function AgentClientList({ agentId, title, hideHeader }: AgentClientListP
     fetchClients()
   }, [fetchClients])
 
-  const filtered = search.trim()
-    ? unifiedClients.filter((c) =>
-        c.name.toLowerCase().includes(search.toLowerCase()) ||
-        c.email?.toLowerCase().includes(search.toLowerCase()) ||
-        c.city?.toLowerCase().includes(search.toLowerCase())
-      )
-    : unifiedClients
+  // (F8) Búsqueda extendida: en modo trip, también filtra por nombre de viaje
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase()
+    if (!q) return unifiedClients
+    return unifiedClients.filter((c) => {
+      if (
+        c.name.toLowerCase().includes(q) ||
+        c.email?.toLowerCase().includes(q) ||
+        c.city?.toLowerCase().includes(q)
+      ) return true
+      // En modo trip, también buscar por nombre de viaje
+      if (groupMode === 'trip') {
+        return c.orders.some((o) => {
+          if (!o.tripId) return false
+          const tripName = tripMap[o.tripId]
+          return tripName?.toLowerCase().includes(q)
+        })
+      }
+      return false
+    })
+  }, [unifiedClients, search, groupMode, tripMap])
+
+  const tripGroups = useMemo(() => groupByTrip(filtered, tripMap), [filtered, tripMap])
+  const clientGroups = useMemo(() => groupByClient(filtered, tripMap), [filtered, tripMap])
 
   const totalClients = unifiedClients.length
   const totalOrders = unifiedClients.reduce((sum, c) => sum + c.orderCount, 0)
@@ -759,12 +815,19 @@ export function AgentClientList({ agentId, title, hideHeader }: AgentClientListP
         </div>
       )}
 
-      {/* Search + actions */}
-      <div className="flex items-center gap-3">
+      {/* Group toggle + Search + actions */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <Tabs value={groupMode} onValueChange={(v) => { setGroupMode(v as 'trip' | 'client'); setSearch('') }}>
+          <TabsList>
+            <TabsTrigger value="trip">Por Viaje</TabsTrigger>
+            <TabsTrigger value="client">Por Cliente</TabsTrigger>
+          </TabsList>
+        </Tabs>
+        <div className="flex items-center gap-3 flex-1">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Buscar por nombre, email o ciudad..."
+            placeholder={groupMode === 'trip' ? 'Buscar por nombre, email, ciudad o viaje...' : 'Buscar por nombre, email o ciudad...'}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
@@ -786,12 +849,14 @@ export function AgentClientList({ agentId, title, hideHeader }: AgentClientListP
           <Plus className="h-4 w-4 mr-2" />
           <span className="hidden sm:inline">Nuevo Cliente</span>
         </Button>
+        </div>
       </div>
 
       {/* Content */}
       {isLoading ? (
+        /* (F11) Skeleton genérico — 3 rectángulos, NO Accordion falsos */
         <div className="space-y-3">
-          {Array.from({ length: 6 }).map((_, i) => (
+          {Array.from({ length: 3 }).map((_, i) => (
             <Skeleton key={i} className="h-16 w-full rounded-lg" />
           ))}
         </div>
@@ -804,6 +869,7 @@ export function AgentClientList({ agentId, title, hideHeader }: AgentClientListP
           <Button variant="outline" onClick={fetchClients}>Reintentar</Button>
         </div>
       ) : filtered.length === 0 ? (
+        /* (F7) Empty state */
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <Users className="h-16 w-16 text-muted-foreground/50 mb-4" />
           <h2 className="font-heading text-xl font-semibold text-foreground mb-2">
@@ -811,99 +877,21 @@ export function AgentClientList({ agentId, title, hideHeader }: AgentClientListP
           </h2>
           <p className="text-muted-foreground max-w-md">
             {search
-              ? `No se encontraron clientes que coincidan con "${search}".`
+              ? 'No se encontraron clientes con ese filtro'
               : 'Aun no tienes clientes. Crea uno con el boton "Nuevo Cliente".'
             }
           </p>
         </div>
+      ) : groupMode === 'trip' ? (
+        <GroupedByTripView
+          tripGroups={tripGroups}
+          onClientClick={setSelectedClient}
+        />
       ) : (
-        <>
-          {/* Desktop table */}
-          <div className="hidden md:block">
-            <Card>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Cliente</TableHead>
-                    <TableHead>Origen</TableHead>
-                    <TableHead>Ciudad</TableHead>
-                    <TableHead className="text-right">Ordenes</TableHead>
-                    <TableHead className="text-right">Total</TableHead>
-                    <TableHead className="w-8" />
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filtered.map((client) => (
-                    <TableRow
-                      key={`${client.source}-${client.id}`}
-                      className="cursor-pointer hover:bg-muted/50"
-                      onClick={() => setSelectedClient(client)}
-                    >
-                      <TableCell>
-                        <div>
-                          <p className="font-medium">{client.name}</p>
-                          {client.email && (
-                            <p className="text-xs text-muted-foreground">{client.email}</p>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={client.source === 'platform' ? 'default' : 'secondary'} className={client.source === 'platform' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}>
-                          {client.source === 'platform' ? 'Plataforma' : 'Odoo'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
-                        {client.city ?? '-'}
-                      </TableCell>
-                      <TableCell className="text-right tabular-nums font-medium">
-                        {client.orderCount}
-                      </TableCell>
-                      <TableCell className="text-right tabular-nums font-mono">
-                        {formatMXN(client.totalAmount)}
-                      </TableCell>
-                      <TableCell>
-                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Card>
-          </div>
-
-          {/* Mobile cards */}
-          <div className="md:hidden space-y-2">
-            {filtered.map((client) => (
-              <button
-                type="button"
-                key={`${client.source}-${client.id}`}
-                className="w-full rounded-lg border p-4 text-left hover:bg-muted/50 transition-colors"
-                onClick={() => setSelectedClient(client)}
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium truncate">{client.name}</p>
-                    {client.city && (
-                      <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-                        <MapPin className="h-3 w-3" />
-                        {client.city}
-                      </p>
-                    )}
-                  </div>
-                  <Badge variant={client.source === 'platform' ? 'default' : 'secondary'} className={`shrink-0 ${client.source === 'platform' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}`}>
-                    {client.source === 'platform' ? 'Plataforma' : 'Odoo'}
-                  </Badge>
-                </div>
-                <div className="flex items-center justify-between mt-2 text-sm">
-                  <span className="text-muted-foreground">
-                    {client.orderCount} {client.orderCount === 1 ? 'orden' : 'ordenes'}
-                  </span>
-                  <span className="font-mono font-medium">{formatMXN(client.totalAmount)}</span>
-                </div>
-              </button>
-            ))}
-          </div>
-        </>
+        <GroupedByClientView
+          clientGroups={clientGroups}
+          onClientClick={setSelectedClient}
+        />
       )}
 
       {/* Client detail sheet */}
@@ -923,6 +911,7 @@ export function AgentClientList({ agentId, title, hideHeader }: AgentClientListP
         onClose={() => setIsCreateOpen(false)}
         agentId={agentId}
         onCreated={fetchClients}
+        trips={trips}
       />
     </div>
   )
