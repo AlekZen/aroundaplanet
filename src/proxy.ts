@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server'
 
 // Public pages that don't require authentication
-const PUBLIC_PATHS = ['/', '/viajes', '/sobre-nosotros', '/privacy', '/terms']
+const PUBLIC_PATHS = ['/', '/viajes', '/sobre-nosotros', '/privacy', '/terms', '/cotizar']
 const PUBLIC_PREFIXES = ['/viajes/']
 
 // Auth pages (login/register flow) — always accessible without auth

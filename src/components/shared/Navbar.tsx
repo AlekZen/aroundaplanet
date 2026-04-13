@@ -90,17 +90,20 @@ export function Navbar({ className }: NavbarProps) {
               <span className="text-sm text-foreground/70 truncate max-w-[150px]">
                 {user?.displayName ?? user?.email}
               </span>
-              <Button size="sm" asChild className="min-h-11 bg-accent text-accent-foreground hover:bg-accent-light">
+              <Button variant="outline" size="sm" asChild className="min-h-11">
                 <Link href="/dashboard">Mi Panel</Link>
               </Button>
+              <Button size="sm" asChild className="min-h-11 bg-accent text-accent-foreground hover:bg-accent-light">
+                <Link href="/cotizar">Cotizar</Link>
+              </Button>
               <Button
-                variant="outline"
+                variant="ghost"
                 size="sm"
                 className="min-h-11"
                 onClick={() => logout()}
+                aria-label="Cerrar sesión"
               >
-                <LogOut className="h-4 w-4 mr-1" />
-                Salir
+                <LogOut className="h-4 w-4" />
               </Button>
             </>
           ) : (
@@ -109,7 +112,7 @@ export function Navbar({ className }: NavbarProps) {
                 <Link href="/login">Iniciar Sesion</Link>
               </Button>
               <Button size="sm" asChild className="min-h-11 bg-accent text-accent-foreground hover:bg-accent-light">
-                <Link href="/viajes">Cotizar</Link>
+                <Link href="/cotizar">Cotizar</Link>
               </Button>
             </>
           )}
@@ -156,8 +159,11 @@ export function Navbar({ className }: NavbarProps) {
                   <span className="text-sm text-foreground/70 truncate">
                     {user?.displayName ?? user?.email}
                   </span>
-                  <Button asChild className="min-h-11 bg-accent text-accent-foreground hover:bg-accent-light">
+                  <Button variant="outline" asChild className="min-h-11">
                     <Link href="/dashboard" onClick={() => setOpen(false)}>Mi Panel</Link>
+                  </Button>
+                  <Button asChild className="min-h-11 bg-accent text-accent-foreground hover:bg-accent-light">
+                    <Link href="/cotizar" onClick={() => setOpen(false)}>Cotizar</Link>
                   </Button>
                   <Button
                     variant="outline"

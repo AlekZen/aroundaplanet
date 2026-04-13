@@ -1,4 +1,5 @@
 export const WHATSAPP_CONTACT_NUMBER = '523331741585'
+export const WHATSAPP_COTIZACION_NUMBER = '5219981523109'
 
 export function buildWhatsAppUrl(phone: string, text?: string): string {
   const base = `https://wa.me/${phone}`
