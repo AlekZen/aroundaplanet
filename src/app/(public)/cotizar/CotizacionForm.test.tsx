@@ -133,7 +133,7 @@ describe('CotizacionForm', () => {
     await waitFor(() => {
       const waLink = screen.getByRole('link', { name: 'Abrir WhatsApp' })
       expect(waLink).toBeInTheDocument()
-      expect(waLink.getAttribute('href')).toContain('wa.me/5219981523109')
+      expect(waLink.getAttribute('href')).toContain('wa.me/5215517492766')
       expect(waLink.getAttribute('target')).toBe('_blank')
     })
   })
