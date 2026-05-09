@@ -38,6 +38,8 @@ export interface AgentClientOrder {
   paymentState: 'paid' | 'partial' | 'not_paid' | 'in_payment' | null
   amountPaid: number
   amountResidual: number
+  tripId: string | null
+  tripName: string | null
 }
 
 export interface AgentClientsResponse {
@@ -194,6 +196,61 @@ async function fetchAndReturnClients(
     })
   }
 
+  // Step 2b: Fetch sale.order.line to get product_template_id → tripId
+  const allOrderIds = orders.map(o => o.id as number)
+  const orderTripMap = new Map<number, { tripId: string; tripName: string | null }>()
+
+  try {
+    // Query order lines in batches of 200 (Odoo 'in' limit)
+    const ORDER_LINE_BATCH = 200
+    const allOrderLines: OdooRecord[] = []
+    for (let i = 0; i < allOrderIds.length; i += ORDER_LINE_BATCH) {
+      const batch = allOrderIds.slice(i, i + ORDER_LINE_BATCH)
+      const lines = await client.searchRead(
+        'sale.order.line',
+        [['order_id', 'in', batch]],
+        ['order_id', 'product_template_id'],
+        { limit: 50000 }
+      )
+      allOrderLines.push(...lines)
+    }
+
+    // Build orderId → odooProductId map (first product per order)
+    const orderProductMap = new Map<number, number>()
+    for (const line of allOrderLines) {
+      const orderId = Array.isArray(line.order_id) ? line.order_id[0] as number : line.order_id as number
+      const productId = Array.isArray(line.product_template_id) ? line.product_template_id[0] as number : line.product_template_id as number
+      if (orderId && productId && !orderProductMap.has(orderId)) {
+        orderProductMap.set(orderId, productId)
+      }
+    }
+
+    // Batch-fetch trip names from Firestore
+    const uniqueProductIds = [...new Set(orderProductMap.values())]
+    const tripNameMap = new Map<number, string>()
+
+    const FIRESTORE_BATCH = 30
+    for (let i = 0; i < uniqueProductIds.length; i += FIRESTORE_BATCH) {
+      const batch = uniqueProductIds.slice(i, i + FIRESTORE_BATCH)
+      const tripDocs = await Promise.all(
+        batch.map(pid => adminDb.collection('trips').doc(`odoo-${pid}`).get())
+      )
+      for (let j = 0; j < tripDocs.length; j++) {
+        if (tripDocs[j].exists) {
+          tripNameMap.set(batch[j], (tripDocs[j].data()?.odooName as string) ?? 'Viaje sin nombre')
+        }
+      }
+    }
+
+    // Build final orderTripMap
+    for (const [orderId, productId] of orderProductMap) {
+      const tripId = `odoo-${productId}`
+      orderTripMap.set(orderId, { tripId, tripName: tripNameMap.get(productId) ?? null })
+    }
+  } catch (err) {
+    console.warn('[agents/clients] Could not fetch order lines for trip mapping:', err)
+  }
+
   // Collect all invoice IDs and partner IDs
   const allInvoiceIds = new Set<number>()
   const allPartnerIds = new Set<number>()
@@ -291,6 +348,7 @@ async function fetchAndReturnClients(
       }
     }
 
+    const tripInfo = orderTripMap.get(order.id as number)
     clientMap.get(partnerId)!.orders.push({
       orderId: order.id as number,
       orderName: order.name as string,
@@ -300,6 +358,8 @@ async function fetchAndReturnClients(
       paymentState: paymentState as AgentClientOrder['paymentState'],
       amountPaid,
       amountResidual,
+      tripId: tripInfo?.tripId ?? null,
+      tripName: tripInfo?.tripName ?? null,
     })
   }
 
