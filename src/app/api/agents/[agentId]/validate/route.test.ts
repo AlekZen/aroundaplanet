@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { NextRequest } from 'next/server'
+import { NextResponse } from 'next/server'
 
 const mockGet = vi.fn()
 
@@ -15,7 +16,6 @@ vi.mock('@/lib/firebase/admin', () => ({
 
 vi.mock('@/lib/errors/handleApiError', () => ({
   handleApiError: (error: Error) => {
-    const { NextResponse } = require('next/server')
     return NextResponse.json({ code: 'INTERNAL', message: error.message }, { status: 500 })
   },
 }))

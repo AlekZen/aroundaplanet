@@ -90,6 +90,8 @@ interface SaleOrder {
   paymentState: 'paid' | 'partial' | 'not_paid' | 'in_payment' | null
   amountPaid: number
   amountResidual: number
+  invoiceCount?: number
+  invoiceNames?: string[]
 }
 
 interface SalesData {
@@ -851,36 +853,72 @@ export function TripEditPanel() {
                           <th className="pb-2 pr-3">Cliente</th>
                           <th className="pb-2 pr-3">Agente</th>
                           <th className="pb-2 pr-3 text-right">Total</th>
-                          <th className="pb-2 pr-3 text-right">Pagado</th>
-                          <th className="pb-2">Estado</th>
+                          <th className="pb-2 pr-3 text-right">Cobrado</th>
+                          <th className="pb-2 pr-3 text-right">Pendiente</th>
+                          <th className="pb-2">Facturacion</th>
+                          <th className="pb-2">Pago</th>
                         </tr>
                       </thead>
                       <tbody>
                         {sales.orders.map((order) => {
                           const ps = PAYMENT_STATE_LABELS[order.paymentState ?? ''] ?? { label: '—', color: 'bg-gray-100 text-gray-800' }
                           const orderDate = new Date(order.dateOrder)
+                          const progress = order.amountTotal > 0
+                            ? Math.min(100, Math.round((order.amountPaid / order.amountTotal) * 100))
+                            : 0
                           return (
                             <tr key={order.orderId} className="border-b last:border-0">
-                              <td className="py-2 pr-3">
+                              <td className="py-3 pr-3 align-top">
                                 <p className="font-medium">{order.orderName}</p>
                                 <p className="text-[10px] text-muted-foreground">{orderDate.toLocaleDateString('es-MX')}</p>
+                                <div className="mt-2 space-y-1 text-[10px] text-muted-foreground">
+                                  <p>Movimiento: venta confirmada en Odoo</p>
+                                  <p>Abonos aplicados: {formatCurrency(order.amountPaid, order.currencyCode)}</p>
+                                  {order.amountResidual > 0 && (
+                                    <p className="text-orange-700">Siguiente accion: cobrar {formatCurrency(order.amountResidual, order.currencyCode)}</p>
+                                  )}
+                                </div>
                               </td>
-                              <td className="py-2 pr-3">
-                                <p className="truncate max-w-[140px]">{order.customerName}</p>
+                              <td className="py-3 pr-3 align-top">
+                                <p className="max-w-[190px] truncate font-medium">{order.customerName}</p>
+                                {order.customerEmail && (
+                                  <p className="max-w-[190px] truncate text-[10px] text-muted-foreground">{order.customerEmail}</p>
+                                )}
+                                {order.customerPhone && (
+                                  <p className="text-[10px] text-muted-foreground">{order.customerPhone}</p>
+                                )}
                                 {order.customerCity && (
                                   <p className="text-[10px] text-muted-foreground">{order.customerCity}</p>
                                 )}
                               </td>
-                              <td className="py-2 pr-3">
+                              <td className="py-3 pr-3 align-top">
                                 <p className="text-xs truncate max-w-[120px]">{order.agentName ?? '—'}</p>
                               </td>
-                              <td className="py-2 pr-3 text-right tabular-nums">
+                              <td className="py-3 pr-3 text-right align-top tabular-nums">
                                 {formatCurrency(order.amountTotal, order.currencyCode)}
                               </td>
-                              <td className="py-2 pr-3 text-right tabular-nums">
-                                {formatCurrency(order.amountPaid, order.currencyCode)}
+                              <td className="py-3 pr-3 align-top">
+                                <p className="text-right tabular-nums text-green-700">
+                                  {formatCurrency(order.amountPaid, order.currencyCode)}
+                                </p>
+                                <Progress value={progress} className="mt-1 h-1.5 min-w-24" />
                               </td>
-                              <td className="py-2">
+                              <td className="py-3 pr-3 text-right align-top tabular-nums text-orange-700">
+                                {formatCurrency(order.amountResidual, order.currencyCode)}
+                              </td>
+                              <td className="py-3 pr-3 align-top">
+                                <p className="text-xs">{order.invoiceStatus || 'Sin factura'}</p>
+                                {order.invoiceCount != null && order.invoiceCount > 0 && (
+                                  <p className="max-w-[140px] truncate text-[10px] text-muted-foreground">
+                                    {order.invoiceCount} factura{order.invoiceCount === 1 ? '' : 's'}
+                                    {order.invoiceNames?.length ? ` · ${order.invoiceNames.join(', ')}` : ''}
+                                  </p>
+                                )}
+                                <p className="mt-1 text-[10px] text-muted-foreground">
+                                  Saldo: {order.amountResidual > 0 ? 'pendiente' : 'cubierto'}
+                                </p>
+                              </td>
+                              <td className="py-3 align-top">
                                 <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${ps.color}`}>
                                   {ps.label}
                                 </span>

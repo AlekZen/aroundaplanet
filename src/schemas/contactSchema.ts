@@ -37,7 +37,28 @@ export type UnifiedClient = {
   source: 'odoo' | 'platform'
   orderCount: number
   totalAmount: number // en MXN (no centavos) para display
+  totalPaid?: number
+  totalResidual?: number
   orders: UnifiedOrder[]
+}
+
+export type UnifiedPayment = {
+  paymentId: string
+  orderId: string
+  amountCents: number
+  paymentMethod: string | null
+  status: string
+  receiptUrl: string | null
+  bankName?: string | null
+  bankReference?: string | null
+  concept?: string | null
+  sourceAccount?: string | null
+  destinationAccount?: string | null
+  notes?: string | null
+  date?: string | null
+  createdAt: string | null
+  verifiedAt?: string | null
+  rejectionNote?: string | null
 }
 
 /** Unified order representation for both sources */
@@ -48,11 +69,16 @@ export type UnifiedOrder = {
   dateOrder: string | null
   source: 'odoo' | 'platform'
   tripId?: string
+  tripName?: string | null
   // Odoo-specific
   paymentState?: string | null
+  amountPaid?: number
   amountResidual?: number
+  invoiceStatus?: string | null
+  currencyCode?: string | null
   // Platform-specific
   status?: string
   amountPaidCents?: number
   amountTotalCents?: number
+  payments?: UnifiedPayment[]
 }

@@ -85,10 +85,19 @@ export async function GET(
           paymentId: doc.id,
           orderId: p.orderId,
           amountCents: p.amountCents ?? 0,
-          method: p.method ?? null,
+          paymentMethod: p.paymentMethod ?? p.method ?? null,
           status: p.status ?? 'pending_verification',
           receiptUrl: p.receiptUrl ?? null,
+          bankName: p.bankName ?? null,
+          bankReference: p.bankReference ?? null,
+          concept: p.concept ?? null,
+          sourceAccount: p.sourceAccount ?? null,
+          destinationAccount: p.destinationAccount ?? null,
+          notes: p.notes ?? null,
+          date: p.date?.toDate?.()?.toISOString?.() ?? p.date ?? null,
           createdAt: p.createdAt?.toDate?.()?.toISOString() ?? null,
+          verifiedAt: p.verifiedAt?.toDate?.()?.toISOString() ?? null,
+          rejectionNote: p.rejectionNote ?? null,
         })
       }
     }

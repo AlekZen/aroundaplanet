@@ -23,12 +23,13 @@ import {
 import {
   Search, Users, RefreshCw, Phone, Mail, MapPin,
   ShoppingBag, CreditCard, Plus, AlertTriangle,
-  Loader2, Plane,
+  Loader2, Plane, CheckCircle2, Clock, XCircle,
+  MessageSquare, ReceiptText, CalendarDays,
 } from 'lucide-react'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { PaymentRegistrationForm } from '@/components/custom/PaymentRegistrationForm'
 import type { AgentClientsResponse, AgentClientOrder } from '@/app/api/agents/[agentId]/clients/route'
-import type { UnifiedClient, UnifiedOrder } from '@/schemas/contactSchema'
+import type { UnifiedClient, UnifiedOrder, UnifiedPayment } from '@/schemas/contactSchema'
 import { groupByTrip, groupByClient } from './grouping'
 import { GroupedByTripView } from './GroupedByTripView'
 import { GroupedByClientView } from './GroupedByClientView'
@@ -51,6 +52,46 @@ type PublishedTrip = {
   odooName: string
   odooListPriceCentavos: number
   odooCurrencyCode: string
+}
+
+const PLATFORM_PAYMENT_STATUS_LABELS: Record<string, string> = {
+  pending_verification: 'En revision',
+  verified: 'Verificado',
+  rejected: 'Rechazado',
+  info_requested: 'Info solicitada',
+}
+
+const PLATFORM_PAYMENT_STATUS_COLORS: Record<string, string> = {
+  pending_verification: 'bg-yellow-100 text-yellow-800',
+  verified: 'bg-green-100 text-green-800',
+  rejected: 'bg-red-100 text-red-800',
+  info_requested: 'bg-blue-100 text-blue-800',
+}
+
+const PLATFORM_PAYMENT_METHOD_LABELS: Record<string, string> = {
+  transfer: 'Transferencia',
+  card: 'Tarjeta',
+  cash: 'Efectivo',
+  deposit: 'Deposito',
+}
+
+function getOrderPaidAmount(order: UnifiedOrder): number {
+  if (order.source === 'odoo') return order.amountPaid ?? Math.max(0, order.amountTotal - (order.amountResidual ?? 0))
+  return (order.amountPaidCents ?? 0) / 100
+}
+
+function getOrderResidualAmount(order: UnifiedOrder): number {
+  if (order.source === 'odoo') return order.amountResidual ?? Math.max(0, order.amountTotal - getOrderPaidAmount(order))
+  return Math.max(0, ((order.amountTotalCents ?? 0) - (order.amountPaidCents ?? 0)) / 100)
+}
+
+function getMovementIcon(status: string) {
+  if (status === 'verified' || status === 'paid') return <CheckCircle2 className="h-3.5 w-3.5 text-green-600" />
+  if (status === 'rejected') return <XCircle className="h-3.5 w-3.5 text-red-600" />
+  if (status === 'info_requested') return <MessageSquare className="h-3.5 w-3.5 text-blue-600" />
+  if (status === 'invoice') return <ReceiptText className="h-3.5 w-3.5 text-muted-foreground" />
+  if (status === 'order') return <CalendarDays className="h-3.5 w-3.5 text-muted-foreground" />
+  return <Clock className="h-3.5 w-3.5 text-yellow-600" />
 }
 
 // ── CreateContactSheet ──
@@ -405,6 +446,8 @@ function ClientDetailSheet({
   if (!client) return null
 
   const isPlatform = client.source === 'platform'
+  const totalPaid = client.totalPaid ?? client.orders.reduce((sum, order) => sum + getOrderPaidAmount(order), 0)
+  const totalResidual = client.totalResidual ?? client.orders.reduce((sum, order) => sum + getOrderResidualAmount(order), 0)
 
   const paymentOrders = isPlatform
     ? client.orders
@@ -479,6 +522,22 @@ function ClientDetailSheet({
                   <p className="text-lg font-bold">{client.orderCount}</p>
                 </CardContent>
               </Card>
+              <Card>
+                <CardContent className="pt-3 pb-2 px-3">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                    <CreditCard className="h-3.5 w-3.5" /> Cobrado
+                  </div>
+                  <p className="text-lg font-bold font-mono text-green-700">{formatMXN(totalPaid)}</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="pt-3 pb-2 px-3">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                    <AlertTriangle className="h-3.5 w-3.5" /> Pendiente
+                  </div>
+                  <p className="text-lg font-bold font-mono text-orange-700">{formatMXN(totalResidual)}</p>
+                </CardContent>
+              </Card>
             </div>
 
             {/* Orders list */}
@@ -539,6 +598,110 @@ function ClientDetailSheet({
 
 // ── OrderCard ──
 
+function OrderMovementList({ order }: { order: UnifiedOrder }) {
+  const paidAmount = getOrderPaidAmount(order)
+  const residualAmount = getOrderResidualAmount(order)
+  const payments = [...(order.payments ?? [])].sort((a, b) => {
+    const aDate = new Date(a.date ?? a.createdAt ?? '').getTime()
+    const bDate = new Date(b.date ?? b.createdAt ?? '').getTime()
+    return Number.isNaN(bDate) || Number.isNaN(aDate) ? 0 : bDate - aDate
+  })
+
+  if (order.source === 'odoo') {
+    return (
+      <div className="space-y-2 rounded-md border bg-muted/20 p-2">
+        <p className="text-xs font-medium">Movimientos relevantes</p>
+        <div className="space-y-2 text-xs">
+          <div className="flex gap-2">
+            {getMovementIcon('order')}
+            <div>
+              <p className="font-medium">Venta confirmada en Odoo</p>
+              <p className="text-muted-foreground">{formatDate(order.dateOrder)} · {order.orderName}</p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            {getMovementIcon('invoice')}
+            <div>
+              <p className="font-medium">Facturacion: {order.invoiceStatus || 'Sin factura'}</p>
+              <p className="text-muted-foreground">Estado de pago: {PAYMENT_STATE_LABELS[order.paymentState ?? ''] ?? 'Sin estado'}</p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            {getMovementIcon(order.paymentState === 'paid' ? 'paid' : 'pending_verification')}
+            <div>
+              <p className="font-medium">Cobrado {formatMXN(paidAmount)}</p>
+              <p className={residualAmount > 0 ? 'text-orange-700' : 'text-muted-foreground'}>
+                Pendiente {formatMXN(residualAmount)}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-2 rounded-md border bg-muted/20 p-2">
+      <p className="text-xs font-medium">Abonos y movimientos</p>
+      <div className="space-y-2 text-xs">
+        <div className="flex gap-2">
+          {getMovementIcon('order')}
+          <div>
+            <p className="font-medium">Orden creada</p>
+            <p className="text-muted-foreground">{formatDate(order.dateOrder)} · {order.status ?? 'Sin estado'}</p>
+          </div>
+        </div>
+        {payments.map((payment) => {
+          const method = payment.paymentMethod
+            ? (PLATFORM_PAYMENT_METHOD_LABELS[payment.paymentMethod] ?? payment.paymentMethod)
+            : 'Metodo no definido'
+          return (
+            <div key={payment.paymentId} className="flex gap-2">
+              {getMovementIcon(payment.status)}
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="font-medium">{formatMXN(payment.amountCents / 100)} · {method}</p>
+                  <Badge className={`text-[10px] ${PLATFORM_PAYMENT_STATUS_COLORS[payment.status] ?? 'bg-gray-100 text-gray-800'}`}>
+                    {PLATFORM_PAYMENT_STATUS_LABELS[payment.status] ?? payment.status}
+                  </Badge>
+                </div>
+                <p className="text-muted-foreground">
+                  {formatDate(payment.date ?? payment.createdAt)}
+                  {payment.bankName ? ` · ${payment.bankName}` : ''}
+                  {payment.bankReference ? ` · Ref. ${payment.bankReference}` : ''}
+                </p>
+                {payment.concept && (
+                  <p className="truncate text-muted-foreground">Concepto: {payment.concept}</p>
+                )}
+                {payment.rejectionNote && (
+                  <p className={payment.status === 'rejected' ? 'text-red-700' : 'text-blue-700'}>
+                    {payment.status === 'rejected' ? 'Motivo' : 'Solicitud'}: {payment.rejectionNote}
+                  </p>
+                )}
+              </div>
+            </div>
+          )
+        })}
+        {payments.length === 0 && (
+          <div className="flex gap-2">
+            {getMovementIcon('pending_verification')}
+            <p className="text-muted-foreground">Sin abonos registrados todavia.</p>
+          </div>
+        )}
+        <div className="flex gap-2 border-t pt-2">
+          {getMovementIcon(residualAmount > 0 ? 'pending_verification' : 'paid')}
+          <div>
+            <p className="font-medium">Saldo actual</p>
+            <p className="text-muted-foreground">
+              Cobrado {formatMXN(paidAmount)} · Pendiente {formatMXN(residualAmount)}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function OrderCard({
   order,
   showPaymentButton,
@@ -549,33 +712,53 @@ function OrderCard({
   onPayment: () => void
 }) {
   const isOdoo = order.source === 'odoo'
+  const paidAmount = getOrderPaidAmount(order)
+  const residualAmount = getOrderResidualAmount(order)
+  const progress = order.amountTotal > 0 ? Math.min(100, Math.round((paidAmount / order.amountTotal) * 100)) : 0
 
   return (
     <Card className="p-3">
-      <CardContent className="p-0 space-y-1.5">
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium">{order.orderName}</span>
-          {isOdoo && order.paymentState && (
-            <Badge className={`text-xs ${PAYMENT_STATE_COLORS[order.paymentState] ?? ''}`}>
-              {PAYMENT_STATE_LABELS[order.paymentState] ?? order.paymentState}
-            </Badge>
-          )}
-          {!isOdoo && order.status && (
-            <Badge variant="outline" className="text-xs">{order.status}</Badge>
-          )}
+      <CardContent className="p-0 space-y-3">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <span className="text-sm font-medium">{order.tripName ?? order.orderName}</span>
+            <p className="text-xs text-muted-foreground">
+              {order.orderName}
+              {order.dateOrder ? ` · ${formatDate(order.dateOrder)}` : ''}
+            </p>
+          </div>
+          <div className="flex shrink-0 flex-col items-end gap-1">
+            {isOdoo && order.paymentState && (
+              <Badge className={`text-xs ${PAYMENT_STATE_COLORS[order.paymentState] ?? ''}`}>
+                {PAYMENT_STATE_LABELS[order.paymentState] ?? order.paymentState}
+              </Badge>
+            )}
+            {!isOdoo && order.status && (
+              <Badge variant="outline" className="text-xs">{order.status}</Badge>
+            )}
+            {isOdoo && order.invoiceStatus && (
+              <span className="text-[10px] text-muted-foreground">Factura: {order.invoiceStatus}</span>
+            )}
+          </div>
         </div>
-        <div className="flex items-center justify-between text-sm">
-          <span className="font-mono">{formatMXN(order.amountTotal)}</span>
-          <span className="text-xs text-muted-foreground">{formatDate(order.dateOrder)}</span>
+        <div className="grid grid-cols-3 gap-2 text-xs">
+          <div>
+            <p className="text-muted-foreground">Total</p>
+            <p className="font-mono font-semibold">{formatMXN(order.amountTotal)}</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground">Cobrado</p>
+            <p className="font-mono font-semibold text-green-700">{formatMXN(paidAmount)}</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground">Pendiente</p>
+            <p className="font-mono font-semibold text-orange-700">{formatMXN(residualAmount)}</p>
+          </div>
         </div>
-        {isOdoo && (order.amountResidual ?? 0) > 0 && (
-          <p className="text-xs text-orange-600">Pendiente: {formatMXN(order.amountResidual!)}</p>
-        )}
-        {!isOdoo && order.amountTotalCents != null && order.amountPaidCents != null && order.amountTotalCents > order.amountPaidCents && (
-          <p className="text-xs text-orange-600">
-            Pagado: {formatMXN(order.amountPaidCents / 100)} de {formatMXN(order.amountTotalCents / 100)}
-          </p>
-        )}
+        <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+          <div className="h-full rounded-full bg-green-600" style={{ width: `${progress}%` }} />
+        </div>
+        <OrderMovementList order={order} />
         {showPaymentButton && (
           <Button variant="outline" size="sm" className="w-full mt-2" onClick={onPayment}>
             <CreditCard className="h-3.5 w-3.5 mr-1.5" /> Registrar Pago
@@ -610,13 +793,20 @@ export function AgentClientList({ agentId, title, hideHeader }: AgentClientListP
       .catch(() => { /* tripMap queda vacío — headers mostrarán tripId como fallback */ })
   }, [])
 
+  // Nombres de viaje Odoo extraídos del response de clientes
+  const [odooTripNames, setOdooTripNames] = useState<Record<string, string>>({})
+
   const tripMap = useMemo(() => {
     const map: Record<string, string> = {}
     for (const t of trips) {
       map[t.id] = t.odooName
     }
+    // Enriquecer con nombres de viaje de Odoo (cubre viajes históricos no publicados)
+    for (const [k, v] of Object.entries(odooTripNames)) {
+      if (!map[k]) map[k] = v
+    }
     return map
-  }, [trips])
+  }, [trips, odooTripNames])
 
   const fetchClients = useCallback(async () => {
     setIsLoading(true)
@@ -649,17 +839,33 @@ export function AgentClientList({ agentId, title, hideHeader }: AgentClientListP
           source: 'odoo',
           orderCount: c.orderCount,
           totalAmount: c.totalAmount,
+          totalPaid: c.totalPaid,
+          totalResidual: c.totalResidual,
           orders: c.orders.map((o: AgentClientOrder) => ({
             orderId: String(o.orderId),
             orderName: o.orderName,
+            tripId: o.tripId ?? undefined,
+            tripName: o.tripName,
             amountTotal: o.amountTotal,
             dateOrder: o.dateOrder,
             source: 'odoo' as const,
             paymentState: o.paymentState,
+            amountPaid: o.amountPaid,
             amountResidual: o.amountResidual,
+            invoiceStatus: o.invoiceStatus,
           })),
         })
       }
+      // Extraer nombres de viaje de las órdenes Odoo para enriquecer tripMap
+      const namesFromOdoo: Record<string, string> = {}
+      for (const c of odooResult.value.clients) {
+        for (const o of c.orders) {
+          if (o.tripId && o.tripName) {
+            namesFromOdoo[o.tripId] = o.tripName
+          }
+        }
+      }
+      setOdooTripNames(namesFromOdoo)
     } else {
       setError('Error al cargar clientes de Odoo')
       setIsLoading(false)
@@ -685,21 +891,36 @@ export function AgentClientList({ agentId, title, hideHeader }: AgentClientListP
 
         let orders: UnifiedOrder[] = []
         let totalAmount = 0
+        let totalPaid = 0
+        let totalResidual = 0
 
         if (detailResult.status === 'fulfilled') {
-          const detail = detailResult.value as { orders: Array<{ orderId: string; orderName: string; tripId?: string; amountTotalCents: number; amountPaidCents: number; createdAt: string | null; status: string }> }
+          const detail = detailResult.value as {
+            orders: Array<{ orderId: string; orderName: string; tripId?: string; amountTotalCents: number; amountPaidCents: number; createdAt: string | null; status: string }>
+            payments: UnifiedPayment[]
+          }
+          const paymentsByOrder = new Map<string, UnifiedPayment[]>()
+          for (const payment of detail.payments ?? []) {
+            const list = paymentsByOrder.get(payment.orderId) ?? []
+            list.push(payment)
+            paymentsByOrder.set(payment.orderId, list)
+          }
           orders = detail.orders.map((o) => ({
             orderId: o.orderId,
             orderName: o.orderName,
             tripId: o.tripId,
+            tripName: o.orderName,
             amountTotal: o.amountTotalCents / 100,
             dateOrder: o.createdAt,
             source: 'platform' as const,
             status: o.status,
             amountPaidCents: o.amountPaidCents,
             amountTotalCents: o.amountTotalCents,
+            payments: paymentsByOrder.get(o.orderId) ?? [],
           }))
           totalAmount = orders.reduce((sum, o) => sum + o.amountTotal, 0)
+          totalPaid = orders.reduce((sum, o) => sum + getOrderPaidAmount(o), 0)
+          totalResidual = orders.reduce((sum, o) => sum + getOrderResidualAmount(o), 0)
         }
 
         platformClients.push({
@@ -711,6 +932,8 @@ export function AgentClientList({ agentId, title, hideHeader }: AgentClientListP
           source: 'platform',
           orderCount: orders.length,
           totalAmount,
+          totalPaid,
+          totalResidual,
           orders,
         })
       }
@@ -728,7 +951,11 @@ export function AgentClientList({ agentId, title, hideHeader }: AgentClientListP
   }, [agentId])
 
   useEffect(() => {
-    fetchClients()
+    const loadClients = async () => {
+      await fetchClients()
+    }
+
+    void loadClients()
   }, [fetchClients])
 
   // (F8) Búsqueda extendida: en modo trip, también filtra por nombre de viaje

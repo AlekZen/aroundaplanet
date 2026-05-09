@@ -18,6 +18,8 @@ export interface TripSaleOrder {
   paymentState: 'paid' | 'partial' | 'not_paid' | 'in_payment' | null
   amountPaid: number
   amountResidual: number
+  invoiceCount: number
+  invoiceNames: string[]
 }
 
 export interface TripSalesResult {
@@ -39,7 +41,7 @@ const ORDER_FIELDS = [
 ] as const
 
 const INVOICE_FIELDS = [
-  'payment_state', 'amount_total', 'amount_residual',
+  'name', 'payment_state', 'amount_total', 'amount_residual',
 ] as const
 
 const PARTNER_FIELDS = [
@@ -101,7 +103,7 @@ export async function fetchTripSales(odooProductId: number): Promise<TripSalesRe
   }
 
   // Step 3: Read invoices for payment state
-  const invoiceMap = new Map<number, { paymentState: string; amountTotal: number; amountResidual: number }>()
+  const invoiceMap = new Map<number, { name: string; paymentState: string; amountTotal: number; amountResidual: number }>()
 
   if (allInvoiceIds.size > 0) {
     const invoices = await client.read(
@@ -111,6 +113,7 @@ export async function fetchTripSales(odooProductId: number): Promise<TripSalesRe
     )
     for (const inv of invoices) {
       invoiceMap.set(inv.id as number, {
+        name: (inv.name as string) || String(inv.id),
         paymentState: (inv.payment_state as string) || 'not_paid',
         amountTotal: (inv.amount_total as number) || 0,
         amountResidual: (inv.amount_residual as number) || 0,
@@ -157,6 +160,7 @@ export async function fetchTripSales(odooProductId: number): Promise<TripSalesRe
     let paymentState: string | null = null
     let amountPaid = 0
     let amountResidual = 0
+    const invoiceNames: string[] = []
 
     for (const invId of invoiceIds) {
       const inv = invoiceMap.get(invId)
@@ -164,6 +168,7 @@ export async function fetchTripSales(odooProductId: number): Promise<TripSalesRe
         paymentState = inv.paymentState
         amountPaid += inv.amountTotal - inv.amountResidual
         amountResidual += inv.amountResidual
+        invoiceNames.push(inv.name)
       }
     }
 
@@ -183,6 +188,8 @@ export async function fetchTripSales(odooProductId: number): Promise<TripSalesRe
       paymentState: paymentState as TripSaleOrder['paymentState'],
       amountPaid,
       amountResidual,
+      invoiceCount: invoiceNames.length,
+      invoiceNames,
     })
   }
 

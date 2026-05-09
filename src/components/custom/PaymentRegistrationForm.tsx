@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useSyncExternalStore } from 'react'
 import { toast } from 'sonner'
 import {
   Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription,
@@ -14,7 +14,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Loader2, CheckCircle2, Upload, Sparkles, AlertTriangle } from 'lucide-react'
+import { Loader2, CheckCircle2, Upload, Sparkles } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import {
   PAYMENT_METHODS, PAYMENT_METHOD_LABELS,
@@ -367,16 +367,19 @@ function SuccessContent({ onClose }: { onClose: () => void }) {
 }
 
 function useIsDesktop() {
-  const [isDesktop, setIsDesktop] = useState(false)
-  useEffect(() => {
-    if (typeof window === 'undefined' || !window.matchMedia) return
-    const mq = window.matchMedia('(min-width: 1024px)')
-    setIsDesktop(mq.matches)
-    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches)
-    mq.addEventListener('change', handler)
-    return () => mq.removeEventListener('change', handler)
-  }, [])
-  return isDesktop
+  return useSyncExternalStore(
+    (onStoreChange) => {
+      if (typeof window === 'undefined' || !window.matchMedia) return () => {}
+      const mq = window.matchMedia('(min-width: 1024px)')
+      mq.addEventListener('change', onStoreChange)
+      return () => mq.removeEventListener('change', onStoreChange)
+    },
+    () => {
+      if (typeof window === 'undefined' || !window.matchMedia) return false
+      return window.matchMedia('(min-width: 1024px)').matches
+    },
+    () => false
+  )
 }
 
 export function PaymentRegistrationForm({

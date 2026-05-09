@@ -14,18 +14,10 @@ export default function AgentClientsPage() {
   // If client-side claims don't have agentId yet (Firebase propagation delay),
   // fetch from server where claims are always up-to-date via session cookie.
   const [serverAgentId, setServerAgentId] = useState<string | null>(null)
-  const [checked, setChecked] = useState(false)
+  const [serverChecked, setServerChecked] = useState(false)
 
   useEffect(() => {
-    if (localAgentId) {
-      setChecked(true)
-      return
-    }
-    // Only fetch if we have a user but no agentId locally
-    if (!user) {
-      setChecked(true)
-      return
-    }
+    if (localAgentId || !user) return
     let cancelled = false
     fetch('/api/auth/claims')
       .then((r) => r.ok ? r.json() : null)
@@ -33,13 +25,14 @@ export default function AgentClientsPage() {
         if (!cancelled && data?.agentId) {
           setServerAgentId(data.agentId)
         }
-        if (!cancelled) setChecked(true)
+        if (!cancelled) setServerChecked(true)
       })
-      .catch(() => { if (!cancelled) setChecked(true) })
+      .catch(() => { if (!cancelled) setServerChecked(true) })
     return () => { cancelled = true }
   }, [localAgentId, user])
 
   const agentId = localAgentId ?? serverAgentId
+  const checked = Boolean(localAgentId) || !user || serverChecked
 
   if (!checked) {
     return (

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useMemo } from 'react'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -51,18 +51,14 @@ function computeCountdownText(startDate: string): string | null {
 
 /** Compute countdowns client-side only to avoid hydration mismatch */
 function useCountdowns(departures: PublicDeparture[]): Map<string, string> {
-  const [countdowns, setCountdowns] = useState<Map<string, string>>(new Map())
-
-  useEffect(() => {
+  return useMemo(() => {
     const map = new Map<string, string>()
     for (const dep of departures) {
       const text = computeCountdownText(dep.startDate)
       if (text) map.set(dep.id, text)
     }
-    setCountdowns(map)
+    return map
   }, [departures])
-
-  return countdowns
 }
 
 function formatDepartureDate(isoDate: string): string {

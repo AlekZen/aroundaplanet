@@ -11,12 +11,22 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table'
 import { MapPin } from 'lucide-react'
-import type { UnifiedClient } from '@/schemas/contactSchema'
+import type { UnifiedClient, UnifiedOrder } from '@/schemas/contactSchema'
 import type { TripGroup } from './grouping'
 import {
   formatMXN, formatDate,
   PAYMENT_STATE_LABELS, PAYMENT_STATE_COLORS,
 } from './client-utils'
+
+function getPaidAmount(order: UnifiedOrder): number {
+  if (order.source === 'odoo') return order.amountPaid ?? Math.max(0, order.amountTotal - (order.amountResidual ?? 0))
+  return (order.amountPaidCents ?? 0) / 100
+}
+
+function getResidualAmount(order: UnifiedOrder): number {
+  if (order.source === 'odoo') return order.amountResidual ?? Math.max(0, order.amountTotal - getPaidAmount(order))
+  return Math.max(0, ((order.amountTotalCents ?? 0) - (order.amountPaidCents ?? 0)) / 100)
+}
 
 interface GroupedByTripViewProps {
   tripGroups: TripGroup[]
@@ -41,6 +51,14 @@ export function GroupedByTripView({ tripGroups, onClientClick }: GroupedByTripVi
                 <span className="text-sm font-mono text-muted-foreground">
                   {formatMXN(group.totalAmount)}
                 </span>
+                <span className="hidden text-sm font-mono text-green-700 sm:inline">
+                  Cobrado {formatMXN(group.totalPaid)}
+                </span>
+                {group.totalResidual > 0 && (
+                  <span className="hidden text-sm font-mono text-orange-700 sm:inline">
+                    Pendiente {formatMXN(group.totalResidual)}
+                  </span>
+                )}
               </div>
             </AccordionTrigger>
             <AccordionContent>
@@ -52,7 +70,9 @@ export function GroupedByTripView({ tripGroups, onClientClick }: GroupedByTripVi
                       <TableHead>Cliente</TableHead>
                       <TableHead>Contacto</TableHead>
                       <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Monto</TableHead>
+                      <TableHead className="text-right">Total</TableHead>
+                      <TableHead className="text-right">Cobrado</TableHead>
+                      <TableHead className="text-right">Pendiente</TableHead>
                       <TableHead>Fuente</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -93,6 +113,12 @@ export function GroupedByTripView({ tripGroups, onClientClick }: GroupedByTripVi
                         </TableCell>
                         <TableCell className="text-right tabular-nums font-mono">
                           {formatMXN(orders.reduce((sum, o) => sum + o.amountTotal, 0))}
+                        </TableCell>
+                        <TableCell className="text-right tabular-nums font-mono text-green-700">
+                          {formatMXN(orders.reduce((sum, o) => sum + getPaidAmount(o), 0))}
+                        </TableCell>
+                        <TableCell className="text-right tabular-nums font-mono text-orange-700">
+                          {formatMXN(orders.reduce((sum, o) => sum + getResidualAmount(o), 0))}
                         </TableCell>
                         <TableCell>
                           <Badge
@@ -158,6 +184,14 @@ export function GroupedByTripView({ tripGroups, onClientClick }: GroupedByTripVi
                       </div>
                       <span className="font-mono font-medium">
                         {formatMXN(orders.reduce((sum, o) => sum + o.amountTotal, 0))}
+                      </span>
+                    </div>
+                    <div className="mt-2 grid grid-cols-2 gap-2 text-xs">
+                      <span className="font-mono text-green-700">
+                        Cobrado {formatMXN(orders.reduce((sum, o) => sum + getPaidAmount(o), 0))}
+                      </span>
+                      <span className="font-mono text-orange-700">
+                        Pendiente {formatMXN(orders.reduce((sum, o) => sum + getResidualAmount(o), 0))}
                       </span>
                     </div>
                     {orders.length > 0 && orders[0].dateOrder && (

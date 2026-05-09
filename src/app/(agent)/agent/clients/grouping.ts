@@ -1,5 +1,15 @@
 import type { UnifiedClient, UnifiedOrder } from '@/schemas/contactSchema'
 
+function getPaidAmount(order: UnifiedOrder): number {
+  if (order.source === 'odoo') return order.amountPaid ?? Math.max(0, order.amountTotal - (order.amountResidual ?? 0))
+  return (order.amountPaidCents ?? 0) / 100
+}
+
+function getResidualAmount(order: UnifiedOrder): number {
+  if (order.source === 'odoo') return order.amountResidual ?? Math.max(0, order.amountTotal - getPaidAmount(order))
+  return Math.max(0, ((order.amountTotalCents ?? 0) - (order.amountPaidCents ?? 0)) / 100)
+}
+
 export interface TripGroup {
   tripId: string | null
   tripName: string
@@ -8,6 +18,8 @@ export interface TripGroup {
     orders: UnifiedOrder[]
   }[]
   totalAmount: number
+  totalPaid: number
+  totalResidual: number
 }
 
 export interface ClientGroup {
@@ -18,6 +30,8 @@ export interface ClientGroup {
     orders: UnifiedOrder[]
   }[]
   totalAmount: number
+  totalPaid: number
+  totalResidual: number
 }
 
 /**
@@ -56,11 +70,15 @@ export function groupByTrip(
           tripName: tripId ? (tripMap[tripId] ?? tripId) : 'Sin viaje asociado',
           clients: [],
           totalAmount: 0,
+          totalPaid: 0,
+          totalResidual: 0,
         }
         groupMap.set(tripId, group)
       }
       group.clients.push({ client, orders })
       group.totalAmount += orders.reduce((sum, o) => sum + o.amountTotal, 0)
+      group.totalPaid += orders.reduce((sum, o) => sum + getPaidAmount(o), 0)
+      group.totalResidual += orders.reduce((sum, o) => sum + getResidualAmount(o), 0)
     }
   }
 
@@ -113,6 +131,8 @@ export function groupByClient(
       client,
       trips,
       totalAmount: client.orders.reduce((sum, o) => sum + o.amountTotal, 0),
+      totalPaid: client.orders.reduce((sum, o) => sum + getPaidAmount(o), 0),
+      totalResidual: client.orders.reduce((sum, o) => sum + getResidualAmount(o), 0),
     }
   })
 
