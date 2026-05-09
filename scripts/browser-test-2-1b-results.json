@@ -1,0 +1,67 @@
+{
+  "date": "2026-02-27T19:54:43.085Z",
+  "passed": 12,
+  "total": 12,
+  "results": [
+    {
+      "name": "1. GET /api/trips sin cookie => 401",
+      "passed": true,
+      "detail": "status=401"
+    },
+    {
+      "name": "2. GET /api/trips con rol cliente => 200",
+      "passed": true,
+      "detail": "status=200"
+    },
+    {
+      "name": "3. GET /api/trips retorna lista de viajes",
+      "passed": true,
+      "detail": "status=200, trips=17, firstId=odoo-1694"
+    },
+    {
+      "name": "4. GET /api/trips?filter=published",
+      "passed": true,
+      "detail": "status=200, count=7"
+    },
+    {
+      "name": "5. GET /api/trips?search=mundo",
+      "passed": true,
+      "detail": "status=200, count=1, hasMatch=true"
+    },
+    {
+      "name": "6. GET /api/trips/[tripId] retorna viaje",
+      "passed": true,
+      "detail": "status=200, name=ARGENTINA BRASIL 2026"
+    },
+    {
+      "name": "7. PATCH /api/trips/[tripId] actualiza slug",
+      "passed": true,
+      "detail": "status=200, persisted=true"
+    },
+    {
+      "name": "8. PATCH /api/trips/[tripId] toggle isPublished",
+      "passed": true,
+      "detail": "status=200, toggled=true"
+    },
+    {
+      "name": "9. PATCH /api/trips/[tripId] rechaza campo invalido",
+      "passed": true,
+      "detail": "status=400"
+    },
+    {
+      "name": "10. POST /api/trips/[tripId]/departures crea salida manual",
+      "passed": true,
+      "detail": "status=201, depId=LDNtWrsM2sWUeGrZvQup"
+    },
+    {
+      "name": "11. PATCH /api/trips/[tripId]/departures/[depId] actualiza salida",
+      "passed": true,
+      "detail": "status=200"
+    },
+    {
+      "name": "12. PATCH /api/trips/[tripId] sin cookie => 401",
+      "passed": true,
+      "detail": "status=401"
+    }
+  ]
+}

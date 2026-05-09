@@ -16,11 +16,10 @@ import {
   SidebarFooter,
 } from '@/components/ui/sidebar'
 import { RoleSwitcher } from '@/components/custom/RoleSwitcher'
-import { cn } from '@/lib/utils'
 import { staggerChildren } from '@/lib/animations/variants'
 import { spring } from '@/lib/animations/transitions'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
-import { LayoutDashboard, CreditCard, BarChart3, Shield, UserCircle, RefreshCw, Map, Users, Plane, Contact, UserCheck, DollarSign } from 'lucide-react'
+import { LayoutDashboard, CreditCard, BarChart3, Shield, UserCircle, RefreshCw, Map, Users, Plane, Contact, UserCheck, DollarSign, FileText } from 'lucide-react'
 
 interface RoleSidebarProps {
   roles: string[]
@@ -34,6 +33,7 @@ const SECTIONS_BY_ROLE: Record<string, Array<{ id: string; label: string; icon: 
     { id: 'verification', label: 'Verificacion', icon: <CreditCard className="h-5 w-5" />, href: '/admin/verification' },
     { id: 'commissions', label: 'Comisiones', icon: <DollarSign className="h-5 w-5" />, href: '/admin/commissions' },
     { id: 'trips', label: 'Viajes', icon: <Map className="h-5 w-5" />, href: '/admin/trips' },
+    { id: 'documents', label: 'Documentos', icon: <FileText className="h-5 w-5" />, href: '/admin/documents' },
     { id: 'odoo-sync', label: 'Sync Odoo', icon: <RefreshCw className="h-5 w-5" />, href: '/admin/odoo-sync' },
     { id: 'admin-my-trips', label: 'Mis Viajes', icon: <Plane className="h-5 w-5" />, href: '/admin/my-trips' },
     { id: 'admin-profile', label: 'Mi Perfil', icon: <UserCircle className="h-5 w-5" />, href: '/admin/profile' },
@@ -59,6 +59,7 @@ const SECTIONS_BY_ROLE: Record<string, Array<{ id: string; label: string; icon: 
     { id: 'verification', label: 'Verificacion', icon: <CreditCard className="h-5 w-5" />, href: '/superadmin/verification' },
     { id: 'commissions', label: 'Comisiones', icon: <DollarSign className="h-5 w-5" />, href: '/superadmin/commissions' },
     { id: 'trips', label: 'Viajes', icon: <Map className="h-5 w-5" />, href: '/superadmin/trips' },
+    { id: 'documents', label: 'Documentos', icon: <FileText className="h-5 w-5" />, href: '/superadmin/documents' },
     { id: 'odoo-sync', label: 'Sync Odoo', icon: <RefreshCw className="h-5 w-5" />, href: '/superadmin/odoo-sync' },
     { id: 'superadmin-my-trips', label: 'Mis Viajes', icon: <Plane className="h-5 w-5" />, href: '/superadmin/my-trips' },
     { id: 'superadmin-profile', label: 'Mi Perfil', icon: <UserCircle className="h-5 w-5" />, href: '/superadmin/profile' },
@@ -92,7 +93,7 @@ export function RoleSidebar({ roles, className }: RoleSidebarProps) {
                 {sections.map((section) => {
                   const isActive = pathname === section.href || pathname?.startsWith(section.href + '/')
                   return (
-                    <SidebarMenuItem key={section.id}>
+                    <SidebarMenuItem key={section.href}>
                       <SidebarMenuButton asChild isActive={isActive} tooltip={section.label}>
                         <Link href={section.href}>
                           {section.icon}

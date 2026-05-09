@@ -1,0 +1,462 @@
+- generic [active] [ref=e1]:
+  - link "Saltar al contenido principal" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - banner [ref=e3]:
+    - navigation "Navegacion principal" [ref=e4]:
+      - link "AroundaPlanet AroundaPlanet" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - img "AroundaPlanet" [ref=e6]
+        - generic [ref=e7]: AroundaPlanet
+      - generic [ref=e8]:
+        - link "Inicio" [ref=e9] [cursor=pointer]:
+          - /url: /
+        - link "Viajes" [ref=e10] [cursor=pointer]:
+          - /url: /viajes
+        - link "Vuelta al Mundo" [ref=e11] [cursor=pointer]:
+          - /url: /viajes/vuelta-al-mundo-2025
+        - link "Nosotros" [ref=e12] [cursor=pointer]:
+          - /url: /sobre-nosotros
+      - generic [ref=e13]:
+        - generic [ref=e124]: Alek Zen
+        - link "Mi Panel" [ref=e125] [cursor=pointer]:
+          - /url: /dashboard
+        - button "Salir" [ref=e126]:
+          - img
+          - text: Salir
+  - main [ref=e17]:
+    - generic [ref=e127]:
+      - generic [ref=e128]:
+        - heading "Explora Nuestros Viajes" [level=1] [ref=e129]
+        - paragraph [ref=e130]: Descubre destinos increibles con grupos pequenos y experiencias autenticas.
+      - generic [ref=e131]:
+        - generic [ref=e132]:
+          - generic [ref=e133]:
+            - generic [ref=e134]: "Destino:"
+            - generic [ref=e135] [cursor=pointer]: All
+          - generic [ref=e136]:
+            - generic [ref=e137]: "Precio:"
+            - generic [ref=e138] [cursor=pointer]: Hasta $50K
+            - generic [ref=e139] [cursor=pointer]: $50K — $100K
+            - generic [ref=e140] [cursor=pointer]: Mas de $100K
+        - list [ref=e141]:
+          - listitem [ref=e142]:
+            - link "ARGENTINA Y BRASIL AGOSTO 2025" [ref=e144] [cursor=pointer]:
+              - /url: /viajes/argentina-y-brasil-agosto-2025
+              - article "ARGENTINA Y BRASIL AGOSTO 2025" [ref=e145]:
+                - generic [ref=e146]:
+                  - img "ARGENTINA Y BRASIL AGOSTO 2025" [ref=e147]
+                  - generic [ref=e148]: All
+                - generic [ref=e149]:
+                  - heading "ARGENTINA Y BRASIL AGOSTO 2025" [level=3] [ref=e150]
+                  - paragraph [ref=e151]: Proximamente
+                  - generic [ref=e152]:
+                    - generic [ref=e153]: $69,500
+                    - generic [ref=e154]: Cotizar
+          - listitem [ref=e155]:
+            - link "ARGENTINA Y BRASIL NOVIEMBRE 2025" [ref=e157] [cursor=pointer]:
+              - /url: /viajes/argentina-y-brasil-noviembre-2025
+              - article "ARGENTINA Y BRASIL NOVIEMBRE 2025" [ref=e158]:
+                - generic [ref=e159]:
+                  - img "ARGENTINA Y BRASIL NOVIEMBRE 2025" [ref=e160]
+                  - generic [ref=e161]: All
+                - generic [ref=e162]:
+                  - heading "ARGENTINA Y BRASIL NOVIEMBRE 2025" [level=3] [ref=e163]
+                  - paragraph [ref=e164]: Proximamente
+                  - generic [ref=e165]:
+                    - generic [ref=e166]: $69,500
+                    - generic [ref=e167]: Cotizar
+          - listitem [ref=e168]:
+            - link "ASIA 2026" [ref=e170] [cursor=pointer]:
+              - /url: /viajes/asia-2026
+              - article "ASIA 2026" [ref=e171]:
+                - generic [ref=e172]:
+                  - img "ASIA 2026" [ref=e173]
+                  - generic [ref=e174]: All
+                - generic [ref=e175]:
+                  - heading "ASIA 2026" [level=3] [ref=e176]
+                  - paragraph [ref=e177]: Proximamente
+                  - generic [ref=e178]:
+                    - generic [ref=e179]: $88,500
+                    - generic [ref=e180]: Cotizar
+          - listitem [ref=e181]:
+            - link "CANCUN GRUPAL 2025" [ref=e183] [cursor=pointer]:
+              - /url: /viajes/cancun-grupal-2025
+              - article "CANCUN GRUPAL 2025" [ref=e184]:
+                - generic [ref=e185]:
+                  - img "CANCUN GRUPAL 2025" [ref=e186]
+                  - generic [ref=e187]: All
+                - generic [ref=e188]:
+                  - heading "CANCUN GRUPAL 2025" [level=3] [ref=e189]
+                  - paragraph [ref=e190]: Proximamente
+                  - generic [ref=e191]:
+                    - generic [ref=e192]: $12,900
+                    - generic [ref=e193]: Cotizar
+          - listitem [ref=e194]:
+            - link "CHEPE DICIEMBRE 2025" [ref=e196] [cursor=pointer]:
+              - /url: /viajes/chepe-diciembre-2025
+              - article "CHEPE DICIEMBRE 2025" [ref=e197]:
+                - generic [ref=e198]:
+                  - img "CHEPE DICIEMBRE 2025" [ref=e199]
+                  - generic [ref=e200]: All
+                - generic [ref=e201]:
+                  - heading "CHEPE DICIEMBRE 2025" [level=3] [ref=e202]
+                  - paragraph [ref=e203]: Proximamente
+                  - generic [ref=e204]:
+                    - generic [ref=e205]: $17,500
+                    - generic [ref=e206]: Cotizar
+          - listitem [ref=e207]:
+            - link "CHEPE ENERO 2026" [ref=e209] [cursor=pointer]:
+              - /url: /viajes/chepe-enero-2026
+              - article "CHEPE ENERO 2026" [ref=e210]:
+                - generic [ref=e211]:
+                  - img "CHEPE ENERO 2026" [ref=e212]
+                  - generic [ref=e213]: All
+                - generic [ref=e214]:
+                  - heading "CHEPE ENERO 2026" [level=3] [ref=e215]
+                  - paragraph [ref=e216]: Proximamente
+                  - generic [ref=e217]:
+                    - generic [ref=e218]: $17,500
+                    - generic [ref=e219]: Cotizar
+          - listitem [ref=e220]:
+            - link "CHIAPAS DICIEMBRE 2025" [ref=e222] [cursor=pointer]:
+              - /url: /viajes/chiapas-diciembre-2025
+              - article "CHIAPAS DICIEMBRE 2025" [ref=e223]:
+                - generic [ref=e224]:
+                  - img "CHIAPAS DICIEMBRE 2025" [ref=e225]
+                  - generic [ref=e226]: All
+                - generic [ref=e227]:
+                  - heading "CHIAPAS DICIEMBRE 2025" [level=3] [ref=e228]
+                  - paragraph [ref=e229]: Proximamente
+                  - generic [ref=e230]:
+                    - generic [ref=e231]: $9,900
+                    - generic [ref=e232]: Cotizar
+          - listitem [ref=e233]:
+            - link "CHIAPAS OCTUBRE 2025" [ref=e235] [cursor=pointer]:
+              - /url: /viajes/chiapas-octubre-2025
+              - article "CHIAPAS OCTUBRE 2025" [ref=e236]:
+                - generic [ref=e237]:
+                  - img "CHIAPAS OCTUBRE 2025" [ref=e238]
+                  - generic [ref=e239]: All
+                - generic [ref=e240]:
+                  - heading "CHIAPAS OCTUBRE 2025" [level=3] [ref=e241]
+                  - paragraph [ref=e242]: Proximamente
+                  - generic [ref=e243]:
+                    - generic [ref=e244]: $9,900
+                    - generic [ref=e245]: Cotizar
+          - listitem [ref=e246]:
+            - link "COLOMBIA NOVIEMBRE 2025" [ref=e248] [cursor=pointer]:
+              - /url: /viajes/colombia-noviembre-2025
+              - article "COLOMBIA NOVIEMBRE 2025" [ref=e249]:
+                - generic [ref=e250]:
+                  - img "COLOMBIA NOVIEMBRE 2025" [ref=e251]
+                  - generic [ref=e252]: All
+                - generic [ref=e253]:
+                  - heading "COLOMBIA NOVIEMBRE 2025" [level=3] [ref=e254]
+                  - paragraph [ref=e255]: Proximamente
+                  - generic [ref=e256]:
+                    - generic [ref=e257]: $27,600
+                    - generic [ref=e258]: Cotizar
+          - listitem [ref=e259]:
+            - link "COLOMBIA OCTUBRE 2025" [ref=e261] [cursor=pointer]:
+              - /url: /viajes/colombia-octubre-2025
+              - article "COLOMBIA OCTUBRE 2025" [ref=e262]:
+                - generic [ref=e263]:
+                  - img "COLOMBIA OCTUBRE 2025" [ref=e264]
+                  - generic [ref=e265]: All
+                - generic [ref=e266]:
+                  - heading "COLOMBIA OCTUBRE 2025" [level=3] [ref=e267]
+                  - paragraph [ref=e268]: Proximamente
+                  - generic [ref=e269]:
+                    - generic [ref=e270]: $27,600
+                    - generic [ref=e271]: Cotizar
+          - listitem [ref=e272]:
+            - link "EUROPA INOLVIDABLE" [ref=e274] [cursor=pointer]:
+              - /url: /viajes/europa-inolvidable
+              - article "EUROPA INOLVIDABLE" [ref=e275]:
+                - generic [ref=e276]:
+                  - img "EUROPA INOLVIDABLE" [ref=e277]
+                  - generic [ref=e278]: All
+                - generic [ref=e279]:
+                  - heading "EUROPA INOLVIDABLE" [level=3] [ref=e280]
+                  - paragraph [ref=e281]: Proximamente
+                  - generic [ref=e282]:
+                    - generic [ref=e283]: $52,500
+                    - generic [ref=e284]: Cotizar
+          - listitem [ref=e285]:
+            - link "EUROPA SEPTIEMBRE 2025" [ref=e287] [cursor=pointer]:
+              - /url: /viajes/europa-septiembre-2025
+              - article "EUROPA SEPTIEMBRE 2025" [ref=e288]:
+                - generic [ref=e289]:
+                  - img "EUROPA SEPTIEMBRE 2025" [ref=e290]
+                  - generic [ref=e291]: All
+                - generic [ref=e292]:
+                  - heading "EUROPA SEPTIEMBRE 2025" [level=3] [ref=e293]
+                  - paragraph [ref=e294]: Proximamente
+                  - generic [ref=e295]:
+                    - generic [ref=e296]: $79,800
+                    - generic [ref=e297]: Cotizar
+          - listitem [ref=e298]:
+            - link "EUROPA SIN TOURS" [ref=e300] [cursor=pointer]:
+              - /url: /viajes/europa-sin-tours
+              - article "EUROPA SIN TOURS" [ref=e301]:
+                - generic [ref=e302]:
+                  - img "EUROPA SIN TOURS" [ref=e303]
+                  - generic [ref=e304]: All
+                - generic [ref=e305]:
+                  - heading "EUROPA SIN TOURS" [level=3] [ref=e306]
+                  - paragraph [ref=e307]: Proximamente
+                  - generic [ref=e308]:
+                    - generic [ref=e309]: $65,000
+                    - generic [ref=e310]: Cotizar
+          - listitem [ref=e311]:
+            - link "EUROPA Y LONDRES 2025" [ref=e313] [cursor=pointer]:
+              - /url: /viajes/europa-y-londres-2025
+              - article "EUROPA Y LONDRES 2025" [ref=e314]:
+                - generic [ref=e315]:
+                  - img "EUROPA Y LONDRES 2025" [ref=e316]
+                  - generic [ref=e317]: All
+                - generic [ref=e318]:
+                  - heading "EUROPA Y LONDRES 2025" [level=3] [ref=e319]
+                  - paragraph [ref=e320]: Proximamente
+                  - generic [ref=e321]:
+                    - generic [ref=e322]: $65,000
+                    - generic [ref=e323]: Cotizar
+          - listitem [ref=e324]:
+            - link "GUAYABITOS ENERO 2026" [ref=e326] [cursor=pointer]:
+              - /url: /viajes/guayabitos-enero-2026
+              - article "GUAYABITOS ENERO 2026" [ref=e327]:
+                - generic [ref=e328]:
+                  - img "GUAYABITOS ENERO 2026" [ref=e329]
+                  - generic [ref=e330]: All
+                - generic [ref=e331]:
+                  - heading "GUAYABITOS ENERO 2026" [level=3] [ref=e332]
+                  - paragraph [ref=e333]: Proximamente
+                  - generic [ref=e334]:
+                    - generic [ref=e335]: $6,999
+                    - generic [ref=e336]: Cotizar
+          - listitem [ref=e337]:
+            - link "JAPÓN, CHINA & COREA 2026" [ref=e339] [cursor=pointer]:
+              - /url: /viajes/japon-china-corea-2026
+              - article "JAPÓN, CHINA & COREA 2026" [ref=e340]:
+                - generic [ref=e341]:
+                  - img "JAPÓN, CHINA & COREA 2026" [ref=e342]
+                  - generic [ref=e343]: All
+                - generic [ref=e344]:
+                  - heading "JAPÓN, CHINA & COREA 2026" [level=3] [ref=e345]
+                  - paragraph [ref=e346]: Proximamente
+                  - generic [ref=e347]:
+                    - generic [ref=e348]: $88,900
+                    - generic [ref=e349]: Cotizar
+          - listitem [ref=e350]:
+            - link "LAS VEGAS OCTUBRE 2025" [ref=e352] [cursor=pointer]:
+              - /url: /viajes/las-vegas-octubre-2025
+              - article "LAS VEGAS OCTUBRE 2025" [ref=e353]:
+                - generic [ref=e354]:
+                  - img "LAS VEGAS OCTUBRE 2025" [ref=e355]
+                  - generic [ref=e356]: All
+                - generic [ref=e357]:
+                  - heading "LAS VEGAS OCTUBRE 2025" [level=3] [ref=e358]
+                  - paragraph [ref=e359]: Proximamente
+                  - generic [ref=e360]:
+                    - generic [ref=e361]: $17,500
+                    - generic [ref=e362]: Cotizar
+          - listitem [ref=e363]:
+            - link "MEDIO ORIENTE 2025" [ref=e365] [cursor=pointer]:
+              - /url: /viajes/medio-oriente-2025
+              - article "MEDIO ORIENTE 2025" [ref=e366]:
+                - generic [ref=e367]:
+                  - img "MEDIO ORIENTE 2025" [ref=e368]
+                  - generic [ref=e369]: All
+                - generic [ref=e370]:
+                  - heading "MEDIO ORIENTE 2025" [level=3] [ref=e371]
+                  - paragraph [ref=e372]: Proximamente
+                  - generic [ref=e373]:
+                    - generic [ref=e374]: $79,200
+                    - generic [ref=e375]: Cotizar
+          - listitem [ref=e376]:
+            - link "MUNDIAL 2026" [ref=e378] [cursor=pointer]:
+              - /url: /viajes/mundial-2026
+              - article "MUNDIAL 2026" [ref=e379]:
+                - generic [ref=e380]:
+                  - img "MUNDIAL 2026" [ref=e381]
+                  - generic [ref=e382]: All
+                - generic [ref=e383]:
+                  - heading "MUNDIAL 2026" [level=3] [ref=e384]
+                  - paragraph [ref=e385]: Proximamente
+                  - generic [ref=e386]:
+                    - generic [ref=e387]: $7,500
+                    - generic [ref=e388]: Cotizar
+          - listitem [ref=e389]:
+            - link "NUEVA YORK DICIEMBRE 2025" [ref=e391] [cursor=pointer]:
+              - /url: /viajes/nueva-york-diciembre-2025
+              - article "NUEVA YORK DICIEMBRE 2025" [ref=e392]:
+                - generic [ref=e393]:
+                  - img "NUEVA YORK DICIEMBRE 2025" [ref=e394]
+                  - generic [ref=e395]: All
+                - generic [ref=e396]:
+                  - heading "NUEVA YORK DICIEMBRE 2025" [level=3] [ref=e397]
+                  - paragraph [ref=e398]: Proximamente
+                  - generic [ref=e399]:
+                    - generic [ref=e400]: $25,000
+                    - generic [ref=e401]: Cotizar
+          - listitem [ref=e402]:
+            - link "PERU ABRIL 2026" [ref=e404] [cursor=pointer]:
+              - /url: /viajes/peru-abril-2026
+              - article "PERU ABRIL 2026" [ref=e405]:
+                - generic [ref=e406]:
+                  - img "PERU ABRIL 2026" [ref=e407]
+                  - generic [ref=e408]: All
+                - generic [ref=e409]:
+                  - heading "PERU ABRIL 2026" [level=3] [ref=e410]
+                  - paragraph [ref=e411]: Proximamente
+                  - generic [ref=e412]:
+                    - generic [ref=e413]: $37,500
+                    - generic [ref=e414]: Cotizar
+          - listitem [ref=e415]:
+            - link "PUERTO VALLARTA PRIMERA FECHA" [ref=e417] [cursor=pointer]:
+              - /url: /viajes/puerto-vallarta-primera-fecha
+              - article "PUERTO VALLARTA PRIMERA FECHA" [ref=e418]:
+                - generic [ref=e419]:
+                  - img "PUERTO VALLARTA PRIMERA FECHA" [ref=e420]
+                  - generic [ref=e421]: All
+                - generic [ref=e422]:
+                  - heading "PUERTO VALLARTA PRIMERA FECHA" [level=3] [ref=e423]
+                  - paragraph [ref=e424]: Proximamente
+                  - generic [ref=e425]:
+                    - generic [ref=e426]: $7,999
+                    - generic [ref=e427]: Cotizar
+          - listitem [ref=e428]:
+            - link "PUERTO VALLARTA SEGUNDA FECHA" [ref=e430] [cursor=pointer]:
+              - /url: /viajes/puerto-vallarta-segunda-fecha
+              - article "PUERTO VALLARTA SEGUNDA FECHA" [ref=e431]:
+                - generic [ref=e432]:
+                  - img "PUERTO VALLARTA SEGUNDA FECHA" [ref=e433]
+                  - generic [ref=e434]: All
+                - generic [ref=e435]:
+                  - heading "PUERTO VALLARTA SEGUNDA FECHA" [level=3] [ref=e436]
+                  - paragraph [ref=e437]: Proximamente
+                  - generic [ref=e438]:
+                    - generic [ref=e439]: $8,749
+                    - generic [ref=e440]: Cotizar
+          - listitem [ref=e441]:
+            - link "TAILANDIA" [ref=e443] [cursor=pointer]:
+              - /url: /viajes/tailandia
+              - article "TAILANDIA" [ref=e444]:
+                - generic [ref=e445]:
+                  - img "TAILANDIA" [ref=e446]
+                  - generic [ref=e447]: All
+                - generic [ref=e448]:
+                  - heading "TAILANDIA" [level=3] [ref=e449]
+                  - paragraph [ref=e450]: Proximamente
+                  - generic [ref=e451]:
+                    - generic [ref=e452]: $49,900
+                    - generic [ref=e453]: Cotizar
+          - listitem [ref=e454]:
+            - link "TOUR SHOPPING USA" [ref=e456] [cursor=pointer]:
+              - /url: /viajes/tour-shopping-usa
+              - article "TOUR SHOPPING USA" [ref=e457]:
+                - generic [ref=e458]:
+                  - img "TOUR SHOPPING USA" [ref=e459]
+                  - generic [ref=e460]: All
+                - generic [ref=e461]:
+                  - heading "TOUR SHOPPING USA" [level=3] [ref=e462]
+                  - paragraph [ref=e463]: Proximamente
+                  - generic [ref=e464]:
+                    - generic [ref=e465]: $13,900
+                    - generic [ref=e466]: Cotizar
+          - listitem [ref=e467]:
+            - link "TURQUIA WINTER ENERO 2026" [ref=e469] [cursor=pointer]:
+              - /url: /viajes/turquia-winter-enero-2026
+              - article "TURQUIA WINTER ENERO 2026" [ref=e470]:
+                - generic [ref=e471]:
+                  - img "TURQUIA WINTER ENERO 2026" [ref=e472]
+                  - generic [ref=e473]: All
+                - generic [ref=e474]:
+                  - heading "TURQUIA WINTER ENERO 2026" [level=3] [ref=e475]
+                  - paragraph [ref=e476]: Proximamente
+                  - generic [ref=e477]:
+                    - generic [ref=e478]: $44,900
+                    - generic [ref=e479]: Cotizar
+          - listitem [ref=e480]:
+            - link "TURQUIA WINTER NOVIEMBRE 2025" [ref=e482] [cursor=pointer]:
+              - /url: /viajes/turquia-winter-noviembre-2025
+              - article "TURQUIA WINTER NOVIEMBRE 2025" [ref=e483]:
+                - generic [ref=e484]:
+                  - img "TURQUIA WINTER NOVIEMBRE 2025" [ref=e485]
+                  - generic [ref=e486]: All
+                - generic [ref=e487]:
+                  - heading "TURQUIA WINTER NOVIEMBRE 2025" [level=3] [ref=e488]
+                  - paragraph [ref=e489]: Proximamente
+                  - generic [ref=e490]:
+                    - generic [ref=e491]: $44,900
+                    - generic [ref=e492]: Cotizar
+          - listitem [ref=e493]:
+            - link "TURQUÍA Y DUBÁI 2025" [ref=e495] [cursor=pointer]:
+              - /url: /viajes/turquia-y-dubai-2025
+              - article "TURQUÍA Y DUBÁI 2025" [ref=e496]:
+                - generic [ref=e497]:
+                  - img "TURQUÍA Y DUBÁI 2025" [ref=e498]
+                  - generic [ref=e499]: All
+                - generic [ref=e500]:
+                  - heading "TURQUÍA Y DUBÁI 2025" [level=3] [ref=e501]
+                  - paragraph [ref=e502]: Proximamente
+                  - generic [ref=e503]:
+                    - generic [ref=e504]: $69,500
+                    - generic [ref=e505]: Cotizar
+          - listitem [ref=e506]:
+            - link "VUELOS GDL-MADRID" [ref=e508] [cursor=pointer]:
+              - /url: /viajes/vuelos-gdl-madrid
+              - article "VUELOS GDL-MADRID" [ref=e509]:
+                - generic [ref=e510]:
+                  - img "VUELOS GDL-MADRID" [ref=e511]
+                  - generic [ref=e512]: All
+                - generic [ref=e513]:
+                  - heading "VUELOS GDL-MADRID" [level=3] [ref=e514]
+                  - paragraph [ref=e515]: Proximamente
+                  - generic [ref=e516]:
+                    - generic [ref=e517]: $19,000
+                    - generic [ref=e518]: Cotizar
+          - listitem [ref=e519]:
+            - link "VUELTA AL MUNDO 2025" [ref=e521] [cursor=pointer]:
+              - /url: /viajes/vuelta-al-mundo-2025
+              - article "VUELTA AL MUNDO 2025" [ref=e522]:
+                - generic [ref=e523]:
+                  - img "VUELTA AL MUNDO 2025" [ref=e524]
+                  - generic [ref=e525]: All
+                - generic [ref=e526]:
+                  - heading "VUELTA AL MUNDO 2025" [level=3] [ref=e527]
+                  - paragraph [ref=e528]: Proximamente
+                  - generic [ref=e529]:
+                    - generic [ref=e530]: $120,000
+                    - generic [ref=e531]: Cotizar
+  - contentinfo [ref=e92]:
+    - generic [ref=e93]:
+      - generic [ref=e94]:
+        - generic [ref=e95]:
+          - heading "Contacto" [level=3] [ref=e96]
+          - generic [ref=e97]:
+            - paragraph [ref=e98]: Ocotlan, Jalisco, Mexico
+            - paragraph [ref=e99]:
+              - link "info@aroundaplanet.com" [ref=e100] [cursor=pointer]:
+                - /url: mailto:info@aroundaplanet.com
+        - generic [ref=e101]:
+          - heading "Explora" [level=3] [ref=e102]
+          - navigation "Links del footer" [ref=e103]:
+            - link "Viajes" [ref=e104] [cursor=pointer]:
+              - /url: /viajes
+            - link "Vuelta al Mundo" [ref=e105] [cursor=pointer]:
+              - /url: /viajes/vuelta-al-mundo-2025
+            - link "Nosotros" [ref=e106] [cursor=pointer]:
+              - /url: /sobre-nosotros
+        - generic [ref=e107]:
+          - heading "Legal" [level=3] [ref=e108]
+          - navigation "Links legales" [ref=e109]:
+            - link "Aviso de Privacidad" [ref=e110] [cursor=pointer]:
+              - /url: /privacy
+            - link "Terminos y Condiciones" [ref=e111] [cursor=pointer]:
+              - /url: /terms
+      - paragraph [ref=e113]: © 2026 AroundaPlanet. Todos los derechos reservados.
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e119] [cursor=pointer]:
+    - img [ref=e120]
+  - alert [ref=e123]

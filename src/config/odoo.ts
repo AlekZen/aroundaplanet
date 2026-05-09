@@ -9,8 +9,9 @@ export const ODOO_DEFAULT_PAGE_SIZE = 100
 export const ODOO_CACHE_TTL: Record<string, number> = {
   'product.product': 24 * 60 * 60 * 1000,    // 24h — product variants (rarely change)
   'product.template': 24 * 60 * 60 * 1000,   // 24h — trip products (sync updates Firestore)
-  'product.document': 24 * 60 * 60 * 1000,   // 24h — attached documents (rarely change)
-  'ir.attachment': 24 * 60 * 60 * 1000,       // 24h — binary attachments
+  'product.document': 24 * 60 * 60 * 1000,   // 24h - attached documents (rarely change)
+  'documents.document': 24 * 60 * 60 * 1000, // 24h - Odoo Documents module metadata
+  'ir.attachment': 24 * 60 * 60 * 1000,       // 24h - binary attachments
   'res.partner': 1 * 60 * 60 * 1000,          // 1h — contacts/customers
   'res.users': 1 * 60 * 60 * 1000,            // 1h — Odoo users
   'crm.team': 1 * 60 * 60 * 1000,             // 1h — sales teams

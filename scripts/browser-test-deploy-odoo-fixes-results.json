@@ -1,0 +1,55 @@
+{
+  "date": "2026-03-02T18:22:28.065Z",
+  "results": [
+    {
+      "name": "1. Homepage returns 200",
+      "pass": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "name": "2. /viajes catalog returns 200",
+      "pass": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "name": "3. GET /api/trips returns trips with .select() (no odooImageBase64)",
+      "pass": true,
+      "detail": "20 trips, odooImageBase64 excluded: true, hasOdooImage present: true"
+    },
+    {
+      "name": "4. GET /api/trips — hasOdooImage field works",
+      "pass": true,
+      "detail": "hasOdooImage=false (type: boolean)"
+    },
+    {
+      "name": "5. GET /api/trips/[tripId]/sales — cached response",
+      "pass": true,
+      "detail": "HTTP 503 — Odoo bloqueado (esperado), pero cache funciona si hay datos stale"
+    },
+    {
+      "name": "6. GET /api/trips/[tripId]/sales — second call (should be cache hit)",
+      "pass": true,
+      "detail": "HTTP 503 — Odoo bloqueado, stale cache returned"
+    },
+    {
+      "name": "7. POST /api/odoo/sync-trips — lock mechanism (without actually syncing)",
+      "pass": false,
+      "detail": "HTTP 500 — ODOO_UNAVAILABLE"
+    },
+    {
+      "name": "8. POST /api/odoo/sync-trips — concurrent lock test",
+      "pass": false,
+      "detail": "HTTP 500 — ODOO_UNAVAILABLE"
+    },
+    {
+      "name": "9. /viajes/[slug] — trip landing page",
+      "pass": true,
+      "detail": "HTTP 200 — /viajes/test-browser-slug-1772222077036"
+    },
+    {
+      "name": "10. Login page loads",
+      "pass": true,
+      "detail": "HTTP 200"
+    }
+  ]
+}

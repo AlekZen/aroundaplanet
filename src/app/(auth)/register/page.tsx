@@ -21,6 +21,7 @@ import { createUserProfile, getUserProfile, updateLastLogin } from '@/lib/fireba
 import { getFirebaseErrorMessage } from '@/lib/firebase/errors'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { validateReturnUrl } from '@/lib/utils/validateReturnUrl'
+import { useLocalhostAuthRedirect } from '@/lib/utils/useLocalhostAuthRedirect'
 import { GoogleIcon } from '@/components/shared/GoogleIcon'
 import { trackEvent } from '@/lib/analytics'
 
@@ -55,6 +56,7 @@ export default function RegisterPage() {
   const returnUrl = validateReturnUrl(searchParams.get('returnUrl'))
   const { isLoading, isAuthenticated } = useAuthStore()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  useLocalhostAuthRedirect()
 
   const {
     register,

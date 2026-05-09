@@ -1,0 +1,87 @@
+{
+  "date": "2026-02-28T18:09:37.507Z",
+  "passed": 16,
+  "total": 16,
+  "results": [
+    {
+      "name": "1. POST /api/orders guest sin header IP => 201 (dev server provee ::1)",
+      "passed": true,
+      "detail": "status=201, guestToken=e6a3e0df"
+    },
+    {
+      "name": "2. POST /api/orders guest con IP => 201",
+      "passed": true,
+      "detail": "status=201, orderId=C3WxbwQQ83lXJcZzU0hB"
+    },
+    {
+      "name": "3. Guest response tiene guestToken string",
+      "passed": true,
+      "detail": "guestToken=f6068e39..., type=string"
+    },
+    {
+      "name": "4. POST /api/orders guest body invalido => 400",
+      "passed": true,
+      "detail": "status=400, code=VALIDATION_ERROR"
+    },
+    {
+      "name": "5. POST /api/orders guest tripId falso => 404",
+      "passed": true,
+      "detail": "status=404, code=TRIP_NOT_FOUND"
+    },
+    {
+      "name": "6. POST /api/orders guest departureId falso => 404",
+      "passed": true,
+      "detail": "status=404, code=DEPARTURE_NOT_FOUND"
+    },
+    {
+      "name": "7. POST /api/orders con cookie => 201",
+      "passed": true,
+      "detail": "status=201, orderId=Rmoa6lKmUJj0uPcX0n2O"
+    },
+    {
+      "name": "8. Auth response tiene guestToken null",
+      "passed": true,
+      "detail": "guestToken=null"
+    },
+    {
+      "name": "9. Order auth tiene userId del claims",
+      "passed": true,
+      "detail": "userId=gif7XVStiEfOJFrBMCeECQOgJfZ2, guestToken=null, guestIp=null"
+    },
+    {
+      "name": "10. POST /api/orders contactName corto => 400",
+      "passed": true,
+      "detail": "status=400, msg=Nombre es requerido (minimo 2 caracteres)"
+    },
+    {
+      "name": "11. POST /api/orders contactPhone corto => 400",
+      "passed": true,
+      "detail": "status=400, msg=Telefono completo es requerido"
+    },
+    {
+      "name": "12. POST /api/orders con attribution => 201 + persiste",
+      "passed": true,
+      "detail": "orderId=ubmboglhXgrI501E3Rbz, persisted=true, utm=browser-test"
+    },
+    {
+      "name": "13. GET /privacy => 200 con contenido",
+      "passed": true,
+      "detail": "status=200, hasContent=true, length=75094"
+    },
+    {
+      "name": "14. GET /terms => 200 con contenido",
+      "passed": true,
+      "detail": "status=200, hasContent=true, length=71150"
+    },
+    {
+      "name": "15. GET /viajes/[slug] => 200 sin cookie",
+      "passed": true,
+      "detail": "status=200, slug=peru-diciembre-2025, htmlLength=772399"
+    },
+    {
+      "name": "16. GET /viajes/[slug]?cotizar=true => 200 sin auth",
+      "passed": true,
+      "detail": "status=200, htmlLength=772449"
+    }
+  ]
+}

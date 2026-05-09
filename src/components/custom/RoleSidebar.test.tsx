@@ -91,8 +91,8 @@ describe('RoleSidebar', () => {
     mockUsePathname.mockReturnValue('/admin/verification')
     render(<RoleSidebar roles={['admin']} />)
     const buttons = document.querySelectorAll('[data-active="false"]')
-    // Admin tiene 8 items, 1 activo = 7 inactivos
-    expect(buttons.length).toBe(7)
+    // Admin tiene 9 items, 1 activo = 8 inactivos
+    expect(buttons.length).toBe(8)
   })
 
   it('renders combined sections for multiple roles', () => {
@@ -117,14 +117,14 @@ describe('RoleSidebar', () => {
     expect(screen.queryByText('Verificacion')).not.toBeInTheDocument()
   })
 
-  it('renders agente sections correctly (3 items)', () => {
+  it('renders agente sections correctly', () => {
     mockUsePathname.mockReturnValue('/agent/dashboard')
     render(<RoleSidebar roles={['agente']} />)
     expect(screen.getByText('Mi Negocio')).toBeInTheDocument()
+    expect(screen.getByText('Mis Clientes')).toBeInTheDocument()
     expect(screen.getByText('Mis Viajes')).toBeInTheDocument()
     expect(screen.getByText('Mi Perfil')).toBeInTheDocument()
     // No debe tener items fantasma
-    expect(screen.queryByText('Clientes')).not.toBeInTheDocument()
     expect(screen.queryByText('Pagos')).not.toBeInTheDocument()
   })
 

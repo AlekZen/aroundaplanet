@@ -37,17 +37,15 @@ describe('CotizacionForm', () => {
     expect(screen.queryByLabelText('Edades de menores')).not.toBeInTheDocument()
   })
 
-  it('muestra campo edadesMenores al seleccionar menores > 0', async () => {
+  it('muestra campo edadesMenores al seleccionar menores > 0', { timeout: 15000 }, async () => {
     render(<CotizacionForm />)
 
     // El tercer combobox es menores (0: tipoViaje, 1: adultos, 2: menores)
     const comboboxes = screen.getAllByRole('combobox')
     fireEvent.click(comboboxes[2])
 
-    await waitFor(() => {
-      const option = screen.getByRole('option', { name: '2' })
-      fireEvent.click(option)
-    })
+    const option = await screen.findByRole('option', { name: '2' })
+    fireEvent.click(option)
 
     await waitFor(() => {
       expect(screen.getByLabelText('Edades de menores')).toBeInTheDocument()

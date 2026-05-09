@@ -24,6 +24,8 @@ export const PERMISSION_MATRIX: Record<UserRole, Record<string, boolean>> = {
     'notifications:config': true,
     'referrals:create': false,
     'sync:odoo': false,
+    'documents:read': false,
+    'documents:manage': false,
   },
   agente: {
     'trips:read': true,
@@ -48,6 +50,8 @@ export const PERMISSION_MATRIX: Record<UserRole, Record<string, boolean>> = {
     'notifications:config': true,
     'referrals:create': true,
     'sync:odoo': false,
+    'documents:read': false,
+    'documents:manage': false,
   },
   admin: {
     'trips:read': true,
@@ -72,6 +76,8 @@ export const PERMISSION_MATRIX: Record<UserRole, Record<string, boolean>> = {
     'notifications:config': true,
     'referrals:create': false,
     'sync:odoo': true,
+    'documents:read': true,
+    'documents:manage': true,
   },
   director: {
     'trips:read': true,
@@ -96,6 +102,8 @@ export const PERMISSION_MATRIX: Record<UserRole, Record<string, boolean>> = {
     'notifications:config': true,
     'referrals:create': false,
     'sync:odoo': true,
+    'documents:read': false,
+    'documents:manage': false,
   },
   superadmin: {
     'trips:read': true,
@@ -120,6 +128,8 @@ export const PERMISSION_MATRIX: Record<UserRole, Record<string, boolean>> = {
     'notifications:config': true,
     'referrals:create': false,
     'sync:odoo': true,
+    'documents:read': true,
+    'documents:manage': true,
   },
 }
 

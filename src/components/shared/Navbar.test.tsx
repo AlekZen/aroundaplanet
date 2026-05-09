@@ -80,7 +80,7 @@ describe('Navbar', () => {
     expect(screen.queryByText('Salir')).not.toBeInTheDocument()
   })
 
-  it('shows "Salir" button when authenticated', () => {
+  it('shows logout button when authenticated', () => {
     useAuthStore.setState({
       user: { uid: '123', displayName: 'Test User', email: 'test@example.com' } as never,
       isAuthenticated: true,
@@ -89,11 +89,11 @@ describe('Navbar', () => {
 
     render(<Navbar />)
 
-    const logoutButtons = screen.getAllByText('Salir')
+    const logoutButtons = screen.getAllByLabelText('Cerrar sesión')
     expect(logoutButtons.length).toBeGreaterThan(0)
   })
 
-  it('calls logout when Salir button is clicked', () => {
+  it('calls logout when logout button is clicked', () => {
     useAuthStore.setState({
       user: { uid: '123', displayName: 'Test User', email: 'test@example.com' } as never,
       isAuthenticated: true,
@@ -102,8 +102,8 @@ describe('Navbar', () => {
 
     render(<Navbar />)
 
-    // Click the first visible Salir button (desktop)
-    const logoutButtons = screen.getAllByText('Salir')
+    // Click the first visible logout button (desktop)
+    const logoutButtons = screen.getAllByLabelText('Cerrar sesión')
     fireEvent.click(logoutButtons[0])
 
     expect(mockLogout).toHaveBeenCalledTimes(1)

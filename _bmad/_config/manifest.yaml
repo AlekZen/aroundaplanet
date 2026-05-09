@@ -1,38 +1,43 @@
 installation:
-  version: 6.0.3
+  version: 6.6.0
   installDate: 2026-02-24T19:45:42.805Z
-  lastUpdated: 2026-02-24T19:45:42.805Z
+  lastUpdated: 2026-05-08T17:42:08.144Z
 modules:
   - name: core
-    version: 6.0.3
+    version: 6.6.0
     installDate: 2026-02-24T19:45:41.013Z
-    lastUpdated: 2026-02-24T19:45:41.013Z
+    lastUpdated: 2026-05-08T17:42:07.968Z
     source: built-in
     npmPackage: null
     repoUrl: null
   - name: bmm
-    version: 6.0.3
+    version: 6.6.0
     installDate: 2026-02-24T19:45:34.433Z
-    lastUpdated: 2026-02-24T19:45:41.013Z
+    lastUpdated: 2026-05-08T17:42:07.970Z
     source: built-in
     npmPackage: null
     repoUrl: null
   - name: cis
-    version: 0.1.8
+    version: v0.2.0
     installDate: 2026-02-24T19:45:36.554Z
-    lastUpdated: 2026-02-24T19:45:41.885Z
+    lastUpdated: 2026-05-08T17:42:08.057Z
     source: external
     npmPackage: bmad-creative-intelligence-suite
     repoUrl: https://github.com/bmad-code-org/bmad-module-creative-intelligence-suite
+    channel: stable
+    sha: 14a63b893c07173b7a6cfe0fb6a9a72ba51d3cf1
   - name: tea
-    version: 1.2.3
+    version: v1.16.0
     installDate: 2026-02-24T19:45:38.930Z
-    lastUpdated: 2026-02-24T19:45:42.805Z
+    lastUpdated: 2026-05-08T17:42:08.144Z
     source: external
     npmPackage: bmad-method-test-architecture-enterprise
     repoUrl: https://github.com/bmad-code-org/bmad-method-test-architecture-enterprise
+    channel: stable
+    sha: cd5427959c10b766e880cf112bf84b9fef0af848
 ides:
   - claude-code
   - cursor
   - antigravity
   - opencode
+  - codex

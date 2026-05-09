@@ -81,9 +81,9 @@ development_status:
   # =============================================
   # Epic 4: Agent Business Portal (3 stories)
   # =============================================
-  epic-4: backlog
-  4-1-agent-client-list-detail: backlog
-  4-2-commissions-business-metrics: backlog
+  epic-4: in-progress
+  4-1-agent-client-list-detail: done
+  4-2-commissions-business-metrics: done # commit e9c3b86 local, pendiente browser test + push
   4-3-referral-links-lead-notifications: backlog
   epic-4-retrospective: optional
 
@@ -116,3 +116,10 @@ development_status:
   7-2-document-downloads-photo-uploads: backlog
   7-3-reviews-ratings-social-sharing: backlog
   epic-7-retrospective: optional
+
+  # =============================================
+  # Epic 8: Odoo Documents Backoffice (1 story)
+  # =============================================
+  epic-8: in-progress
+  8-1-odoo-documents-backoffice: review
+  epic-8-retrospective: optional
