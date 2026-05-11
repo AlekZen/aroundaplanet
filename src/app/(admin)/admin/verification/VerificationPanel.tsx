@@ -27,6 +27,9 @@ interface PaymentItem {
   orderId: string
   agentId: string | null
   agentName: string | null
+  clientId: string | null
+  clientName: string | null
+  clientPhone: string | null
   tripName: string | null
   amountCents: number
   paymentMethod: PaymentMethod
@@ -259,8 +262,8 @@ export function VerificationPanel() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
-                        <p className="truncate text-sm font-medium">
-                          {formatCurrency(payment.amountCents)}
+                        <p className="truncate text-sm font-semibold">
+                          {payment.clientName ?? 'Cliente sin nombre'}
                         </p>
                         {overdue && (
                           <Badge variant="destructive" className="text-[10px]">
@@ -270,10 +273,13 @@ export function VerificationPanel() {
                         )}
                       </div>
                       <p className="truncate text-xs text-muted-foreground">
-                        {payment.tripName ?? 'Sin viaje'} — {payment.agentName ?? 'Sin agente'}
+                        Agente: <span className="font-medium text-foreground/80">{payment.agentName ?? 'Sin agente'}</span>
                       </p>
-                      <p className="text-xs text-muted-foreground">
-                        {PAYMENT_METHOD_LABELS[payment.paymentMethod]} — {formatDate(payment.date)}
+                      <p className="truncate text-xs text-muted-foreground">
+                        {payment.tripName ?? 'Sin viaje'}
+                      </p>
+                      <p className="text-xs font-medium text-foreground/90">
+                        {formatCurrency(payment.amountCents)} · {PAYMENT_METHOD_LABELS[payment.paymentMethod]} · {formatDate(payment.date)}
                       </p>
                     </div>
                     <Badge className={STATUS_COLORS[payment.status]}>
@@ -342,6 +348,23 @@ export function VerificationPanel() {
                   <span className="text-muted-foreground">Registrado por</span>
                   <span>{selectedPayment.registeredByName ?? selectedPayment.registeredBy}</span>
                 </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Cliente</span>
+                  <span className="truncate pl-4 text-right font-medium">{selectedPayment.clientName ?? 'Sin nombre'}</span>
+                </div>
+                {selectedPayment.clientPhone && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Teléfono</span>
+                    <button
+                      type="button"
+                      onClick={() => navigator.clipboard?.writeText(selectedPayment.clientPhone ?? '')}
+                      className="font-mono text-xs underline-offset-2 hover:underline"
+                      title="Click para copiar"
+                    >
+                      {selectedPayment.clientPhone}
+                    </button>
+                  </div>
+                )}
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Viaje</span>
                   <span className="truncate pl-4 text-right">{selectedPayment.tripName ?? '-'}</span>
