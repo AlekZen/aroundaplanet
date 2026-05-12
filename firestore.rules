@@ -130,6 +130,24 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // === PAYMENT RECONCILIATION LOG (Story 9.1 PARTE A) ===
+    // Read: admin/superadmin only. Write: NEVER from client (Admin SDK only via API)
+    match /paymentReconciliationLog/{logId} {
+      allow read: if request.auth != null
+                  && ('admin' in request.auth.token.roles
+                      || 'superadmin' in request.auth.token.roles);
+      allow write: if false;
+    }
+
+    // === PAYMENT DEDUP LOG (Story 9.1 PARTE B) ===
+    // Read: admin/superadmin only. Write: NEVER from client (Admin SDK only via API)
+    match /paymentDedupLog/{logId} {
+      allow read: if request.auth != null
+                  && ('admin' in request.auth.token.roles
+                      || 'superadmin' in request.auth.token.roles);
+      allow write: if false;
+    }
+
     // === DEFAULT DENY ===
     // Any unspecified collection: denied
     match /{document=**} {
