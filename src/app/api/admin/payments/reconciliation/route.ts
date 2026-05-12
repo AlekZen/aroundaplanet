@@ -3,6 +3,7 @@ import { adminDb } from '@/lib/firebase/admin'
 import { requirePermission } from '@/lib/auth/requirePermission'
 import { handleApiError } from '@/lib/errors/handleApiError'
 import { getOdooClient } from '@/lib/odoo/client'
+import { dedupInflight } from '@/lib/odoo/inflightCache'
 import {
   scoreMatch,
   type MatchConfidence,
@@ -172,8 +173,12 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Cargar pagos Odoo
-    const odooPayments = await fetchAllOdooPayments()
+    // Cargar pagos Odoo (dedup + 30s cache: la UI puede fan-out por StrictMode/HMR/focus)
+    const odooPayments = await dedupInflight(
+      'odoo:reconciliation:allPayments',
+      fetchAllOdooPayments,
+      30_000,
+    )
 
     const buckets = {
       high: [] as ReconciliationCandidate[],

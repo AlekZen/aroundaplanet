@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { requirePermission } from '@/lib/auth/requirePermission'
 import { handleApiError } from '@/lib/errors/handleApiError'
 import { getOdooClient } from '@/lib/odoo/client'
+import { dedupInflight } from '@/lib/odoo/inflightCache'
 import { groupClusters, type OdooPaymentRow } from '@/lib/payments/duplicateClustering'
 import type { DuplicatesGetResponse } from '@/schemas/dedupSchema'
 
@@ -57,43 +58,51 @@ function mapRow(o: OdooPaymentRaw): OdooPaymentRow {
   }
 }
 
+async function fetchDuplicatesPayload(): Promise<DuplicatesGetResponse> {
+  const client = getOdooClient()
+  const all: OdooPaymentRaw[] = []
+  const pageSize = 200
+  let offset = 0
+  while (true) {
+    const batch = (await client.searchRead(
+      'account.payment',
+      [['state', 'in', ['draft', 'in_process', 'paid']]],
+      [...ODOO_PAYMENT_FIELDS],
+      { offset, limit: pageSize },
+    )) as unknown as OdooPaymentRaw[]
+    if (batch.length === 0) break
+    all.push(...batch)
+    if (batch.length < pageSize) break
+    offset += pageSize
+    if (offset > 5000) break
+  }
+
+  const rows = all.map(mapRow)
+  const clusters = groupClusters(rows)
+
+  const summary = {
+    totalClusters: clusters.length,
+    unmarked: clusters.filter((c) => c.currentState === 'unmarked').length,
+    canonicalSet: clusters.filter((c) => c.currentState === 'canonical_set').length,
+    inconsistent: clusters.filter((c) => c.currentState === 'inconsistent').length,
+  }
+
+  return {
+    generatedAt: new Date().toISOString(),
+    summary,
+    clusters,
+  }
+}
+
 export async function GET() {
   try {
     await requirePermission('payments:verify')
-    const client = getOdooClient()
-
-    const all: OdooPaymentRaw[] = []
-    const pageSize = 200
-    let offset = 0
-    while (true) {
-      const batch = (await client.searchRead(
-        'account.payment',
-        [['state', 'in', ['draft', 'in_process', 'paid']]],
-        [...ODOO_PAYMENT_FIELDS],
-        { offset, limit: pageSize },
-      )) as unknown as OdooPaymentRaw[]
-      if (batch.length === 0) break
-      all.push(...batch)
-      if (batch.length < pageSize) break
-      offset += pageSize
-      if (offset > 5000) break
-    }
-
-    const rows = all.map(mapRow)
-    const clusters = groupClusters(rows)
-
-    const summary = {
-      totalClusters: clusters.length,
-      unmarked: clusters.filter((c) => c.currentState === 'unmarked').length,
-      canonicalSet: clusters.filter((c) => c.currentState === 'canonical_set').length,
-      inconsistent: clusters.filter((c) => c.currentState === 'inconsistent').length,
-    }
-
-    const response: DuplicatesGetResponse = {
-      generatedAt: new Date().toISOString(),
-      summary,
-      clusters,
-    }
+    const response = await dedupInflight(
+      'odoo:duplicates:payments',
+      fetchDuplicatesPayload,
+      // TTL 30s: balance entre frescura vs spam (UI puede recargar varias veces)
+      30_000,
+    )
     return NextResponse.json(response)
   } catch (error) {
     return handleApiError(error)

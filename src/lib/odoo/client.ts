@@ -290,11 +290,24 @@ export class OdooClient {
 }
 
 // --- Singleton ---
+//
+// IMPORTANTE: en Next.js dev (Turbopack + HMR), los modules pueden recargarse y
+// resetear cualquier variable a nivel de módulo. Como autenticar contra Odoo
+// toma ~11s, perder el singleton por HMR significa pagar ese costo cada vez que
+// se toca un archivo. Persistimos el cliente en `globalThis` para que sobreviva
+// HMR y multiples module-graph (Server Components vs Route Handlers).
+//
+// `authenticate()` ya deduplica calls concurrentes (this.authPromise) — esto
+// asegura que ese estado sobreviva HMR.
 
-let odooClient: OdooClient | null = null
+interface OdooGlobal {
+  __odooClient?: OdooClient
+}
+
+const globalScope = globalThis as unknown as OdooGlobal
 
 export function getOdooClient(): OdooClient {
-  if (odooClient) return odooClient
+  if (globalScope.__odooClient) return globalScope.__odooClient
 
   const url = process.env.ODOO_URL
   const db = process.env.ODOO_DB
@@ -310,10 +323,10 @@ export function getOdooClient(): OdooClient {
     )
   }
 
-  odooClient = new OdooClient({ url, db, username, apiKey })
-  return odooClient
+  globalScope.__odooClient = new OdooClient({ url, db, username, apiKey })
+  return globalScope.__odooClient
 }
 
 export function resetOdooClient(): void {
-  odooClient = null
+  globalScope.__odooClient = undefined
 }

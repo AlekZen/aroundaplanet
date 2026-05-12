@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { NextRequest, NextResponse } from 'next/server'
+import { clearInflightCache } from '@/lib/odoo/inflightCache'
 
 const mockRequirePermission = vi.fn()
 vi.mock('@/lib/auth/requirePermission', () => ({
@@ -48,6 +49,7 @@ describe('GET /api/admin/payments/reconciliation', () => {
     mockFsGet.mockReset()
     mockLogGet.mockReset()
     mockSearchRead.mockReset()
+    clearInflightCache()
   })
 
   it('responds with buckets for high/medium/low/none', async () => {
