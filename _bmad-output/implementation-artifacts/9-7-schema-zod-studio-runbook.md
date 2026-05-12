@@ -1,6 +1,6 @@
 # Story 9.7: Schema Zod canónico + Custom fields Odoo Studio + Runbook operativo
 
-Status: review
+Status: done
 
 > **Tipo:** Foundation (Small)
 > **Bloquea:** Story 9.2 (push), Story 9.3 (pull) — ambas consumen el schema

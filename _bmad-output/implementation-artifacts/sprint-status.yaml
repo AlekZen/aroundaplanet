@@ -136,5 +136,5 @@ development_status:
   9-4-documents-attachment-individual: backlog
   9-5-folder-dedup-odoo-documents: backlog
   9-6-ux-admin-sync-conflictos: backlog
-  9-7-schema-zod-studio-runbook: review
+  9-7-schema-zod-studio-runbook: done
   epic-9-retrospective: optional
