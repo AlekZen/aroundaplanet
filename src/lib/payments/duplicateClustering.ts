@@ -19,6 +19,13 @@ export interface OdooPaymentRow {
   state: string
   xDupStatus: 'canonico' | 'secundario' | null
   xCanonicalPaymentId: number | null
+  // Enrichment opcional (Story 9.1 UX)
+  tripName?: string | null
+  agentName?: string | null
+  saleOrderName?: string | null
+  paymentMethodLine?: string | null
+  communication?: string | null
+  reconcileDate?: string | null
 }
 
 export type ClusterState = 'unmarked' | 'canonical_set' | 'inconsistent'

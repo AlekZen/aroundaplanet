@@ -1,0 +1,82 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { NextRequest, NextResponse } from 'next/server'
+
+const mockRequirePermission = vi.fn()
+vi.mock('@/lib/auth/requirePermission', () => ({
+  requirePermission: (...args: unknown[]) => mockRequirePermission(...args),
+}))
+
+const mockSet = vi.fn()
+const mockDelete = vi.fn()
+vi.mock('@/lib/firebase/admin', () => ({
+  adminDb: {
+    collection: () => ({ doc: () => ({ set: mockSet, delete: mockDelete }) }),
+  },
+}))
+
+vi.mock('firebase-admin/firestore', () => ({
+  FieldValue: { serverTimestamp: () => 'TS' },
+}))
+
+vi.mock('@/lib/errors/handleApiError', () => ({
+  handleApiError: (error: unknown) => {
+    if (error && typeof error === 'object' && 'status' in error) {
+      const e = error as { status: number; code: string; message: string }
+      return NextResponse.json({ code: e.code, message: e.message }, { status: e.status })
+    }
+    return NextResponse.json({ code: 'ERROR' }, { status: 500 })
+  },
+}))
+
+const mkRequest = (method: string, body: unknown) =>
+  new NextRequest('http://localhost/x', { method, body: JSON.stringify(body) })
+
+describe('POST/DELETE /dismiss', () => {
+  beforeEach(() => {
+    vi.resetModules()
+    mockRequirePermission.mockReset()
+    mockSet.mockReset()
+    mockDelete.mockReset()
+  })
+
+  it('POST crea dismissal Firestore-only', async () => {
+    mockRequirePermission.mockResolvedValue({ uid: 'admin1', roles: ['admin'] })
+    mockSet.mockResolvedValue({})
+
+    const { POST } = await import('./route')
+    const res = await POST(mkRequest('POST', { clusterId: 'c_1_2', memberOdooIds: [1, 2], reason: 'distinto recibo' }))
+    expect(res.status).toBe(200)
+    expect(mockSet).toHaveBeenCalledWith(
+      expect.objectContaining({ clusterId: 'c_1_2', dismissedBy: 'admin1', reason: 'distinto recibo' }),
+      { merge: false },
+    )
+  })
+
+  it('POST 400 si body inválido', async () => {
+    mockRequirePermission.mockResolvedValue({ uid: 'admin1', roles: ['admin'] })
+
+    const { POST } = await import('./route')
+    const res = await POST(mkRequest('POST', { clusterId: '', memberOdooIds: [1] }))
+    expect(res.status).toBe(400)
+    expect(mockSet).not.toHaveBeenCalled()
+  })
+
+  it('DELETE revierte dismissal', async () => {
+    mockRequirePermission.mockResolvedValue({ uid: 'admin1', roles: ['admin'] })
+    mockDelete.mockResolvedValue({})
+
+    const { DELETE } = await import('./route')
+    const res = await DELETE(mkRequest('DELETE', { clusterId: 'c_1_2' }))
+    expect(res.status).toBe(200)
+    expect(mockDelete).toHaveBeenCalled()
+  })
+
+  it('POST 403 si caller sin permiso', async () => {
+    const { AppError } = await import('@/lib/errors/AppError')
+    mockRequirePermission.mockRejectedValue(new AppError('INSUFFICIENT_PERMISSION', 'denied', 403, false))
+
+    const { POST } = await import('./route')
+    const res = await POST(mkRequest('POST', { clusterId: 'c_1_2', memberOdooIds: [1, 2] }))
+    expect(res.status).toBe(403)
+  })
+})

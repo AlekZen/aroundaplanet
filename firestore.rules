@@ -148,6 +148,21 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // === PAYMENT DEDUP DISMISSALS / FLAGS (Story 9.1 UX) ===
+    // Soft-state Firestore-only sobre clusters Odoo. Read/write via Admin SDK desde API.
+    match /paymentDedupDismissals/{clusterId} {
+      allow read: if request.auth != null
+                  && ('admin' in request.auth.token.roles
+                      || 'superadmin' in request.auth.token.roles);
+      allow write: if false;
+    }
+    match /paymentDedupFlags/{clusterId} {
+      allow read: if request.auth != null
+                  && ('admin' in request.auth.token.roles
+                      || 'superadmin' in request.auth.token.roles);
+      allow write: if false;
+    }
+
     // === DEFAULT DENY ===
     // Any unspecified collection: denied
     match /{document=**} {
