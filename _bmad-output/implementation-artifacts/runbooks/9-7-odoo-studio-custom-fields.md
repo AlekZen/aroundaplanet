@@ -129,12 +129,25 @@ Repetir con:
 
 ## Paso 7 — Crear tags `dup-canonico` y `dup-secundario`
 
-> 🔍 **Validar primero** si `account.payment` tiene un campo `tag_ids` nativo:
+> 🔍 **Validar primero** si `account.payment` tiene un campo `tag_ids` nativo.
 >
-> 1. Abrir un payment en la UI estándar (sin Studio).
-> 2. Buscar un campo "Tags" o "Etiquetas".
-> 3. Si **existe**: ir a **Settings → Technical → Database Structure → Models → account.payment.tag** y crear los 2 tags ahí.
-> 4. Si **NO existe**: omitir este paso. Los booleanos `x_is_canonical_duplicate` + `x_canonical_payment_id` son suficientes para el dedup. Los tags `dup-*` se aplicarán a los attachments en Story 9.4 vía `documents.tag` (otro runbook).
+> **Comando de discovery (el dev acompañante):**
+>
+> ```bash
+> curl -s -X POST "$ODOO_URL/jsonrpc" -H "Content-Type: application/json" -d '{
+>   "jsonrpc":"2.0","method":"call","params":{
+>     "service":"object","method":"execute_kw",
+>     "args":["'$ODOO_DB'",'$UID',"'$PASSWORD'",
+>       "ir.model.fields","search_read",
+>       [[["model","=","account.payment"],["name","=","tag_ids"]]],
+>       {"fields":["name","ttype","relation"]}
+>     ]
+>   }
+> }'
+> ```
+>
+> - **Resultado NO vacío** (1 registro con `ttype: "many2many"`, `relation: "account.payment.tag"` o similar): tag_ids existe → seguir abajo creando tags.
+> - **Resultado vacío `[]`**: tag_ids NO existe en este tenant → omitir este paso. Los booleanos `x_is_canonical_duplicate` + `x_canonical_payment_id` (Pasos 5-6) son suficientes para el dedup. Los tags `dup-*` se aplicarán solo a los attachments en Story 9.4 vía `documents.tag` (otro runbook).
 
 ### Si `account.payment.tag_ids` existe:
 

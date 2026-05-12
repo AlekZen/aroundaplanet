@@ -76,6 +76,59 @@ describe('paymentConflictSchema', () => {
     })
     expect(result.success).toBe(false)
   })
+
+  // Code review fix R5: discriminación de tipos por field
+  describe('refines value-type por field', () => {
+    it('rechaza amount con firestoreValue string', () => {
+      const result = paymentConflictSchema.safeParse({
+        ...baseConflict,
+        field: 'amount',
+        firestoreValue: '14500000',
+        odooValue: 14400000,
+      })
+      expect(result.success).toBe(false)
+    })
+
+    it('rechaza amount con float (debe ser centavos enteros)', () => {
+      const result = paymentConflictSchema.safeParse({
+        ...baseConflict,
+        field: 'amount',
+        firestoreValue: 14500000.5,
+        odooValue: 14400000,
+      })
+      expect(result.success).toBe(false)
+    })
+
+    it('rechaza memo con number', () => {
+      const result = paymentConflictSchema.safeParse({
+        ...baseConflict,
+        field: 'memo',
+        firestoreValue: 'algo',
+        odooValue: 42,
+      })
+      expect(result.success).toBe(false)
+    })
+
+    it('acepta paymentDate con Firestore Timestamp shape', () => {
+      const result = paymentConflictSchema.safeParse({
+        ...baseConflict,
+        field: 'paymentDate',
+        firestoreValue: { seconds: 1715000000, nanoseconds: 0 },
+        odooValue: '2026-05-11',
+      })
+      expect(result.success).toBe(true)
+    })
+
+    it('rechaza paymentDate con boolean', () => {
+      const result = paymentConflictSchema.safeParse({
+        ...baseConflict,
+        field: 'paymentDate',
+        firestoreValue: true,
+        odooValue: '2026-05-11',
+      })
+      expect(result.success).toBe(false)
+    })
+  })
 })
 
 describe('createPaymentConflictSchema', () => {

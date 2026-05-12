@@ -226,6 +226,44 @@ describe('paymentSchema', () => {
     })
   })
 
+  describe('lwwValueSchema — Firestore Timestamp compat', () => {
+    it('acepta writtenAt como shape Firestore Timestamp ({seconds, nanoseconds})', () => {
+      const schema = lwwValueSchema(z.string())
+      const result = schema.safeParse({
+        value: 'memo',
+        writtenAt: { seconds: 1715000000, nanoseconds: 123_000_000 },
+        source: 'odoo',
+      })
+      expect(result.success).toBe(true)
+    })
+
+    it('acepta un Firestore Timestamp con métodos extras (passthrough)', () => {
+      const schema = lwwValueSchema(z.string())
+      const fakeTimestamp = {
+        seconds: 1715000000,
+        nanoseconds: 0,
+        toDate: () => new Date(),
+        toMillis: () => 1715000000000,
+      }
+      const result = schema.safeParse({
+        value: 'memo',
+        writtenAt: fakeTimestamp,
+        source: 'odoo',
+      })
+      expect(result.success).toBe(true)
+    })
+
+    it('rechaza Timestamp shape con nanoseconds fuera de rango', () => {
+      const schema = lwwValueSchema(z.string())
+      const result = schema.safeParse({
+        value: 'memo',
+        writtenAt: { seconds: 1, nanoseconds: 1_000_000_000 },
+        source: 'odoo',
+      })
+      expect(result.success).toBe(false)
+    })
+  })
+
   describe('lwwValueSchema', () => {
     it('parses a valid LWW number with ISO writtenAt', () => {
       const schema = lwwValueSchema(z.number().int())
@@ -309,7 +347,6 @@ describe('paymentSchema', () => {
         odooState: 'paid',
         odooJournalId: 7,
         odooJournalName: 'Bank MXN',
-        odooMemo: 'Inscripción VAM',
         odooReconciled: true,
         odooReconciledInvoiceIds: [501, 502],
         odooCanceledAt: null,
@@ -368,6 +405,71 @@ describe('paymentSchema', () => {
         lww: {
           memo: { value: 'note', writtenAt: new Date(), source: 'odoo' },
         },
+      })
+      expect(result.success).toBe(true)
+    })
+
+    // Refines de coherencia (Code review fix R2)
+    it('rechaza odooSyncStatus=synced sin odooPaymentId', () => {
+      const result = paymentOdooSyncSchema.safeParse({
+        odooSyncStatus: 'synced',
+        odooPaymentId: null,
+      })
+      expect(result.success).toBe(false)
+    })
+
+    it('acepta odooSyncStatus=synced con odooPaymentId presente', () => {
+      const result = paymentOdooSyncSchema.safeParse({
+        odooSyncStatus: 'synced',
+        odooPaymentId: 999,
+      })
+      expect(result.success).toBe(true)
+    })
+
+    it('rechaza odooSyncStatus=legacy_linked sin linkedAt', () => {
+      const result = paymentOdooSyncSchema.safeParse({
+        odooSyncStatus: 'legacy_linked',
+        odooPaymentId: 42,
+        linkedAt: null,
+      })
+      expect(result.success).toBe(false)
+    })
+
+    it('rechaza odooSyncStatus=error sin odooLastError', () => {
+      const result = paymentOdooSyncSchema.safeParse({
+        odooSyncStatus: 'error',
+        odooLastError: null,
+      })
+      expect(result.success).toBe(false)
+    })
+
+    it('acepta odooSyncStatus=error con odooLastError', () => {
+      const result = paymentOdooSyncSchema.safeParse({
+        odooSyncStatus: 'error',
+        odooLastError: 'Odoo XML-RPC timeout',
+      })
+      expect(result.success).toBe(true)
+    })
+
+    it('rechaza odooReconciled=true con odooReconciledInvoiceIds vacío', () => {
+      const result = paymentOdooSyncSchema.safeParse({
+        odooReconciled: true,
+        odooReconciledInvoiceIds: [],
+      })
+      expect(result.success).toBe(false)
+    })
+
+    it('acepta odooReconciled=true con al menos un invoiceId', () => {
+      const result = paymentOdooSyncSchema.safeParse({
+        odooReconciled: true,
+        odooReconciledInvoiceIds: [501],
+      })
+      expect(result.success).toBe(true)
+    })
+
+    it('acepta odooReconciled=false sin invoiceIds', () => {
+      const result = paymentOdooSyncSchema.safeParse({
+        odooReconciled: false,
       })
       expect(result.success).toBe(true)
     })

@@ -128,12 +128,26 @@ export type SyncSource = (typeof SYNC_SOURCES)[number]
 export const syncSourceSchema = z.enum(SYNC_SOURCES)
 
 /**
+ * Shape duck-typed de un Firestore `Timestamp` instance.
+ * Tanto `firebase-admin/firestore` como `firebase/firestore` exponen
+ * `{seconds, nanoseconds}` con métodos adicionales (`toDate`, `toMillis`).
+ * Validamos solo los dos campos numéricos — `passthrough` deja pasar los métodos.
+ */
+const firestoreTimestampSchema = z
+  .object({
+    seconds: z.number().int(),
+    nanoseconds: z.number().int().min(0).max(999_999_999),
+  })
+  .passthrough()
+
+/**
  * Wrapper LWW para campos editables en ambos lados (memo, paymentDate, amount).
  * `writtenAt` se compara entre Firestore y Odoo para detectar concurrent writes.
- * Acepta Date | string ISO para compatibilidad cross-runtime; los writes a Firestore
- * deben convertir a Timestamp (regla CLAUDE.md — NUNCA ISO en writes).
+ * Acepta `Date | string ISO | Firestore.Timestamp` para cubrir los 3 shapes
+ * vistos en runtime (writes locales / serialización JSON / reads Firestore SDK).
+ * Los writes a Firestore deben convertir a Timestamp (regla CLAUDE.md — NUNCA ISO).
  */
-const lwwTimestamp = z.union([z.date(), z.string()])
+const lwwTimestamp = z.union([z.date(), z.string(), firestoreTimestampSchema])
 
 export const lwwValueSchema = <T extends z.ZodTypeAny>(valueSchema: T) =>
   z.object({
@@ -172,7 +186,7 @@ export const paymentOdooSyncSchema = z.object({
   odooState: odooPaymentStateSchema.nullable().optional(),
   odooJournalId: z.number().int().positive().nullable().optional(),
   odooJournalName: z.string().max(200).nullable().optional(),
-  odooMemo: z.string().max(500).nullable().optional(),
+  // memo cruzado vive en lww.memo con source='odoo' — NO duplicar como odooMemo
   odooReconciled: z.boolean().optional(),
   odooReconciledInvoiceIds: z.array(z.number().int().positive()).optional(),
   odooCanceledAt: lwwTimestamp.nullable().optional(),
@@ -201,6 +215,41 @@ export const paymentOdooSyncSchema = z.object({
   // === LWW (memo, date, amount) — opcional para back-compat ===
   lww: paymentLwwFieldsSchema.partial().optional(),
 })
+  .refine(
+    (d) => d.odooSyncStatus !== 'synced' || (d.odooPaymentId ?? null) !== null,
+    {
+      message: 'odooSyncStatus="synced" requiere odooPaymentId no-null',
+      path: ['odooPaymentId'],
+    },
+  )
+  .refine(
+    (d) => d.odooSyncStatus !== 'legacy_linked' || (d.odooPaymentId ?? null) !== null,
+    {
+      message: 'odooSyncStatus="legacy_linked" requiere odooPaymentId no-null',
+      path: ['odooPaymentId'],
+    },
+  )
+  .refine(
+    (d) => d.odooSyncStatus !== 'legacy_linked' || d.linkedAt != null,
+    {
+      message: 'odooSyncStatus="legacy_linked" requiere linkedAt',
+      path: ['linkedAt'],
+    },
+  )
+  .refine(
+    (d) => d.odooSyncStatus !== 'error' || (d.odooLastError ?? null) !== null,
+    {
+      message: 'odooSyncStatus="error" requiere odooLastError',
+      path: ['odooLastError'],
+    },
+  )
+  .refine(
+    (d) => d.odooReconciled !== true || (d.odooReconciledInvoiceIds?.length ?? 0) > 0,
+    {
+      message: 'odooReconciled=true requiere al menos un odooReconciledInvoiceIds',
+      path: ['odooReconciledInvoiceIds'],
+    },
+  )
 
 export type PaymentOdooSync = z.infer<typeof paymentOdooSyncSchema>
 
