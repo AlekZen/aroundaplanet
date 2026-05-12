@@ -19,7 +19,7 @@ const RECON_LOG_COLLECTION = 'paymentReconciliationLog'
 const ODOO_PAYMENT_FIELDS = [
   'id',
   'name',
-  'ref',
+  'memo',
   'amount',
   'date',
   'partner_id',
@@ -42,7 +42,7 @@ interface FirestorePaymentDoc {
 interface OdooPaymentRaw {
   id: number
   name?: string | false
-  ref?: string | false
+  memo?: string | false
   amount: number
   date: string | false
   partner_id: [number, string] | false
@@ -115,7 +115,7 @@ function buildOdooSummary(o: OdooPaymentRaw): OdooPaymentSummary {
     journalId: journal.id,
     journalName: journal.name,
     state: o.state,
-    ref: typeof o.ref === 'string' ? o.ref : null,
+    memo: typeof o.memo === 'string' ? o.memo : null,
   }
 }
 

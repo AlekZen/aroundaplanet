@@ -8,7 +8,7 @@ import type { DuplicatesGetResponse } from '@/schemas/dedupSchema'
 const ODOO_PAYMENT_FIELDS = [
   'id',
   'name',
-  'ref',
+  'memo',
   'amount',
   'date',
   'partner_id',
@@ -21,7 +21,7 @@ const ODOO_PAYMENT_FIELDS = [
 interface OdooPaymentRaw {
   id: number
   name?: string | false
-  ref?: string | false
+  memo?: string | false
   amount: number
   date: string | false
   partner_id: [number, string] | false
@@ -44,7 +44,7 @@ function mapRow(o: OdooPaymentRaw): OdooPaymentRow {
   return {
     id: o.id,
     name: typeof o.name === 'string' ? o.name : null,
-    ref: typeof o.ref === 'string' ? o.ref : null,
+    memo: typeof o.memo === 'string' ? o.memo : null,
     amount: o.amount,
     date: typeof o.date === 'string' ? o.date : null,
     partnerId: tupleId(o.partner_id),

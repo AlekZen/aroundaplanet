@@ -31,9 +31,9 @@ describe('GET /api/admin/odoo/payments/duplicates', () => {
   it('returns clusters with state', async () => {
     mockRequirePermission.mockResolvedValue({ uid: 'admin1', roles: ['admin'] })
     mockSearchRead.mockResolvedValueOnce([
-      { id: 1, name: 'P1', ref: false, amount: 5000, date: '2026-01-08', partner_id: [100, 'X'], state: 'paid', journal_id: [13, 'Bank'], x_dup_status: false, x_canonical_payment_id: false },
-      { id: 2, name: 'P2', ref: false, amount: 5000, date: '2026-01-08', partner_id: [100, 'X'], state: 'paid', journal_id: [13, 'Bank'], x_dup_status: false, x_canonical_payment_id: false },
-      { id: 3, name: 'P3', ref: false, amount: 999, date: '2025-12-01', partner_id: [200, 'Y'], state: 'paid', journal_id: [13, 'Bank'], x_dup_status: false, x_canonical_payment_id: false },
+      { id: 1, name: 'P1', memo: false, amount: 5000, date: '2026-01-08', partner_id: [100, 'X'], state: 'paid', journal_id: [13, 'Bank'], x_dup_status: false, x_canonical_payment_id: false },
+      { id: 2, name: 'P2', memo: false, amount: 5000, date: '2026-01-08', partner_id: [100, 'X'], state: 'paid', journal_id: [13, 'Bank'], x_dup_status: false, x_canonical_payment_id: false },
+      { id: 3, name: 'P3', memo: false, amount: 999, date: '2025-12-01', partner_id: [200, 'Y'], state: 'paid', journal_id: [13, 'Bank'], x_dup_status: false, x_canonical_payment_id: false },
     ]).mockResolvedValueOnce([])
 
     const { GET } = await import('./route')
@@ -48,8 +48,8 @@ describe('GET /api/admin/odoo/payments/duplicates', () => {
   it('detects canonical_set state', async () => {
     mockRequirePermission.mockResolvedValue({ uid: 'admin1', roles: ['admin'] })
     mockSearchRead.mockResolvedValueOnce([
-      { id: 1, name: 'P1', ref: false, amount: 5000, date: '2026-01-08', partner_id: [100, 'X'], state: 'paid', journal_id: [13, 'Bank'], x_dup_status: 'canonico', x_canonical_payment_id: false },
-      { id: 2, name: 'P2', ref: false, amount: 5000, date: '2026-01-08', partner_id: [100, 'X'], state: 'paid', journal_id: [13, 'Bank'], x_dup_status: 'secundario', x_canonical_payment_id: [1, 'P1'] },
+      { id: 1, name: 'P1', memo: false, amount: 5000, date: '2026-01-08', partner_id: [100, 'X'], state: 'paid', journal_id: [13, 'Bank'], x_dup_status: 'canonico', x_canonical_payment_id: false },
+      { id: 2, name: 'P2', memo: false, amount: 5000, date: '2026-01-08', partner_id: [100, 'X'], state: 'paid', journal_id: [13, 'Bank'], x_dup_status: 'secundario', x_canonical_payment_id: [1, 'P1'] },
     ]).mockResolvedValueOnce([])
 
     const { GET } = await import('./route')

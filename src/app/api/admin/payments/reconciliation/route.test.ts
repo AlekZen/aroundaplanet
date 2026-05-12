@@ -60,7 +60,7 @@ describe('GET /api/admin/payments/reconciliation', () => {
     })
     mockLogGet.mockResolvedValue({ docs: [] })
     mockSearchRead.mockResolvedValueOnce([
-      { id: 7976, name: 'P-1', ref: null, amount: 5000, date: '2026-01-08', partner_id: [4314, 'Felipe Rubio'], state: 'paid', journal_id: [13, 'Bank'] },
+      { id: 7976, name: 'P-1', memo: null, amount: 5000, date: '2026-01-08', partner_id: [4314, 'Felipe Rubio'], state: 'paid', journal_id: [13, 'Bank'] },
     ]).mockResolvedValueOnce([])
 
     const { GET } = await import('./route')
@@ -86,7 +86,7 @@ describe('GET /api/admin/payments/reconciliation', () => {
       docs: [{ data: () => ({ firestorePaymentId: 'p1', odooPaymentId: 7976, action: 'rejected' }) }],
     })
     mockSearchRead.mockResolvedValueOnce([
-      { id: 7976, name: null, ref: null, amount: 5000, date: '2026-01-08', partner_id: [1, 'Felipe'], state: 'paid', journal_id: [13, 'Bank'] },
+      { id: 7976, name: null, memo: null, amount: 5000, date: '2026-01-08', partner_id: [1, 'Felipe'], state: 'paid', journal_id: [13, 'Bank'] },
     ]).mockResolvedValueOnce([])
 
     const { GET } = await import('./route')

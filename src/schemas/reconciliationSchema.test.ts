@@ -72,7 +72,7 @@ describe('reconciliationSchema', () => {
         journalId: 13,
         journalName: 'Bank',
         state: 'paid',
-        ref: null,
+        memo: null,
       },
       diff: { amountDiff: 0, dateDiff: 0, partnerJaccard: 1 },
       confidence: 'high' as const,

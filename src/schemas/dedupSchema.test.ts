@@ -35,7 +35,7 @@ describe('dedupSchema', () => {
 
   it('validates a full cluster', () => {
     const member = {
-      id: 1, name: 'P1', ref: null, amount: 5000, date: '2026-01-08',
+      id: 1, name: 'P1', memo: null, amount: 5000, date: '2026-01-08',
       partnerId: 100, partnerName: 'X', journalId: 13, journalName: 'Bank',
       state: 'paid', xDupStatus: null, xCanonicalPaymentId: null,
     }
@@ -50,7 +50,7 @@ describe('dedupSchema', () => {
 
   it('accepts xDupStatus canonico/secundario/null', () => {
     const base = {
-      id: 1, name: null, ref: null, amount: 100, date: '2026-01-01',
+      id: 1, name: null, memo: null, amount: 100, date: '2026-01-01',
       partnerId: 1, partnerName: 'X', journalId: null, journalName: null,
       state: 'paid', xCanonicalPaymentId: null,
     }

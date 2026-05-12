@@ -9,7 +9,7 @@ import { normalizePartner } from './reconciliationMatch'
 export interface OdooPaymentRow {
   id: number
   name: string | null
-  ref: string | null
+  memo: string | null
   amount: number
   date: string | null // YYYY-MM-DD
   partnerId: number | null

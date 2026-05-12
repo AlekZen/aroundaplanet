@@ -8,7 +8,7 @@ import {
 const baseRow = (overrides: Partial<OdooPaymentRow>): OdooPaymentRow => ({
   id: 0,
   name: 'P0001',
-  ref: null,
+  memo: null,
   amount: 5000,
   date: '2026-01-08',
   partnerId: 4314,

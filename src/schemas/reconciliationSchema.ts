@@ -24,7 +24,7 @@ export const odooPaymentSummarySchema = z.object({
   journalId: z.number().int().nullable(),
   journalName: z.string().nullable(),
   state: z.string(),
-  ref: z.string().nullable(),
+  memo: z.string().nullable(),
 })
 
 export const reconciliationCandidateSchema = z.object({

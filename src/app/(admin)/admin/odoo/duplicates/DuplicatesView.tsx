@@ -199,7 +199,7 @@ function ClusterCard({ cluster, onMarkCanonical }: { cluster: DuplicateClusterDt
             <TableRow>
               <TableHead>ID</TableHead>
               <TableHead>Name</TableHead>
-              <TableHead>Ref</TableHead>
+              <TableHead>Memo</TableHead>
               <TableHead>Fecha</TableHead>
               <TableHead>Monto</TableHead>
               <TableHead>Journal</TableHead>
@@ -213,7 +213,7 @@ function ClusterCard({ cluster, onMarkCanonical }: { cluster: DuplicateClusterDt
               <TableRow key={m.id}>
                 <TableCell>{m.id}</TableCell>
                 <TableCell>{m.name ?? '-'}</TableCell>
-                <TableCell>{m.ref ?? '-'}</TableCell>
+                <TableCell>{m.memo ?? '-'}</TableCell>
                 <TableCell>{m.date ?? '-'}</TableCell>
                 <TableCell>{formatMoney(m.amount)}</TableCell>
                 <TableCell>{m.journalName ?? '-'}</TableCell>

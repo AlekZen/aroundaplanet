@@ -5,7 +5,7 @@ export const xDupStatusSchema = z.enum(['canonico', 'secundario']).nullable()
 export const odooPaymentRowSchema = z.object({
   id: z.number().int().positive(),
   name: z.string().nullable(),
-  ref: z.string().nullable(),
+  memo: z.string().nullable(),
   amount: z.number(),
   date: z.string().nullable(),
   partnerId: z.number().int().nullable(),
