@@ -123,3 +123,18 @@ development_status:
   epic-8: in-progress
   8-1-odoo-documents-backoffice: review
   epic-8-retrospective: optional
+
+  # =============================================
+  # Epic 9: Sync Bidireccional de Pagos (9 stories: 2 spikes + 7 features)
+  # =============================================
+  epic-9: in-progress
+  9-0a-spike-documents-res-id: ready-for-dev
+  9-0b-spike-idempotencia-2call: ready-for-dev
+  9-1-reconciliacion-retroactiva-dedup-odoo: backlog
+  9-2-push-firestore-odoo-idempotente: backlog
+  9-3-pull-odoo-firestore-mirror: backlog
+  9-4-documents-attachment-individual: backlog
+  9-5-folder-dedup-odoo-documents: backlog
+  9-6-ux-admin-sync-conflictos: backlog
+  9-7-schema-zod-studio-runbook: review
+  epic-9-retrospective: optional

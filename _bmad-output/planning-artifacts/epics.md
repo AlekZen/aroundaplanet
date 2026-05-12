@@ -1587,3 +1587,403 @@ So that I can express my satisfaction and help other travelers decide.
 **Then** all views are within the ClientLayout with consistent BottomNavBar
 **And** back navigation is clear at every level (back-arrow in header)
 **And** no page exists without a clear path back to "Mis Viajes"
+
+## Epic 9: Sync Bidireccional de Pagos (Firestore ↔ Odoo ↔ Documents)
+
+Sincronización bidireccional robusta entre Firestore y Odoo 18 Enterprise Online para `account.payment`, con conciliación retroactiva de los 200 pagos legacy + 31 pagos Firestore, idempotencia obligatoria, dedup UI de duplicados internos Odoo, y attachment de comprobantes via Documents.
+
+**Insumos clave:**
+- Research técnico: `_bmad-output/planning-artifacts/research/technical-epic-9-sync-bidireccional-pagos-research-2026-05-12.md`
+- Auditoría real: `scripts/audit-output/cross-match-result.json` (16 high + 12 med + 3 low + 17 dup-internos Odoo + 26 folder-clusters)
+- Memoria sesión 35: `memory/session-35-payments-sync-audit.md`
+
+**Restricciones NO NEGOCIABLES (negocio):**
+1. NUNCA borrar/unlink registros en Odoo — Odoo es source of truth contable.
+2. Idempotencia obligatoria — capturar un pago N veces NO debe duplicar en Odoo.
+3. Sentido único de creación — Firestore→Odoo solo al verificar; Odoo→Firestore solo lectura/reconciliación.
+4. Pagos legacy (200 en Odoo, 0 en Firestore) NO se tocan — solo se enlazan vía heurística partner+amount±$1+date±3d cuando match high-confidence.
+
+**Bloqueos entre stories:**
+- Story 9.0a (Spike Documents) **BLOQUEA** Story 9.4
+- Story 9.0b (Spike Idempotencia) **BLOQUEA** Story 9.2
+- Story 9.1 **BLOQUEA** Story 9.2 (necesita external_id mapping y dedup canónico ya resueltos)
+- Story 9.7 (schema Zod) **BLOQUEA** Stories 9.2, 9.3 (define contratos de campos)
+
+### Story 9.0a (Spike A): Validar Documents res_id en ir.attachment
+
+As a **developer**,
+I want to validate empirically en sandbox Odoo Online cómo crear `ir.attachment` respetando `res_model='account.payment'` y `res_id`,
+So that podemos diseñar Story 9.4 con certeza técnica antes de invertir en implementación.
+
+**Acceptance Criteria:**
+
+**Given** un sandbox Odoo 18 Enterprise Online con credenciales XML-RPC
+**When** ejecuto un script de spike que intenta crear `ir.attachment` con `res_model='account.payment'`, `res_id={paymentId}`, `datas={base64}`, `name='comprobante.pdf'`
+**Then** documento si `res_id` queda persistido correctamente o si se descarta (read-only)
+**And** documento el método alternativo que funciona (ej. `message_post` sobre `account.payment` con `attachment_ids`)
+**And** documento si el attachment aparece visible en Odoo Documents UI
+
+**Given** el spike completa
+**When** entrego el reporte
+**Then** existe un archivo `_bmad-output/spikes/spike-a-documents-res-id-2026-MM-DD.md` con:
+  - Comandos XML-RPC exactos probados
+  - Respuestas crudas observadas (success/error)
+  - Recomendación final: cuál API usar en Story 9.4
+  - Bloqueadores o restricciones descubiertos
+**And** la recomendación se incorpora a Story 9.4 como decisión técnica firme antes de codear
+
+**Given** el spike revela que `res_id` NO se puede setear directamente
+**When** evalúo alternativas
+**Then** pruebo `mail.thread.message_post` con `attachment_ids` sobre `account.payment`
+**And** pruebo módulo bridge `documents_account` si está disponible en el tenant
+**And** documento el camino que funcione end-to-end
+
+**Estimación:** 1 día
+**Bloquea:** Story 9.4
+
+### Story 9.0b (Spike B): Validar idempotencia create + ir.model.data
+
+As a **developer**,
+I want to validar empíricamente en sandbox que el patrón 2-call (`create account.payment` + `create ir.model.data`) es idempotente y reproducible,
+So that Story 9.2 puede asumir el patrón sin sorpresas en producción.
+
+**Acceptance Criteria:**
+
+**Given** un sandbox Odoo 18 Enterprise Online
+**When** ejecuto el script de spike que crea un `account.payment` y a continuación un `ir.model.data` con `module='__aroundaplanet__'`, `name='payment_TEST001'`, `model='account.payment'`, `res_id={paymentId}`
+**Then** el external_id queda registrado y consultable via `search_read('ir.model.data', [('module','=','__aroundaplanet__'),('name','=','payment_TEST001')])`
+
+**Given** el external_id ya existe
+**When** ejecuto el mismo script 2 veces más con el mismo `firestoreId`
+**Then** el script detecta el external_id existente en la 1ª llamada (lookup)
+**And** NO crea un segundo `account.payment` ni un segundo `ir.model.data`
+**And** retorna el `res_id` original
+
+**Given** simulo fallo en la 2ª llamada (`ir.model.data create` falla)
+**When** el script no logra registrar el external_id pero el `account.payment` ya fue creado
+**Then** documento la estrategia de recovery: reintentar `ir.model.data create` con backoff (1s→2s→4s)
+**And** si el retry final falla, documento la lógica de marcar el pago en `syncLog/{paymentId}` para reconciliación manual
+
+**Given** el spike completa
+**When** entrego el reporte
+**Then** existe `_bmad-output/spikes/spike-b-idempotencia-2026-MM-DD.md` con:
+  - Patrón final validado paso a paso
+  - Latencias observadas por call (importante por rate limit 60 req/min)
+  - Edge cases descubiertos (race conditions, errores de Odoo)
+  - Decisión sobre recovery de la transacción no-atómica
+
+**Estimación:** 1 día
+**Bloquea:** Story 9.2
+
+### Story 9.1: Reconciliación Retroactiva + UI Dedup Odoo
+
+As an **admin (Paloma)**,
+I want to revisar y enlazar los 200 pagos legacy de Odoo con los 31 pagos Firestore + designar canónicos entre los 17 duplicados internos Odoo,
+So that el sistema arranca con una base de datos limpia, sin duplicar registros en Odoo y sin perder trazabilidad.
+
+**Acceptance Criteria:**
+
+**Given** admin navega a `/admin/odoo-sync/reconciliacion`
+**When** la pantalla carga
+**Then** veo 3 tabs: "Match High Confidence" (16), "Match Medium/Low" (15 = 12+3), "Sin Match" (Firestore-only, 0 hoy)
+**And** cada match muestra: partner, amount (Odoo vs Firestore), date diff, journal Odoo, agentName Firestore, evidencia (campos coincidentes)
+**And** los datos vienen de re-ejecutar `scripts/audit-firestore-payments.ts` + cross-match al entrar a la pantalla (no estático)
+
+**Given** Paloma revisa un match high-confidence
+**When** confirma el match
+**Then** Firestore `payments/{firestoreId}.odooPaymentId` se setea al `id` Odoo
+**And** Firestore `payments/{firestoreId}.linkedAt = serverTimestamp()`, `linkedBy = uid`
+**And** NO se crea `ir.model.data` para legacy (restricción negocio)
+**And** NO se modifica nada en Odoo
+**And** el match desaparece de la cola y se loggea en `syncLog/{firestoreId}` con `action='legacy_linked'`
+
+**Given** Paloma rechaza un match medium/low
+**When** marca "No es match"
+**Then** se registra en `syncLog/{firestoreId}` con `action='match_rejected'`, `reviewedBy`, `reasonText`
+**And** el pago Firestore permanece sin `odooPaymentId`
+**And** el pago Odoo legacy queda sin enlace (esperado)
+
+**Given** admin navega a `/admin/odoo-dedup`
+**When** la pantalla carga
+**Then** veo los 17 clusters de duplicados internos Odoo agrupados por partner+amount+date±1d
+**And** cada cluster muestra todos los `account.payment` con: id, state, journal, date exacta, ref, create_date
+**And** ninguno está pre-marcado como canónico
+
+**Given** Paloma selecciona el canónico de un cluster
+**When** confirma la elección
+**Then** el canónico recibe tag `dup-canonico` (creado en `documents.tag` o `account.payment.category` si existe) via XML-RPC
+**And** los demás del cluster reciben tag `dup-secundario`
+**And** cada secundario recibe custom field `x_canonical_payment_id = {idCanonico}` (campo creado pre-sprint via Studio)
+**And** NUNCA se ejecuta `unlink` ni cambio de `state`
+**And** la acción se loggea en Firestore `dedupLog/{clusterId}` con `canonicalId`, `secondaryIds[]`, `decidedBy`, `decidedAt`
+
+**Given** el cross-match con Firestore corre después de la dedup
+**When** un pago Firestore matchea contra varios del mismo cluster Odoo
+**Then** el algoritmo prefiere el `dup-canonico`
+**And** si no hay canónico marcado aún, marca el match como "Pendiente dedup" y bloquea linking hasta que Paloma decida
+
+**Given** UI muestra estado global
+**When** Paloma entra a `/admin/odoo-sync`
+**Then** veo dashboard: % matches procesados, % clusters resueltos, # pagos sin enlace, alertas operativas
+
+**Bloquea:** Story 9.2 (necesita dedup canónico resuelto antes de que el push automático genere matches)
+
+### Story 9.2: Push Idempotente Firestore→Odoo al Verificar
+
+As a **sistema**,
+I want to crear automáticamente un `account.payment` en Odoo cuando un admin verifica un pago en Firestore, garantizando idempotencia y sin duplicar en re-intentos,
+So that Paloma ve los pagos verificados en su contabilidad sin captura manual.
+
+**Acceptance Criteria:**
+
+**Given** un admin verifica un pago Firestore (transición `pending_verification` → `verified` de Story 3.3)
+**When** la Cloud Function `onPaymentVerified` se dispara
+**Then** ejecuta el patrón 2-call validado en Spike B:
+  1. `search_read('ir.model.data', [('module','=','__aroundaplanet__'),('name','=',`payment_${firestoreId}`)])`
+  2. Si existe: actualiza Firestore `odooPaymentId` con el `res_id` retornado y termina
+  3. Si NO existe: `create('account.payment', {...})` → `create('ir.model.data', {...})`
+**And** el `account.payment` se crea con: `partner_id`, `amount` (centavos→Monetary), `date`, `journal_id` (mapeo método→journal), `ref`, `x_firebase_payment_id = firestoreId`, `x_firebase_agent_uid = agentId`
+**And** NO se intenta reconcile con factura (restricción Punto 4 research)
+**And** NO se asocia a `sale.order` en este sprint (out-of-scope)
+
+**Given** la Cloud Function corre por reintento de Cloud Tasks
+**When** el mismo `firestoreId` llega 2ª vez
+**Then** la 1ª llamada (search_read) encuentra el external_id existente
+**And** NO se crea un segundo `account.payment`
+**And** la función retorna éxito con `odooPaymentId` ya conocido
+
+**Given** la 2ª llamada (`ir.model.data create`) falla pero la 1ª (account.payment create) tuvo éxito
+**When** la función detecta el fallo
+**Then** reintenta `ir.model.data create` con backoff (1s→2s→4s) hasta 3 veces
+**And** si el retry final falla, escribe `syncLog/{firestoreId}` con `action='orphan_payment'`, `odooPaymentId`, `error`
+**And** dispara alerta admin (UI de Story 9.6)
+**And** NO duplica el `account.payment` en futuras corridas (el siguiente intento detecta el huérfano via heurística partner+amount+date)
+
+**Given** Odoo XML-RPC retorna error transitorio (timeout, 503, rate limit)
+**When** la Cloud Function captura la excepción
+**Then** aplica exponential backoff 1s→2s→4s (max 3 retries)
+**And** si todos fallan, marca el pago en `syncQueue/{firestoreId}` para reintento posterior por Cloud Scheduler
+
+**Given** el mapeo `journal_id` no resuelve el método de pago
+**When** el pago tiene `paymentMethod` desconocido
+**Then** se usa el journal default `bank_default_journal_id` configurado en env
+**And** se loggea warning en `syncLog/{firestoreId}` con `action='unknown_method_fallback'`
+
+**Bloqueada por:** Story 9.0b (Spike B), Story 9.1 (dedup), Story 9.7 (schema)
+
+### Story 9.3: Pull Odoo→Firestore (Mirror Read-Only)
+
+As a **sistema**,
+I want to reflejar en Firestore los cambios que Paloma hace en Odoo (state, journal, reconciled, etc.) sin que el sync modifique campos Firestore-owned,
+So that el dashboard agente/admin muestra siempre el estado contable actualizado.
+
+**Acceptance Criteria:**
+
+**Given** Cloud Scheduler dispara `pullOdooPayments` cada 15 minutos
+**When** la función ejecuta `search_read('account.payment', [('write_date','>',lastCursor)], [...campos...])`
+**Then** recibe el delta de pagos modificados desde el último cursor
+**And** persiste `lastCursor = max(write_date)` en `syncCursors/odooPayments`
+
+**Given** un pago Odoo viene en el delta y tiene `x_firebase_payment_id` poblado
+**When** la función mapea al Firestore doc
+**Then** actualiza SOLO los campos mirror: `odooState`, `odooJournalId`, `odooJournalName`, `odooReconciled`, `odooReconciledAt`, `odooInvoiceId`, `odooLastSyncAt`
+**And** NUNCA modifica: `status`, `agentId`, `clientName`, `receiptUrl`, `ocrData`, `verifiedBy`, `verifiedAt`
+**And** si `state` cambió a `canceled`, escribe alerta en `paymentAlerts/{paymentId}` con `type='odoo_canceled'` (UI Story 9.6)
+
+**Given** un pago Odoo viene en el delta SIN `x_firebase_payment_id` y SIN `ir.model.data` enlazado
+**When** la función intenta mapear
+**Then** ejecuta heurística partner+amount±$1+date±3d contra Firestore
+**And** si match high-confidence: enlaza vía `odooPaymentId` (mismo path Story 9.1)
+**And** si no match: ignora (legacy huérfano sin enlace, esperado por restricción negocio)
+
+**Given** webhook outgoing Odoo (Automation Rule) dispara a `/api/odoo/webhook/payment` con payload de cambio
+**When** la API verifica firma HMAC del header `X-Odoo-Signature` contra secret de env
+**Then** procesa el cambio inmediato (mismo flujo que el polling pero por evento)
+**And** retorna 200 OK en <500ms para no bloquear Odoo
+**And** si la firma es inválida, retorna 401 y loggea intento
+
+**Given** el webhook falla o Odoo no lo envió por cualquier motivo
+**When** el polling de 15min corre
+**Then** detecta el cambio igual via `write_date > lastCursor`
+**And** el sistema es robusto al double-trigger (mismo update idempotente)
+
+**Bloqueada por:** Story 9.7 (schema)
+
+### Story 9.4: Comprobantes en Odoo Documents (Attachment Individual)
+
+As a **sistema y admin**,
+I want to que cada comprobante de pago verificado quede como attachment individual en Odoo asociado al `account.payment` correspondiente, con tag `aroundaplanet_comprobante`,
+So that Paloma encuentra los comprobantes desde Odoo sin salir de su flujo contable.
+
+**Acceptance Criteria:**
+
+**Given** un pago Firestore se verifica y Story 9.2 crea el `account.payment` en Odoo
+**When** Story 9.4 dispara después del create exitoso
+**Then** descarga el `receiptUrl` de Firebase Storage
+**And** sube a Odoo usando el método validado en Spike A (probablemente `mail.thread.message_post` sobre `account.payment` con `attachment_ids`, o `ir.attachment create` con `res_model='account.payment'` + `res_id={paymentId}` si el spike confirma que funciona)
+**And** asigna tag `aroundaplanet_comprobante` (creado pre-sprint en `documents.tag`)
+**And** NO concentra en PDF maestro {Cliente}.pdf (descartado per research Punto 6)
+
+**Given** el upload del attachment falla
+**When** la función captura el error
+**Then** reintenta con backoff 1s→2s→4s (max 3)
+**And** si todos fallan, loggea en `syncLog/{firestoreId}` con `action='attachment_failed'`
+**And** dispara alerta UI Story 9.6 (no bloquea el pago, solo el attachment)
+
+**Given** el attachment se sube exitosamente
+**When** se confirma el `attachment_id` retornado por Odoo
+**Then** Firestore `payments/{firestoreId}.odooAttachmentId = {id}` se persiste
+**And** `payments/{firestoreId}.odooAttachmentSyncedAt = serverTimestamp()`
+
+**Given** el pago tiene MÚLTIPLES comprobantes (escenario futuro, no MVP pero diseñado)
+**When** cada comprobante se sube
+**Then** cada uno es attachment individual con su propio `attachment_id`
+**And** Firestore `payments/{firestoreId}.odooAttachmentIds = [id1, id2, ...]`
+
+**Given** Paloma busca el comprobante en Odoo
+**When** abre el `account.payment` en la UI Odoo
+**Then** ve el attachment en la sección de archivos adjuntos / chatter
+**And** lo encuentra también en Odoo Documents filtrado por tag `aroundaplanet_comprobante`
+
+**Bloqueada por:** Story 9.0a (Spike A), Story 9.2
+
+### Story 9.5: Normalización de Folders Odoo Documents (26 clusters)
+
+As an **admin (Paloma)**,
+I want to consolidar los 26 clusters de folders duplicados en Odoo Documents marcando un canónico por destino+mes+año, sin borrar los demás,
+So that el sistema de archivos en Odoo es navegable y los nuevos comprobantes van al folder correcto.
+
+**Acceptance Criteria:**
+
+**Given** admin navega a `/admin/odoo-folders/dedup`
+**When** la pantalla carga
+**Then** veo los 26 folder-clusters detectados, agrupados por patrón normalizado `{destino}-{mes}-{año}` (lowercase + sin diacríticos + sin espacios extra)
+**And** cada cluster muestra los folders raw (ej. "ASIA MAYO", "ASIA MAYO1", "ASIA MAYO 2"), # documentos en cada uno, fechas de creación
+**And** ninguno pre-marcado como canónico
+
+**Given** Paloma selecciona el folder canónico de un cluster
+**When** confirma
+**Then** el canónico recibe tag `folder-canonico` (en `documents.tag` si aplicable, o custom field `x_is_canonical = True`)
+**And** los demás reciben tag `folder-duplicado` y custom field `x_canonical_folder_id = {idCanonico}`
+**And** NUNCA se ejecuta `unlink` sobre folders ni se mueven documentos existentes
+**And** la decisión se loggea en `folderDedupLog/{clusterId}`
+
+**Given** Story 9.4 sube un nuevo comprobante con destino+mes+año
+**When** la lógica determina folder destino
+**Then** consulta el mapping canónico (busca folder con `x_canonical_folder_id = NULL` y match de nombre normalizado)
+**And** si encuentra canónico, sube ahí
+**And** si no hay canónico definido para ese destino+mes+año, crea uno nuevo con el patrón estándar `{DESTINO} {MES} {AÑO}` y lo marca como canónico
+
+**Given** se quiere consolidar documentos antiguos en el canónico (decisión futura)
+**When** Paloma decide hacer esa consolidación
+**Then** este es un proceso fuera del scope automático (manual o spike posterior)
+**And** Story 9.5 NO mueve documentos automáticamente entre folders
+
+### Story 9.6: UX Admin de Sync (Cola Conflictos, Alertas, Estado)
+
+As an **admin**,
+I want to ver el estado del sync, resolver conflictos LWW, y revisar alertas operativas en una sola pantalla,
+So that los problemas de integración se detectan y resuelven rápido sin esperar reportes.
+
+**Acceptance Criteria:**
+
+**Given** admin navega a `/admin/odoo-sync`
+**When** la pantalla carga
+**Then** veo dashboard con:
+  - # pagos en `paymentConflicts/` pendientes resolución
+  - # pagos en `syncQueue/` pendientes push (errores transitorios)
+  - # `paymentAlerts/` activas (canceled-in-odoo, attachment_failed, orphan_payment, unknown_method)
+  - Última corrida de `pullOdooPayments` + cursor actual
+  - Tasa de éxito últimas 24h (push vs pull)
+
+**Given** existe un conflicto LWW en `paymentConflicts/{paymentId}`
+**When** admin abre el conflicto
+**Then** ve los 2 valores (Firestore vs Odoo) con timestamps `writtenAt`
+**And** ve el campo en conflicto (memo, date, o amount)
+**And** elige cuál preservar
+**And** la elección se persiste: ganador queda en el doc, perdedor se loggea en `conflictHistory/`
+**And** la entrada en `paymentConflicts/` se elimina
+
+**Given** existe una alerta `odoo_canceled` (Paloma canceló en Odoo)
+**When** admin la revisa
+**Then** ve el pago Firestore con `status='verified'` y `odooState='canceled'`
+**And** decide acción: marcar Firestore también canceled (NO crea en Odoo de vuelta), o desestimar alerta como falso positivo
+**And** la decisión queda loggeada
+
+**Given** existe pago en `syncQueue/` por error transitorio
+**When** admin lo abre
+**Then** ve el último error, # de retries, próximo retry programado
+**And** puede forzar retry inmediato
+**And** puede marcar como "rechazado para sync" si decide no sincronizar (escapa hatch)
+
+**Given** Paloma necesita reporte
+**When** exporta CSV desde `/admin/odoo-sync`
+**Then** recibe CSV con: paymentId, firestoreId, odooPaymentId, status, odooState, lastSyncAt, errores
+
+### Story 9.7: Schema Canónico Zod + Custom Fields + Documentación
+
+As a **developer**,
+I want a Zod schema canónico de `Payment` con todos los campos mirror Odoo + custom fields Odoo creados via Studio + runbook operativo,
+So that las Stories 9.1-9.6 tienen contratos claros y el deploy del Epic 9 es reproducible.
+
+**Acceptance Criteria:**
+
+**Given** se define el schema canónico
+**When** se crea `src/schemas/paymentSchema.ts`
+**Then** incluye TODOS los campos de la matriz field-ownership (Punto 8 research):
+  - Firestore-owned: `firestoreId`, `agentId`, `agentName`, `clientName`, `status`, `paymentMethod`, `receiptUrl`, `ocrData`, `verifiedBy`, `verifiedAt`, `rejectionReason`
+  - LWW: `amount` (centavos), `paymentDate` (Timestamp), `memo` — cada uno con sub-objeto `{value, writtenAt, source}` para tracking
+  - Odoo mirror (read-only desde Firestore): `odooPaymentId`, `odooState`, `odooJournalId`, `odooJournalName`, `odooReconciled`, `odooReconciledAt`, `odooInvoiceId`, `odooLastSyncAt`, `odooAttachmentIds[]`, `odooCanceledAt`
+  - Bridge: `firestoreId` (idempotency key external_id), `linkedAt`, `linkedBy`
+**And** el schema valida via `safeParse` (NUNCA `as Type`)
+
+**Given** existe cola de conflictos LWW
+**When** se diseña el contrato
+**Then** `paymentConflicts/{paymentId}` tiene schema Zod propio: `{paymentId, field: 'memo'|'paymentDate'|'amount', firestoreValue, odooValue, firestoreWrittenAt, odooWrittenAt, detectedAt}`
+**And** la cola es alimentada por Story 9.3 (pull) cuando detecta concurrent writes
+
+**Given** Studio fields Odoo
+**When** se prepara el deploy
+**Then** existe runbook `_bmad-output/runbooks/epic-9-odoo-studio-setup.md` con:
+  - Pasos exactos UI Odoo Studio para crear `x_firebase_payment_id` (Char, indexed) y `x_firebase_agent_uid` (Char, indexed) en `account.payment`
+  - Pasos para crear `x_canonical_payment_id` (Many2one→account.payment) y `x_canonical_folder_id` (Many2one→documents.folder)
+  - Pasos para crear tags `aroundaplanet_comprobante`, `dup-canonico`, `dup-secundario`, `folder-canonico`, `folder-duplicado`
+  - Screenshots por paso
+  - Validación post-setup via XML-RPC search_read
+
+**Given** existe webhook Automation Rule (Story 9.3)
+**When** se prepara el deploy
+**Then** runbook incluye pasos Studio para crear Automation Rule en `account.payment`:
+  - Trigger: On Save
+  - Condition: `state` change OR `journal_id` change OR `reconciled` change
+  - Action: Webhook POST a URL configurada por env, con secret en header
+
+**Given** Cloud Functions de Stories 9.2 y 9.3 se despliegan
+**When** se valida configuración
+**Then** existe env config validada: `ODOO_URL`, `ODOO_DB`, `ODOO_USERNAME`, `ODOO_API_KEY`, `ODOO_WEBHOOK_SECRET`, `ODOO_DEFAULT_BANK_JOURNAL_ID`, `ODOO_DEFAULT_CASH_JOURNAL_ID`
+**And** mapping de `paymentMethod` (Firestore enum) → `journal_id` (Odoo int) está documentado y deployable via Firestore Remote Config o env
+
+**Bloquea:** Stories 9.2, 9.3 (contratos de campos)
+
+---
+
+## Epic 9 — Resumen de Stories
+
+| Story | Tipo | Estimación | Bloqueada por | Bloquea |
+|---|---|---|---|---|
+| 9.0a Spike Documents res_id | Spike | 1 día | — | 9.4 |
+| 9.0b Spike Idempotencia | Spike | 1 día | — | 9.2 |
+| 9.1 Reconciliación + Dedup UI | Feature | M | — | 9.2 |
+| 9.2 Push Firestore→Odoo | Feature | M | 9.0b, 9.1, 9.7 | — |
+| 9.3 Pull Odoo→Firestore | Feature | M | 9.7 | — |
+| 9.4 Documents attachments | Feature | S | 9.0a, 9.2 | — |
+| 9.5 Folder dedup Odoo | Feature | S | — | — |
+| 9.6 UX admin sync | Feature | M | 9.2, 9.3 | — |
+| 9.7 Schema Zod + runbook | Foundation | S | — | 9.2, 9.3 |
+
+**Orden recomendado de ejecución:**
+
+1. **Sprint 9.0 (1-2 días):** 9.0a + 9.0b en paralelo + 9.7 en paralelo (foundation)
+2. **Sprint 9.1 (3-5 días):** 9.1 (reconciliación + UI dedup Odoo)
+3. **Sprint 9.2 (5 días):** 9.2 + 9.3 en paralelo
+4. **Sprint 9.3 (3 días):** 9.4 + 9.5 + 9.6 en paralelo
