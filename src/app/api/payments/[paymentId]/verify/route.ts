@@ -6,6 +6,7 @@ import { handleApiError } from '@/lib/errors/handleApiError'
 import { AppError } from '@/lib/errors/AppError'
 import { verifyPaymentSchema } from '@/schemas/paymentSchema'
 import { createCommissionFromPayment } from './createCommission'
+import { syncVerifiedPaymentToOdoo } from '@/lib/odoo/payments-push'
 
 const PAYMENTS_COLLECTION = 'payments'
 
@@ -78,6 +79,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     await paymentRef.update(updateData)
 
     // Fire-and-forget: create commission if payment verified with agentId
+    let odooSync: Awaited<ReturnType<typeof syncVerifiedPaymentToOdoo>> | null = null
     if (action === 'verify') {
       const paymentData = paymentSnap.data()!
       try {
@@ -85,12 +87,19 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       } catch (err) {
         console.error('[Commission Hook] Error creating commission:', err)
       }
+      // Push idempotente a Odoo (Story 9.2). NUNCA throw: el verify Firestore ya persistió.
+      try {
+        odooSync = await syncVerifiedPaymentToOdoo(paymentId, paymentData)
+      } catch (err) {
+        console.error('[Odoo Sync Hook] Error pushing to Odoo:', err)
+      }
     }
 
     return NextResponse.json({
       paymentId,
       status: updateData.status,
       action,
+      ...(odooSync ? { odooSync } : {}),
     })
   } catch (error) {
     return handleApiError(error)

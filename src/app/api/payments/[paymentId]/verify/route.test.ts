@@ -35,6 +35,11 @@ vi.mock('./createCommission', () => ({
   createCommissionFromPayment: (...args: unknown[]) => mockCreateCommission(...args),
 }))
 
+const mockSyncOdoo = vi.fn()
+vi.mock('@/lib/odoo/payments-push', () => ({
+  syncVerifiedPaymentToOdoo: (...args: unknown[]) => mockSyncOdoo(...args),
+}))
+
 vi.mock('@/lib/errors/handleApiError', () => ({
   handleApiError: (error: unknown) => {
     if (error && typeof error === 'object' && 'status' in error) {
@@ -56,6 +61,8 @@ describe('PATCH /api/payments/[paymentId]/verify', () => {
     mockGet.mockReset()
     mockUpdate.mockReset()
     mockCreateCommission.mockReset()
+    mockSyncOdoo.mockReset()
+    mockSyncOdoo.mockResolvedValue({ status: 'synced', odooPaymentId: 1, isNew: true, orphan: false })
   })
 
   it('approves a pending payment', async () => {
@@ -240,6 +247,62 @@ describe('PATCH /api/payments/[paymentId]/verify', () => {
     mockUpdate.mockResolvedValue(undefined)
     mockCreateCommission.mockRejectedValue(new Error('Firestore unavailable'))
 
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+    const { PATCH } = await import('./route')
+    const req = new NextRequest('http://localhost/api/payments/pay1/verify', {
+      method: 'PATCH',
+      body: JSON.stringify({ action: 'verify' }),
+    })
+
+    const res = await PATCH(req, makeContext('pay1'))
+    expect(res.status).toBe(200)
+    expect(consoleSpy).toHaveBeenCalled()
+    consoleSpy.mockRestore()
+  })
+
+  // --- Odoo Sync Hook Tests (Story 9.2) ---
+
+  it('invoca syncVerifiedPaymentToOdoo solo en verify y retorna odooSync', async () => {
+    const paymentData = { status: 'pending_verification', clientName: 'Cliente', amountCents: 50000 }
+    mockRequirePermission.mockResolvedValue({ uid: 'admin1', roles: ['admin'] })
+    mockGet.mockResolvedValue({ exists: true, data: () => paymentData })
+    mockUpdate.mockResolvedValue(undefined)
+    mockSyncOdoo.mockResolvedValue({ status: 'synced', odooPaymentId: 8400, isNew: true, orphan: false })
+
+    const { PATCH } = await import('./route')
+    const req = new NextRequest('http://localhost/api/payments/pay1/verify', {
+      method: 'PATCH',
+      body: JSON.stringify({ action: 'verify' }),
+    })
+
+    const res = await PATCH(req, makeContext('pay1'))
+    const body = await res.json()
+
+    expect(mockSyncOdoo).toHaveBeenCalledWith('pay1', paymentData)
+    expect(body.odooSync).toEqual({ status: 'synced', odooPaymentId: 8400, isNew: true, orphan: false })
+  })
+
+  it('no invoca syncVerifiedPaymentToOdoo en reject', async () => {
+    mockRequirePermission.mockResolvedValue({ uid: 'admin1', roles: ['admin'] })
+    mockGet.mockResolvedValue({ exists: true, data: () => ({ status: 'pending_verification' }) })
+    mockUpdate.mockResolvedValue(undefined)
+
+    const { PATCH } = await import('./route')
+    const req = new NextRequest('http://localhost/api/payments/pay1/verify', {
+      method: 'PATCH',
+      body: JSON.stringify({ action: 'reject', rejectionNote: 'No coincide' }),
+    })
+
+    await PATCH(req, makeContext('pay1'))
+    expect(mockSyncOdoo).not.toHaveBeenCalled()
+  })
+
+  it('completa verify aún si syncVerifiedPaymentToOdoo throws', async () => {
+    mockRequirePermission.mockResolvedValue({ uid: 'admin1', roles: ['admin'] })
+    mockGet.mockResolvedValue({ exists: true, data: () => ({ status: 'pending_verification' }) })
+    mockUpdate.mockResolvedValue(undefined)
+    mockSyncOdoo.mockRejectedValue(new Error('Odoo unreachable'))
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
     const { PATCH } = await import('./route')

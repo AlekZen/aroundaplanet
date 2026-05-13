@@ -51,4 +51,19 @@ env:
   - variable: GEMINI_API_KEY
     secret: prod-gemini-api-key
     availability: [RUNTIME]
+
+  # === Story 9.2 — Odoo Journal IDs (push Firestore→account.payment) ===
+  # Resolver IDs reales antes del primer deploy: vía Odoo Accounting > Journals.
+  # Comentadas hasta tener los IDs; activar como secrets cuando estén disponibles.
+  # - variable: ODOO_JOURNAL_BANK_DEFAULT_ID
+  #   secret: prod-odoo-journal-bank-default-id
+  #   availability: [RUNTIME]
+  # - variable: ODOO_JOURNAL_CASH_ID
+  #   secret: prod-odoo-journal-cash-id
+  #   availability: [RUNTIME]
+  # Feature flag: ODOO_AUTO_RECONCILE=false por default (Story 9.2 AC10)
+  # - variable: ODOO_AUTO_RECONCILE
+  #   value: "false"
+  #   availability: [RUNTIME]
+
   # Firebase Admin SDK: uses ADC automatically in Cloud Run — no variable needed

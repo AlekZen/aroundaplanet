@@ -19,8 +19,9 @@ import {
 } from '@/components/ui/dialog'
 import {
   PAYMENT_STATUS_LABELS, PAYMENT_METHOD_LABELS,
-  type PaymentStatus, type PaymentMethod,
+  type PaymentStatus, type PaymentMethod, type OdooSyncStatus,
 } from '@/schemas/paymentSchema'
+import { OdooSyncBadge } from '@/components/payments/OdooSyncBadge'
 
 interface PaymentItem {
   id: string
@@ -49,6 +50,10 @@ interface PaymentItem {
   rejectionNote: string | null
   notes: string | null
   syncedToOdoo: boolean
+  odooPaymentId: number | null
+  odooSyncStatus: OdooSyncStatus | null
+  odooJournalName: string | null
+  odooLastError: string | null
   createdAt: string | null
   updatedAt: string | null
 }
@@ -119,6 +124,7 @@ export function VerificationPanel() {
   const [actionDialog, setActionDialog] = useState<{ type: ActionType; payment: PaymentItem } | null>(null)
   const [rejectionNote, setRejectionNote] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [retryingId, setRetryingId] = useState<string | null>(null)
 
   const fetchPayments = useCallback(async () => {
     try {
@@ -176,6 +182,23 @@ export function VerificationPanel() {
       setIsSubmitting(false)
     }
   }, [actionDialog, rejectionNote, fetchPayments])
+
+  const handleRetrySync = useCallback(async (paymentId: string) => {
+    setRetryingId(paymentId)
+    setError(null)
+    try {
+      const res = await fetch(`/api/payments/${paymentId}/retry-sync`, { method: 'POST' })
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}))
+        throw new Error(body.message ?? `Error ${res.status}`)
+      }
+      await fetchPayments()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error al reintentar sync')
+    } finally {
+      setRetryingId(null)
+    }
+  }, [fetchPayments])
 
   if (error) {
     return (
@@ -281,6 +304,15 @@ export function VerificationPanel() {
                       <p className="text-xs font-medium text-foreground/90">
                         {formatCurrency(payment.amountCents)} · {PAYMENT_METHOD_LABELS[payment.paymentMethod]} · {formatDate(payment.date)}
                       </p>
+                      {payment.status === 'verified' && (
+                        <OdooSyncBadge
+                          status={payment.odooSyncStatus}
+                          odooPaymentId={payment.odooPaymentId}
+                          odooJournalName={payment.odooJournalName}
+                          odooLastError={payment.odooLastError}
+                          className="mt-1"
+                        />
+                      )}
                     </div>
                     <Badge className={STATUS_COLORS[payment.status]}>
                       {PAYMENT_STATUS_LABELS[payment.status]}
@@ -456,9 +488,30 @@ export function VerificationPanel() {
               )}
 
               {selectedPayment.status === 'verified' && (
-                <div className="flex items-center gap-2 rounded-lg bg-green-50 p-3 text-sm text-green-700">
-                  <CheckCircle2 className="h-4 w-4" />
-                  Verificado el {formatDate(selectedPayment.verifiedAt)}
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 rounded-lg bg-green-50 p-3 text-sm text-green-700">
+                    <CheckCircle2 className="h-4 w-4" />
+                    Verificado el {formatDate(selectedPayment.verifiedAt)}
+                  </div>
+                  <div className="flex items-center justify-between gap-2">
+                    <OdooSyncBadge
+                      status={selectedPayment.odooSyncStatus}
+                      odooPaymentId={selectedPayment.odooPaymentId}
+                      odooJournalName={selectedPayment.odooJournalName}
+                      odooLastError={selectedPayment.odooLastError}
+                    />
+                    {(selectedPayment.odooSyncStatus === 'error' || selectedPayment.odooSyncStatus === 'orphan') && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={retryingId === selectedPayment.id}
+                        onClick={() => handleRetrySync(selectedPayment.id)}
+                      >
+                        {retryingId === selectedPayment.id && <Loader2 className="mr-1.5 h-3 w-3 animate-spin" />}
+                        Reintentar sync
+                      </Button>
+                    )}
+                  </div>
                 </div>
               )}
 

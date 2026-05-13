@@ -165,6 +165,10 @@ export async function GET(request: NextRequest) {
         rejectionNote: d.rejectionNote ?? null,
         notes: d.notes ?? null,
         syncedToOdoo: d.syncedToOdoo ?? false,
+        odooPaymentId: d.odooPaymentId ?? null,
+        odooSyncStatus: d.odooSyncStatus ?? null,
+        odooJournalName: d.odooJournalName ?? null,
+        odooLastError: d.odooLastError ?? null,
         createdAt: d.createdAt?.toDate?.()?.toISOString() ?? null,
         updatedAt: d.updatedAt?.toDate?.()?.toISOString() ?? null,
       }
