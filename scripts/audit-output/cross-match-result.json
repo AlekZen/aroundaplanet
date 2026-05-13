@@ -1,0 +1,3023 @@
+{
+  "generatedAt": "2026-05-12T16:38:50.696Z",
+  "summary": {
+    "firestoreTotal": 31,
+    "odooSampleTotal": 200,
+    "odooFullCount": 200,
+    "matchesHigh": 16,
+    "matchesMedium": 12,
+    "matchesLow": 3,
+    "firestoreOnly": 0,
+    "odooOnly": 175,
+    "duplicatesInternalFirestore": 2,
+    "duplicatesInternalOdoo": 17,
+    "folderDuplicateClusters": 26
+  },
+  "matches": [
+    {
+      "firestoreId": "Uu4UppB4AFvM1AHYKixb",
+      "odooId": 7976,
+      "partner": "FELIPE DE JESUS RUBIO RUIZ ⇔ FELIPE DE JESUS RUBIO RUIZ",
+      "amount": 5000,
+      "date": "2026-01-08",
+      "dateDiff": 0,
+      "amountDiff": 0,
+      "documentFolderId": 1942,
+      "documentFolderName": "COLOMBIA MAYO 2026 ORIGINAL",
+      "documentFileId": 1946,
+      "documentFileName": "FELIPE DE JESUS RUBIO RUIZ.pdf",
+      "confidence": "high",
+      "reasons": [
+        "partner✓(jac=1.00)",
+        "amount✓(Δ=0.00)",
+        "date✓(Δ=0d)"
+      ]
+    },
+    {
+      "firestoreId": "Qzi8E4XIlC4fNoET3tjJ",
+      "odooId": 7977,
+      "partner": "FELIPE DE JESUS RUBIO RUIZ ⇔ FELIPE DE JESUS RUBIO RUIZ",
+      "amount": 5650,
+      "date": "2026-02-05",
+      "dateDiff": 0,
+      "amountDiff": 0,
+      "documentFolderId": 1942,
+      "documentFolderName": "COLOMBIA MAYO 2026 ORIGINAL",
+      "documentFileId": 1946,
+      "documentFileName": "FELIPE DE JESUS RUBIO RUIZ.pdf",
+      "confidence": "high",
+      "reasons": [
+        "partner✓(jac=1.00)",
+        "amount✓(Δ=0.00)",
+        "date✓(Δ=0d)"
+      ]
+    },
+    {
+      "firestoreId": "nrx6nug2EaM7XqMhrqUC",
+      "odooId": 7978,
+      "partner": "FELIPE DE JESUS RUBIO RUIZ ⇔ FELIPE DE JESUS RUBIO RUIZ",
+      "amount": 5650,
+      "date": "2026-03-02",
+      "dateDiff": 0,
+      "amountDiff": 0,
+      "documentFolderId": 1942,
+      "documentFolderName": "COLOMBIA MAYO 2026 ORIGINAL",
+      "documentFileId": 1946,
+      "documentFileName": "FELIPE DE JESUS RUBIO RUIZ.pdf",
+      "confidence": "high",
+      "reasons": [
+        "partner✓(jac=1.00)",
+        "amount✓(Δ=0.00)",
+        "date✓(Δ=0d)"
+      ]
+    },
+    {
+      "firestoreId": "Hi5VfMImtLYabmu7m3dJ",
+      "odooId": 7980,
+      "partner": "FELIPE DE JESUS RUBIO RUIZ ⇔ FELIPE DE JESUS RUBIO RUIZ",
+      "amount": 5650,
+      "date": "2026-04-02",
+      "dateDiff": 2,
+      "amountDiff": 0,
+      "documentFolderId": 1942,
+      "documentFolderName": "COLOMBIA MAYO 2026 ORIGINAL",
+      "documentFileId": 1946,
+      "documentFileName": "FELIPE DE JESUS RUBIO RUIZ.pdf",
+      "confidence": "high",
+      "reasons": [
+        "partner✓(jac=1.00)",
+        "amount✓(Δ=0.00)",
+        "date✓(Δ=2d)"
+      ]
+    },
+    {
+      "firestoreId": "QgcVvO5N2KxXvvcHMYRG",
+      "odooId": 7980,
+      "partner": "FELIPE DE JESUS RUBIO RUIZ ⇔ FELIPE DE JESUS RUBIO RUIZ",
+      "amount": 5650,
+      "date": "2026-04-04",
+      "dateDiff": 0,
+      "amountDiff": 0,
+      "documentFolderId": 1942,
+      "documentFolderName": "COLOMBIA MAYO 2026 ORIGINAL",
+      "documentFileId": 1946,
+      "documentFileName": "FELIPE DE JESUS RUBIO RUIZ.pdf",
+      "confidence": "high",
+      "reasons": [
+        "partner✓(jac=1.00)",
+        "amount✓(Δ=0.00)",
+        "date✓(Δ=0d)"
+      ]
+    },
+    {
+      "firestoreId": "KvsC0YW7JVO85loOI6ts",
+      "odooId": 8110,
+      "partner": "CRISTAL JEANETTE SOLIS VIDAÑA ⇔ CRISTAL JEANETTE SOLIS VIDAÑA",
+      "amount": 5200,
+      "date": "2026-03-09",
+      "dateDiff": 0,
+      "amountDiff": 0,
+      "documentFolderId": 1942,
+      "documentFolderName": "COLOMBIA MAYO 2026 ORIGINAL",
+      "documentFileId": 2017,
+      "documentFileName": "CRISTAL JEANETTE SOLIS VIDAÑA.pdf",
+      "confidence": "high",
+      "reasons": [
+        "partner✓(jac=1.00)",
+        "amount✓(Δ=0.00)",
+        "date✓(Δ=0d)"
+      ]
+    },
+    {
+      "firestoreId": "C6oTSz6mSdhT8Blnpc1P",
+      "odooId": 8111,
+      "partner": "CRISTAL JEANETTE SOLIS VIDAÑA ⇔ CRISTAL JEANETTE SOLIS VIDAÑA",
+      "amount": 20000,
+      "date": "2026-01-26",
+      "dateDiff": 0,
+      "amountDiff": 0,
+      "documentFolderId": 1942,
+      "documentFolderName": "COLOMBIA MAYO 2026 ORIGINAL",
+      "documentFileId": 2017,
+      "documentFileName": "CRISTAL JEANETTE SOLIS VIDAÑA.pdf",
+      "confidence": "high",
+      "reasons": [
+        "partner✓(jac=1.00)",
+        "amount✓(Δ=0.00)",
+        "date✓(Δ=0d)"
+      ]
+    },
+    {
+      "firestoreId": "kNw69roB0KduSL2DfKvX",
+      "odooId": 8112,
+      "partner": "CRISTAL JEANETTE SOLIS VIDAÑA ⇔ CRISTAL JEANETTE SOLIS VIDAÑA",
+      "amount": 10000,
+      "date": "2025-12-29",
+      "dateDiff": 0,
+      "amountDiff": 0,
+      "documentFolderId": 1942,
+      "documentFolderName": "COLOMBIA MAYO 2026 ORIGINAL",
+      "documentFileId": 2017,
+      "documentFileName": "CRISTAL JEANETTE SOLIS VIDAÑA.pdf",
+      "confidence": "high",
+      "reasons": [
+        "partner✓(jac=1.00)",
+        "amount✓(Δ=0.00)",
+        "date✓(Δ=0d)"
+      ]
+    },
+    {
+      "firestoreId": "Epej7CpEr1MpcgG7j4T6",
+      "odooId": 8113,
+      "partner": "CRISTAL JEANETTE SOLIS VIDAÑA ⇔ CRISTAL JEANETTE SOLIS VIDAÑA",
+      "amount": 10000,
+      "date": "2025-07-17",
+      "dateDiff": 0,
+      "amountDiff": 0,
+      "documentFolderId": 1942,
+      "documentFolderName": "COLOMBIA MAYO 2026 ORIGINAL",
+      "documentFileId": 2017,
+      "documentFileName": "CRISTAL JEANETTE SOLIS VIDAÑA.pdf",
+      "confidence": "high",
+      "reasons": [
+        "partner✓(jac=1.00)",
+        "amount✓(Δ=0.00)",
+        "date✓(Δ=0d)"
+      ]
+    },
+    {
+      "firestoreId": "dhcVqQ2fK4XnnXFJR2o6",
+      "odooId": 8114,
+      "partner": "CRISTAL JEANETTE SOLIS VIDAÑA ⇔ CRISTAL JEANETTE SOLIS VIDAÑA",
+      "amount": 10000,
+      "date": "2025-08-06",
+      "dateDiff": 0,
+      "amountDiff": 0,
+      "documentFolderId": 1942,
+      "documentFolderName": "COLOMBIA MAYO 2026 ORIGINAL",
+      "documentFileId": 2017,
+      "documentFileName": "CRISTAL JEANETTE SOLIS VIDAÑA.pdf",
+      "confidence": "high",
+      "reasons": [
+        "partner✓(jac=1.00)",
+        "amount✓(Δ=0.00)",
+        "date✓(Δ=0d)"
+      ]
+    },
+    {
+      "firestoreId": "8WxrSWKAKpZQbsX9yICK",
+      "odooId": 8057,
+      "partner": "JULIO EMIR ELIAS GALVAN ⇔ JULIO EMIR ELIAS GALVAN",
+      "amount": 1000,
+      "date": "2026-05-11",
+      "dateDiff": 49,
+      "amountDiff": 0,
+      "documentFolderId": 1976,
+      "documentFolderName": "CHIAPAS JUNIO 2026 HABITACION SENCILLA",
+      "documentFileId": 1986,
+      "documentFileName": "JULIO EMIR ELIAS GALVAN.pdf",
+      "confidence": "medium",
+      "reasons": [
+        "partner✓(jac=1.00)",
+        "amount✓(Δ=0.00)",
+        "date✗(Δ=49d)"
+      ]
+    },
+    {
+      "firestoreId": "iUFH10VSnbRni8v3LNUb",
+      "odooId": 8054,
+      "partner": "JULIO EMIR ELIAS GALVAN ⇔ JULIO EMIR ELIAS GALVAN",
+      "amount": 5000,
+      "date": "2026-01-24",
+      "dateDiff": 0,
+      "amountDiff": 0,
+      "documentFolderId": 1976,
+      "documentFolderName": "CHIAPAS JUNIO 2026 HABITACION SENCILLA",
+      "documentFileId": 1986,
+      "documentFileName": "JULIO EMIR ELIAS GALVAN.pdf",
+      "confidence": "high",
+      "reasons": [
+        "partner✓(jac=1.00)",
+        "amount✓(Δ=0.00)",
+        "date✓(Δ=0d)"
+      ]
+    },
+    {
+      "firestoreId": "sSGo72uUstlg1I5eNIRz",
+      "odooId": 8055,
+      "partner": "JULIO EMIR ELIAS GALVAN ⇔ JULIO EMIR ELIAS GALVAN",
+      "amount": 500,
+      "date": "2026-05-11",
+      "dateDiff": 77,
+      "amountDiff": 0,
+      "documentFolderId": 1976,
+      "documentFolderName": "CHIAPAS JUNIO 2026 HABITACION SENCILLA",
+      "documentFileId": 1986,
+      "documentFileName": "JULIO EMIR ELIAS GALVAN.pdf",
+      "confidence": "medium",
+      "reasons": [
+        "partner✓(jac=1.00)",
+        "amount✓(Δ=0.00)",
+        "date✗(Δ=77d)"
+      ]
+    },
+    {
+      "firestoreId": "xsPh6ah4fBluBV1u6Q1G",
+      "odooId": 8057,
+      "partner": "JULIO EMIR ELIAS GALVAN ⇔ JULIO EMIR ELIAS GALVAN",
+      "amount": 1000,
+      "date": "2026-05-11",
+      "dateDiff": 49,
+      "amountDiff": 0,
+      "documentFolderId": 1976,
+      "documentFolderName": "CHIAPAS JUNIO 2026 HABITACION SENCILLA",
+      "documentFileId": 1986,
+      "documentFileName": "JULIO EMIR ELIAS GALVAN.pdf",
+      "confidence": "medium",
+      "reasons": [
+        "partner✓(jac=1.00)",
+        "amount✓(Δ=0.00)",
+        "date✗(Δ=49d)"
+      ]
+    },
+    {
+      "firestoreId": "qBi6KztzrQEjSA96WUak",
+      "odooId": 8058,
+      "partner": "JULIO EMIR ELIAS GALVAN ⇔ JULIO EMIR ELIAS GALVAN",
+      "amount": 400,
+      "date": "2026-05-11",
+      "dateDiff": 25,
+      "amountDiff": 0,
+      "documentFolderId": 1976,
+      "documentFolderName": "CHIAPAS JUNIO 2026 HABITACION SENCILLA",
+      "documentFileId": 1986,
+      "documentFileName": "JULIO EMIR ELIAS GALVAN.pdf",
+      "confidence": "medium",
+      "reasons": [
+        "partner✓(jac=1.00)",
+        "amount✓(Δ=0.00)",
+        "date✗(Δ=25d)"
+      ]
+    },
+    {
+      "firestoreId": "HUNuqEGersR33ViUbUQE",
+      "odooId": 8049,
+      "partner": "MARIA LUISA ALVAREZ MARTINEZ ⇔ MARIA LUISA ALVAREZ MARTINEZ",
+      "amount": 3700,
+      "date": "2026-04-17",
+      "dateDiff": 0,
+      "amountDiff": 0,
+      "documentFolderId": 1979,
+      "documentFolderName": "CHIAPAS JUNIO 2026",
+      "documentFileId": 1982,
+      "documentFileName": "MARIA LUISA ALVAREZ MARTINEZ.pdf",
+      "confidence": "high",
+      "reasons": [
+        "partner✓(jac=1.00)",
+        "amount✓(Δ=0.00)",
+        "date✓(Δ=0d)"
+      ]
+    },
+    {
+      "firestoreId": "ZQNlbyVWEDfkpvL0XMPZ",
+      "odooId": 8048,
+      "partner": "MARIA LUISA ALVAREZ MARTINEZ ⇔ MARIA LUISA ALVAREZ MARTINEZ",
+      "amount": 2500,
+      "date": "2019-03-26",
+      "dateDiff": 2550,
+      "amountDiff": 0,
+      "documentFolderId": 1979,
+      "documentFolderName": "CHIAPAS JUNIO 2026",
+      "documentFileId": 1982,
+      "documentFileName": "MARIA LUISA ALVAREZ MARTINEZ.pdf",
+      "confidence": "medium",
+      "reasons": [
+        "partner✓(jac=1.00)",
+        "amount✓(Δ=0.00)",
+        "date✗(Δ=2550d)"
+      ]
+    },
+    {
+      "firestoreId": "50Nc0cUwhzbZqBUEnEZ9",
+      "odooId": 8109,
+      "partner": "IRMA RODRIGUEZ ⇔ IRMA RODRIGUEZ",
+      "amount": 35340,
+      "date": "2026-03-05",
+      "dateDiff": 0,
+      "amountDiff": 0,
+      "documentFolderId": 1932,
+      "documentFolderName": "ASIA MAYO1 2026",
+      "documentFileId": 2016,
+      "documentFileName": "IRMA RODRIGUEZ.pdf",
+      "confidence": "high",
+      "reasons": [
+        "partner✓(jac=1.00)",
+        "amount✓(Δ=0.00)",
+        "date✓(Δ=0d)"
+      ]
+    },
+    {
+      "firestoreId": "r9bt8JEPhv7ytFS3jYi2",
+      "odooId": 8108,
+      "partner": "IRMA RODRIGUEZ ⇔ IRMA RODRIGUEZ",
+      "amount": 35060,
+      "date": "2026-03-25",
+      "dateDiff": 0,
+      "amountDiff": 0,
+      "documentFolderId": 1932,
+      "documentFolderName": "ASIA MAYO1 2026",
+      "documentFileId": 2016,
+      "documentFileName": "IRMA RODRIGUEZ.pdf",
+      "confidence": "high",
+      "reasons": [
+        "partner✓(jac=1.00)",
+        "amount✓(Δ=0.00)",
+        "date✓(Δ=0d)"
+      ]
+    },
+    {
+      "firestoreId": "m6HYiUuq33kO0ybFQbPc",
+      "odooId": 8106,
+      "partner": "IRMA RODRIGUEZ ⇔ IRMA RODRIGUEZ",
+      "amount": 10056.8,
+      "date": "2025-04-29",
+      "dateDiff": 0,
+      "amountDiff": 0.7999999999992724,
+      "documentFolderId": 1932,
+      "documentFolderName": "ASIA MAYO1 2026",
+      "documentFileId": 2016,
+      "documentFileName": "IRMA RODRIGUEZ.pdf",
+      "confidence": "high",
+      "reasons": [
+        "partner✓(jac=1.00)",
+        "amount✓(Δ=0.80)",
+        "date✓(Δ=0d)"
+      ]
+    },
+    {
+      "firestoreId": "ZRGRKeKMuPW3hHX0yBvd",
+      "odooId": 8104,
+      "partner": "IRMA RODRIGUEZ ⇔ IRMA RODRIGUEZ",
+      "amount": 10360,
+      "date": "2026-05-11",
+      "dateDiff": 402,
+      "amountDiff": 0,
+      "documentFolderId": 1932,
+      "documentFolderName": "ASIA MAYO1 2026",
+      "documentFileId": 2016,
+      "documentFileName": "IRMA RODRIGUEZ.pdf",
+      "confidence": "medium",
+      "reasons": [
+        "partner✓(jac=1.00)",
+        "amount✓(Δ=0.00)",
+        "date✗(Δ=402d)"
+      ]
+    },
+    {
+      "firestoreId": "lFqMo9Px59mgxNPiyHYc",
+      "odooId": 8105,
+      "partner": "IRMA RODRIGUEZ ⇔ IRMA RODRIGUEZ",
+      "amount": 56790,
+      "date": "2025-05-26",
+      "dateDiff": 0,
+      "amountDiff": 0,
+      "documentFolderId": 1932,
+      "documentFolderName": "ASIA MAYO1 2026",
+      "documentFileId": 2016,
+      "documentFileName": "IRMA RODRIGUEZ.pdf",
+      "confidence": "high",
+      "reasons": [
+        "partner✓(jac=1.00)",
+        "amount✓(Δ=0.00)",
+        "date✓(Δ=0d)"
+      ]
+    },
+    {
+      "firestoreId": "2JDvFCYAxXmH5iMIIwVN",
+      "odooId": 8107,
+      "partner": "IRMA RODRIGUEZ ⇔ IRMA RODRIGUEZ",
+      "amount": 29394.04,
+      "date": "2024-04-03",
+      "dateDiff": 365,
+      "amountDiff": 0.040000000000873115,
+      "documentFolderId": 1932,
+      "documentFolderName": "ASIA MAYO1 2026",
+      "documentFileId": 2016,
+      "documentFileName": "IRMA RODRIGUEZ.pdf",
+      "confidence": "medium",
+      "reasons": [
+        "partner✓(jac=1.00)",
+        "amount✓(Δ=0.04)",
+        "date✗(Δ=365d)"
+      ]
+    },
+    {
+      "firestoreId": "AHpn0QkQGNbzg1Gjxptr",
+      "odooId": 8103,
+      "partner": "null ⇔ YAZIL RAMIREZ",
+      "amount": 86800,
+      "date": "2026-04-24",
+      "dateDiff": 0,
+      "amountDiff": 0,
+      "documentFolderId": 1927,
+      "documentFolderName": "ASIA MAYO 2026",
+      "documentFileId": null,
+      "documentFileName": null,
+      "confidence": "medium",
+      "reasons": [
+        "partner✗(jac=0.00)",
+        "amount✓(Δ=0.00)",
+        "date✓(Δ=0d)"
+      ]
+    },
+    {
+      "firestoreId": "TYjYEmlaeOyY5GylmYna",
+      "odooId": 8102,
+      "partner": "null ⇔ YAZIL RAMIREZ",
+      "amount": 140000,
+      "date": "2026-03-31",
+      "dateDiff": 0,
+      "amountDiff": 0,
+      "documentFolderId": 1927,
+      "documentFolderName": "ASIA MAYO 2026",
+      "documentFileId": null,
+      "documentFileName": null,
+      "confidence": "medium",
+      "reasons": [
+        "partner✗(jac=0.00)",
+        "amount✓(Δ=0.00)",
+        "date✓(Δ=0d)"
+      ]
+    },
+    {
+      "firestoreId": "BsZrglAt1MY8jSxGkjqt",
+      "odooId": 8101,
+      "partner": "null ⇔ YAZIL RAMIREZ",
+      "amount": 60000,
+      "date": "2026-03-23",
+      "dateDiff": 0,
+      "amountDiff": 0,
+      "documentFolderId": 1927,
+      "documentFolderName": "ASIA MAYO 2026",
+      "documentFileId": null,
+      "documentFileName": null,
+      "confidence": "medium",
+      "reasons": [
+        "partner✗(jac=0.00)",
+        "amount✓(Δ=0.00)",
+        "date✓(Δ=0d)"
+      ]
+    },
+    {
+      "firestoreId": "BiLLsmVz9GMeJKtAeVlZ",
+      "odooId": 8107,
+      "partner": "null ⇔ IRMA RODRIGUEZ",
+      "amount": 5000,
+      "date": "2025-04-02",
+      "dateDiff": 1,
+      "amountDiff": 24394,
+      "documentFolderId": 1786,
+      "documentFolderName": "ASIA 2026",
+      "documentFileId": null,
+      "documentFileName": null,
+      "confidence": "low",
+      "reasons": [
+        "partner✗(jac=0.00)",
+        "amount✗(Δ=24394.00)",
+        "date✓(Δ=1d)"
+      ]
+    },
+    {
+      "firestoreId": "ivkuzBZk83wGaaaUSw7v",
+      "odooId": 8112,
+      "partner": "null ⇔ CRISTAL JEANETTE SOLIS VIDAÑA",
+      "amount": 10000,
+      "date": "2025-12-30",
+      "dateDiff": 1,
+      "amountDiff": 0,
+      "documentFolderId": 1518,
+      "documentFolderName": "ARGENTINA BRASIL AGOSTO",
+      "documentFileId": null,
+      "documentFileName": null,
+      "confidence": "medium",
+      "reasons": [
+        "partner✗(jac=0.00)",
+        "amount✓(Δ=0.00)",
+        "date✓(Δ=1d)"
+      ]
+    },
+    {
+      "firestoreId": "tcIEENRkco5KY81OS4Cc",
+      "odooId": 8114,
+      "partner": "null ⇔ CRISTAL JEANETTE SOLIS VIDAÑA",
+      "amount": 10000,
+      "date": "2026-04-23",
+      "dateDiff": 260,
+      "amountDiff": 0,
+      "documentFolderId": 1518,
+      "documentFolderName": "ARGENTINA BRASIL AGOSTO",
+      "documentFileId": null,
+      "documentFileName": null,
+      "confidence": "low",
+      "reasons": [
+        "partner✗(jac=0.00)",
+        "amount✓(Δ=0.00)",
+        "date✗(Δ=260d)"
+      ]
+    },
+    {
+      "firestoreId": "S07f1hq9Kr1hoaU2vXXK",
+      "odooId": 8102,
+      "partner": "null ⇔ YAZIL RAMIREZ",
+      "amount": 3330,
+      "date": "2026-03-30",
+      "dateDiff": 1,
+      "amountDiff": 136670,
+      "documentFolderId": 1518,
+      "documentFolderName": "ARGENTINA BRASIL AGOSTO",
+      "documentFileId": null,
+      "documentFileName": null,
+      "confidence": "low",
+      "reasons": [
+        "partner✗(jac=0.00)",
+        "amount✗(Δ=136670.00)",
+        "date✓(Δ=1d)"
+      ]
+    },
+    {
+      "firestoreId": "ssIbrN6S15o8JY8vhhxU",
+      "odooId": 8053,
+      "partner": "null ⇔ VIOLETA IRANI GOMEZ ESTRELLA",
+      "amount": 2500,
+      "date": "2026-03-19",
+      "dateDiff": 0,
+      "amountDiff": 0,
+      "documentFolderId": 1884,
+      "documentFolderName": "ENERO 2026",
+      "documentFileId": null,
+      "documentFileName": null,
+      "confidence": "medium",
+      "reasons": [
+        "partner✗(jac=0.00)",
+        "amount✓(Δ=0.00)",
+        "date✓(Δ=0d)"
+      ]
+    }
+  ],
+  "firestoreOnly": [],
+  "odooOnly": [
+    {
+      "odooId": 8117,
+      "partner": "ERIKA FLORES GUTIERREZ",
+      "amount": 60000,
+      "date": "2026-05-06",
+      "journal": "Cash",
+      "memo": "INV/2026/00289",
+      "state": "in_process"
+    },
+    {
+      "odooId": 8116,
+      "partner": "ALMA YANET AGUIAR MONTES",
+      "amount": 9598,
+      "date": "2026-05-07",
+      "journal": "Bank",
+      "memo": "INV/2026/00300",
+      "state": "paid"
+    },
+    {
+      "odooId": 8115,
+      "partner": "CESAR HUMBERTO GARCIA MUÑOZ",
+      "amount": 40000,
+      "date": "2026-05-05",
+      "journal": "Bank",
+      "memo": "INV/2026/00372",
+      "state": "paid"
+    },
+    {
+      "odooId": 8100,
+      "partner": "ERIKA DE LA MORA",
+      "amount": 2000,
+      "date": "2026-04-14",
+      "journal": "Bank",
+      "memo": "INV/2026/00112",
+      "state": "paid"
+    },
+    {
+      "odooId": 8099,
+      "partner": "ERICK SILVA ESPARZA",
+      "amount": 2650,
+      "date": "2025-11-03",
+      "journal": "Bank",
+      "memo": "INV/2026/00368",
+      "state": "paid"
+    },
+    {
+      "odooId": 8098,
+      "partner": "ERICK SILVA ESPARZA",
+      "amount": 2450,
+      "date": "2025-12-05",
+      "journal": "Bank",
+      "memo": "INV/2026/00368",
+      "state": "paid"
+    },
+    {
+      "odooId": 8097,
+      "partner": "ERICK SILVA ESPARZA",
+      "amount": 2500,
+      "date": "2025-10-02",
+      "journal": "Bank",
+      "memo": "INV/2026/00368",
+      "state": "paid"
+    },
+    {
+      "odooId": 8096,
+      "partner": "ERICK SILVA ESPARZA",
+      "amount": 2300,
+      "date": "2026-01-05",
+      "journal": "Bank",
+      "memo": "INV/2026/00368",
+      "state": "paid"
+    },
+    {
+      "odooId": 8095,
+      "partner": "VALERIA SUGEY IÑIGUEZ OCHOA",
+      "amount": 2300,
+      "date": "2026-01-05",
+      "journal": "Bank",
+      "memo": "INV/2026/00367",
+      "state": "paid"
+    },
+    {
+      "odooId": 8094,
+      "partner": "VALERIA SUGEY IÑIGUEZ OCHOA",
+      "amount": 2500,
+      "date": "2025-10-02",
+      "journal": "Bank",
+      "memo": "INV/2026/00367",
+      "state": "paid"
+    },
+    {
+      "odooId": 8093,
+      "partner": "VALERIA SUGEY IÑIGUEZ OCHOA",
+      "amount": 2450,
+      "date": "2025-12-05",
+      "journal": "Bank",
+      "memo": "INV/2026/00367",
+      "state": "paid"
+    },
+    {
+      "odooId": 8092,
+      "partner": "VALERIA SUGEY IÑIGUEZ OCHOA",
+      "amount": 2650,
+      "date": "2025-11-03",
+      "journal": "Bank",
+      "memo": "INV/2026/00367",
+      "state": "paid"
+    },
+    {
+      "odooId": 8091,
+      "partner": "FATIMA GUADALUPE PARTIDA ORTEGA",
+      "amount": 1000,
+      "date": "2026-04-24",
+      "journal": "Bank",
+      "memo": "INV/2026/00366",
+      "state": "paid"
+    },
+    {
+      "odooId": 8090,
+      "partner": "FATIMA GUADALUPE PARTIDA ORTEGA",
+      "amount": 1000,
+      "date": "2026-03-15",
+      "journal": "Bank",
+      "memo": "INV/2026/00366",
+      "state": "paid"
+    },
+    {
+      "odooId": 8089,
+      "partner": "FATIMA GUADALUPE PARTIDA ORTEGA",
+      "amount": 1000,
+      "date": "2026-02-18",
+      "journal": "Bank",
+      "memo": "INV/2026/00366",
+      "state": "paid"
+    },
+    {
+      "odooId": 8088,
+      "partner": "FATIMA GUADALUPE PARTIDA ORTEGA",
+      "amount": 1000,
+      "date": "2026-01-26",
+      "journal": "Bank",
+      "memo": "INV/2026/00366",
+      "state": "paid"
+    },
+    {
+      "odooId": 8087,
+      "partner": "FATIMA GUADALUPE PARTIDA ORTEGA",
+      "amount": 2500,
+      "date": "2025-11-26",
+      "journal": "Bank",
+      "memo": "INV/2026/00366",
+      "state": "paid"
+    },
+    {
+      "odooId": 8086,
+      "partner": "EFREN GODINEZ MENDOZA",
+      "amount": 1000,
+      "date": "2026-04-24",
+      "journal": "Bank",
+      "memo": "INV/2026/00365",
+      "state": "paid"
+    },
+    {
+      "odooId": 8085,
+      "partner": "EFREN GODINEZ MENDOZA",
+      "amount": 1000,
+      "date": "2026-03-15",
+      "journal": "Bank",
+      "memo": "INV/2026/00365",
+      "state": "paid"
+    },
+    {
+      "odooId": 8084,
+      "partner": "EFREN GODINEZ MENDOZA",
+      "amount": 1000,
+      "date": "2026-02-18",
+      "journal": "Bank",
+      "memo": "INV/2026/00365",
+      "state": "paid"
+    },
+    {
+      "odooId": 8083,
+      "partner": "EFREN GODINEZ MENDOZA",
+      "amount": 1000,
+      "date": "2026-01-26",
+      "journal": "Bank",
+      "memo": "INV/2026/00365",
+      "state": "paid"
+    },
+    {
+      "odooId": 8082,
+      "partner": "EFREN GODINEZ MENDOZA",
+      "amount": 2500,
+      "date": "2025-11-26",
+      "journal": "Bank",
+      "memo": "INV/2026/00365",
+      "state": "paid"
+    },
+    {
+      "odooId": 8081,
+      "partner": "MAURA RAMIREZ MORA",
+      "amount": 3200,
+      "date": "2026-05-05",
+      "journal": "Bank",
+      "memo": "INV/2026/00134",
+      "state": "paid"
+    },
+    {
+      "odooId": 8080,
+      "partner": "IGNACIO MARIA FRANCISCO PUENTE LOPEZ",
+      "amount": 10000,
+      "date": "2026-05-04",
+      "journal": "Bank",
+      "memo": "INV/2026/00364",
+      "state": "paid"
+    },
+    {
+      "odooId": 8079,
+      "partner": "VERONICA NIETO GONZAEZ",
+      "amount": 10000,
+      "date": "2026-05-04",
+      "journal": "Bank",
+      "memo": "INV/2026/00363",
+      "state": "paid"
+    },
+    {
+      "odooId": 8078,
+      "partner": "DANIEL OMAR CORDOVA OROZCO",
+      "amount": 514,
+      "date": "2026-05-08",
+      "journal": "Bank",
+      "memo": "INV/2026/00362",
+      "state": "paid"
+    },
+    {
+      "odooId": 8077,
+      "partner": "MA CELIA VAZQUEZ ACEVES",
+      "amount": 10000,
+      "date": "2026-03-03",
+      "journal": "Bank",
+      "memo": "INV/2026/00361",
+      "state": "paid"
+    },
+    {
+      "odooId": 8076,
+      "partner": "BERTHA GONZALEZ HERNANDEZ",
+      "amount": 10000,
+      "date": "2026-03-03",
+      "journal": "Bank",
+      "memo": "INV/2026/00360",
+      "state": "paid"
+    },
+    {
+      "odooId": 8075,
+      "partner": "DORA MARIA PRADO BUENROSTRO",
+      "amount": 10000,
+      "date": "2026-03-03",
+      "journal": "Bank",
+      "memo": "INV/2026/00359",
+      "state": "paid"
+    },
+    {
+      "odooId": 8074,
+      "partner": "DIEGO GONZALEZ GONZALEZ",
+      "amount": 10000,
+      "date": "2026-03-03",
+      "journal": "Bank",
+      "memo": "INV/2026/00358",
+      "state": "paid"
+    },
+    {
+      "odooId": 8073,
+      "partner": "SUSANA ELIZABETH CUELLAR HERRERA",
+      "amount": 10000,
+      "date": "2026-03-03",
+      "journal": "Bank",
+      "memo": "INV/2026/00357",
+      "state": "paid"
+    },
+    {
+      "odooId": 8072,
+      "partner": "ATENAS MONTSERRAT RUIZ CORAL",
+      "amount": 40000,
+      "date": "2026-04-20",
+      "journal": "Bank",
+      "memo": "INV/2026/00356",
+      "state": "paid"
+    },
+    {
+      "odooId": 8071,
+      "partner": "ATENAS MONTSERRAT RUIZ CORAL",
+      "amount": 10000,
+      "date": "2026-01-05",
+      "journal": "Bank",
+      "memo": "INV/2026/00356",
+      "state": "paid"
+    },
+    {
+      "odooId": 8070,
+      "partner": "ATENAS MONTSERRAT RUIZ CORAL",
+      "amount": 10000,
+      "date": "2025-11-07",
+      "journal": "Bank",
+      "memo": "INV/2026/00356",
+      "state": "paid"
+    },
+    {
+      "odooId": 8069,
+      "partner": "MARTHA LORENA GUTIERREZ PLASCENCIA",
+      "amount": 26600,
+      "date": "2026-04-16",
+      "journal": "Bank",
+      "memo": "INV/2026/00355",
+      "state": "paid"
+    },
+    {
+      "odooId": 8068,
+      "partner": "MARTHA LORENA GUTIERREZ PLASCENCIA",
+      "amount": 53200,
+      "date": "2025-12-22",
+      "journal": "Bank",
+      "memo": "INV/2026/00355",
+      "state": "paid"
+    },
+    {
+      "odooId": 8067,
+      "partner": "MARTHA LORENA GUTIERREZ PLASCENCIA",
+      "amount": 10000,
+      "date": "2025-10-30",
+      "journal": "Bank",
+      "memo": "INV/2026/00355",
+      "state": "paid"
+    },
+    {
+      "odooId": 8066,
+      "partner": "IRENE PLASCENCIA DE GUTIERRE",
+      "amount": 26600,
+      "date": "2026-04-16",
+      "journal": "Bank",
+      "memo": "INV/2026/00354",
+      "state": "paid"
+    },
+    {
+      "odooId": 8065,
+      "partner": "IRENE PLASCENCIA DE GUTIERRE",
+      "amount": 26600,
+      "date": "2026-02-20",
+      "journal": "Bank",
+      "memo": "INV/2026/00354",
+      "state": "paid"
+    },
+    {
+      "odooId": 8064,
+      "partner": "IRENE PLASCENCIA DE GUTIERRE",
+      "amount": 26600,
+      "date": "2026-01-06",
+      "journal": "Bank",
+      "memo": "INV/2026/00354",
+      "state": "paid"
+    },
+    {
+      "odooId": 8063,
+      "partner": "IRENE PLASCENCIA DE GUTIERRE",
+      "amount": 10000,
+      "date": "2025-10-30",
+      "journal": "Bank",
+      "memo": "INV/2026/00354",
+      "state": "paid"
+    },
+    {
+      "odooId": 8062,
+      "partner": "DIEGO ENRIQUE BORBOLLA GUTIERREZ",
+      "amount": 26600,
+      "date": "2026-04-16",
+      "journal": "Bank",
+      "memo": "INV/2026/00353",
+      "state": "paid"
+    },
+    {
+      "odooId": 8061,
+      "partner": "DIEGO ENRIQUE BORBOLLA GUTIERREZ",
+      "amount": 26600,
+      "date": "2026-02-20",
+      "journal": "Bank",
+      "memo": "INV/2026/00353",
+      "state": "paid"
+    },
+    {
+      "odooId": 8060,
+      "partner": "DIEGO ENRIQUE BORBOLLA GUTIERREZ",
+      "amount": 26600,
+      "date": "2026-02-22",
+      "journal": "Bank",
+      "memo": "INV/2026/00353",
+      "state": "paid"
+    },
+    {
+      "odooId": 8059,
+      "partner": "DIEGO ENRIQUE BORBOLLA GUTIERREZ",
+      "amount": 10000,
+      "date": "2026-05-08",
+      "journal": "Bank",
+      "memo": "INV/2026/00353",
+      "state": "paid"
+    },
+    {
+      "odooId": 8056,
+      "partner": "JULIO EMIR ELIAS GALVAN",
+      "amount": 1000,
+      "date": "2026-03-10",
+      "journal": "Bank",
+      "memo": "INV/2026/00352",
+      "state": "paid"
+    },
+    {
+      "odooId": 8052,
+      "partner": "VIOLETA IRANI GOMEZ ESTRELLA",
+      "amount": 3700,
+      "date": "2026-04-18",
+      "journal": "Bank",
+      "memo": "INV/2026/00351",
+      "state": "paid"
+    },
+    {
+      "odooId": 8051,
+      "partner": "NORA CECILIA SALCEDO ALDANA",
+      "amount": 3700,
+      "date": "2026-04-18",
+      "journal": "Bank",
+      "memo": "INV/2026/00350",
+      "state": "paid"
+    },
+    {
+      "odooId": 8050,
+      "partner": "NORA CECILIA SALCEDO ALDANA",
+      "amount": 2500,
+      "date": "2026-03-19",
+      "journal": "Bank",
+      "memo": "INV/2026/00350",
+      "state": "paid"
+    },
+    {
+      "odooId": 8047,
+      "partner": "PAMELA GIOVANNA BUSQUETS GALLEGOS",
+      "amount": 3700,
+      "date": "2026-04-18",
+      "journal": "Bank",
+      "memo": "INV/2026/00348",
+      "state": "paid"
+    },
+    {
+      "odooId": 8046,
+      "partner": "PAMELA GIOVANNA BUSQUETS GALLEGOS",
+      "amount": 2500,
+      "date": "2026-03-19",
+      "journal": "Bank",
+      "memo": "INV/2026/00348",
+      "state": "paid"
+    },
+    {
+      "odooId": 8045,
+      "partner": "PAMELA GIOVANNA BUSQUETS GALLEGOS",
+      "amount": 2500,
+      "date": "2026-03-19",
+      "journal": "Bank",
+      "memo": "INV/2026/00348",
+      "state": "paid"
+    },
+    {
+      "odooId": 8044,
+      "partner": "SALMA SEGURA RIVERA",
+      "amount": 2816,
+      "date": "2026-04-17",
+      "journal": "Bank",
+      "memo": "INV/2026/00347",
+      "state": "paid"
+    },
+    {
+      "odooId": 8043,
+      "partner": "SALMA SEGURA RIVERA",
+      "amount": 2816,
+      "date": "2026-03-17",
+      "journal": "Bank",
+      "memo": "INV/2026/00347",
+      "state": "paid"
+    },
+    {
+      "odooId": 8042,
+      "partner": "SALMA SEGURA RIVERA",
+      "amount": 2500,
+      "date": "2026-02-17",
+      "journal": "Bank",
+      "memo": "INV/2026/00347",
+      "state": "paid"
+    },
+    {
+      "odooId": 8041,
+      "partner": "MANUEL ALEJANDRO AVILA HERNANDEZ",
+      "amount": 2816,
+      "date": "2026-04-17",
+      "journal": "Bank",
+      "memo": "INV/2026/00346",
+      "state": "paid"
+    },
+    {
+      "odooId": 8040,
+      "partner": "MANUEL ALEJANDRO AVILA HERNANDEZ",
+      "amount": 2816,
+      "date": "2026-03-17",
+      "journal": "Bank",
+      "memo": "INV/2026/00346",
+      "state": "paid"
+    },
+    {
+      "odooId": 8039,
+      "partner": "MANUEL ALEJANDRO AVILA HERNANDEZ",
+      "amount": 2500,
+      "date": "2026-02-17",
+      "journal": "Bank",
+      "memo": "INV/2026/00346",
+      "state": "paid"
+    },
+    {
+      "odooId": 8038,
+      "partner": "MARICELA AVILA HERNANDEZ",
+      "amount": 2818,
+      "date": "2026-04-17",
+      "journal": "Bank",
+      "memo": "INV/2026/00345",
+      "state": "paid"
+    },
+    {
+      "odooId": 8037,
+      "partner": "MARICELA AVILA HERNANDEZ",
+      "amount": 2818,
+      "date": "2026-03-15",
+      "journal": "Bank",
+      "memo": "INV/2026/00345",
+      "state": "paid"
+    },
+    {
+      "odooId": 8036,
+      "partner": "MARICELA AVILA HERNANDEZ",
+      "amount": 2500,
+      "date": "2026-02-17",
+      "journal": "Bank",
+      "memo": "INV/2026/00345",
+      "state": "paid"
+    },
+    {
+      "odooId": 8035,
+      "partner": "JULIO EMIR ELIAS GALVAN",
+      "amount": 400,
+      "date": "2026-04-16",
+      "journal": "Bank",
+      "memo": "INV/2026/00344",
+      "state": "paid"
+    },
+    {
+      "odooId": 8034,
+      "partner": "JULIO EMIR ELIAS GALVAN",
+      "amount": 1000,
+      "date": "2026-03-23",
+      "journal": "Bank",
+      "memo": "INV/2026/00344",
+      "state": "paid"
+    },
+    {
+      "odooId": 8033,
+      "partner": "JULIO EMIR ELIAS GALVAN",
+      "amount": 1000,
+      "date": "2026-03-10",
+      "journal": "Bank",
+      "memo": "INV/2026/00344",
+      "state": "paid"
+    },
+    {
+      "odooId": 8032,
+      "partner": "JULIO EMIR ELIAS GALVAN",
+      "amount": 500,
+      "date": "2026-02-23",
+      "journal": "Bank",
+      "memo": "INV/2026/00344",
+      "state": "paid"
+    },
+    {
+      "odooId": 8031,
+      "partner": "JULIO EMIR ELIAS GALVAN",
+      "amount": 5000,
+      "date": "2026-01-24",
+      "journal": "Bank",
+      "memo": "INV/2026/00344",
+      "state": "paid"
+    },
+    {
+      "odooId": 8030,
+      "partner": "JULIO EMIR ELIAS GALVAN",
+      "amount": 1000,
+      "date": "2026-03-10",
+      "journal": "Bank",
+      "memo": "INV/2026/00344",
+      "state": "paid"
+    },
+    {
+      "odooId": 8029,
+      "partner": "JULIO EMIR ELIAS GALVAN",
+      "amount": 500,
+      "date": "2026-02-23",
+      "journal": "Bank",
+      "memo": "INV/2026/00344",
+      "state": "paid"
+    },
+    {
+      "odooId": 8028,
+      "partner": "JULIO EMIR ELIAS GALVAN",
+      "amount": 5000,
+      "date": "2026-01-24",
+      "journal": "Bank",
+      "memo": "INV/2026/00344",
+      "state": "paid"
+    },
+    {
+      "odooId": 8027,
+      "partner": "[PWA TEST] Champions Sandbox 202605081811 Cliente",
+      "amount": 10000,
+      "date": "2026-05-08",
+      "journal": "Bank",
+      "memo": "[PWA TEST] Abono 2 sandbox para S13379 producto 1937",
+      "state": "draft"
+    },
+    {
+      "odooId": 8026,
+      "partner": "[PWA TEST] Champions Sandbox 202605081811 Cliente",
+      "amount": 15000,
+      "date": "2026-05-08",
+      "journal": "Bank",
+      "memo": "[PWA TEST] Abono 1 sandbox para S13379 producto 1937",
+      "state": "draft"
+    },
+    {
+      "odooId": 8025,
+      "partner": "ADRIANA ALFARO LOPEZ",
+      "amount": 10000,
+      "date": "2026-01-31",
+      "journal": "Bank",
+      "memo": "INV/2026/00343",
+      "state": "paid"
+    },
+    {
+      "odooId": 8024,
+      "partner": "ADRIANA ALFARO LOPEZ",
+      "amount": 75200,
+      "date": "2026-01-31",
+      "journal": "Bank",
+      "memo": "INV/2026/00343",
+      "state": "paid"
+    },
+    {
+      "odooId": 8023,
+      "partner": "DOLORES THELMA SIMON MONTAÑO",
+      "amount": 10000,
+      "date": "2026-01-31",
+      "journal": "Bank",
+      "memo": "INV/2026/00342",
+      "state": "paid"
+    },
+    {
+      "odooId": 8022,
+      "partner": "LUIS DANIEL ORTIZ GONZALEZ",
+      "amount": 5600,
+      "date": "2026-05-07",
+      "journal": "Bank",
+      "memo": "INV/2026/00341",
+      "state": "paid"
+    },
+    {
+      "odooId": 8021,
+      "partner": "RENATO FLAVIANO VAZQUEZ LOPEZ",
+      "amount": 4250,
+      "date": "2026-05-06",
+      "journal": "Bank",
+      "memo": "INV/2026/00340",
+      "state": "paid"
+    },
+    {
+      "odooId": 8020,
+      "partner": "DANIEL OMAR CORDOVA OROZCO",
+      "amount": 3540,
+      "date": "2026-05-05",
+      "journal": "Bank",
+      "memo": "INV/2026/00339",
+      "state": "paid"
+    },
+    {
+      "odooId": 8019,
+      "partner": "OSCAR RAMIREZ FRUTOS",
+      "amount": 4200,
+      "date": "2026-05-05",
+      "journal": "Bank",
+      "memo": "INV/2026/00338",
+      "state": "paid"
+    },
+    {
+      "odooId": 8018,
+      "partner": "ANA MARIA DEL ROSARIO RODRIGUEZ CRUZ",
+      "amount": 4000,
+      "date": "2026-05-04",
+      "journal": "Bank",
+      "memo": "INV/2026/00185",
+      "state": "paid"
+    },
+    {
+      "odooId": 8017,
+      "partner": "FATIMA GUADALUPE PARTIDA ORTEGA",
+      "amount": 1000,
+      "date": "2026-04-24",
+      "journal": "Bank",
+      "memo": "INV/2026/00092",
+      "state": "paid"
+    },
+    {
+      "odooId": 8016,
+      "partner": "EFREN GODINEZ MENDOZA",
+      "amount": 1000,
+      "date": "2026-04-24",
+      "journal": "Bank",
+      "memo": "INV/2026/00091",
+      "state": "paid"
+    },
+    {
+      "odooId": 8015,
+      "partner": "DAVID ISRAEL MENA QUINTANA",
+      "amount": 15000,
+      "date": "2026-05-02",
+      "journal": "Bank",
+      "memo": "INV/2026/00296",
+      "state": "paid"
+    },
+    {
+      "odooId": 8014,
+      "partner": "ERNA QUINTANA GARCIA",
+      "amount": 15000,
+      "date": "2026-05-02",
+      "journal": "Bank",
+      "memo": "INV/2026/00337",
+      "state": "paid"
+    },
+    {
+      "odooId": 8013,
+      "partner": "ERNA QUINTANA GARCIA",
+      "amount": 30000,
+      "date": "2026-04-14",
+      "journal": "Bank",
+      "memo": "INV/2026/00337",
+      "state": "paid"
+    },
+    {
+      "odooId": 8012,
+      "partner": "ESTHER ALVAREZ DELGADILLO",
+      "amount": 5000,
+      "date": "2026-05-01",
+      "journal": "Bank",
+      "memo": "INV/2026/00135",
+      "state": "paid"
+    },
+    {
+      "odooId": 8011,
+      "partner": "EDGAR JOEL MENDEZ HIGAREDA",
+      "amount": 10000,
+      "date": "2026-04-30",
+      "journal": "Bank",
+      "memo": "INV/2026/00003",
+      "state": "paid"
+    },
+    {
+      "odooId": 8010,
+      "partner": "LUIS DANIEL MERCADO BAUTISTA",
+      "amount": 11580,
+      "date": "2026-05-04",
+      "journal": "Bank",
+      "memo": "INV/2026/00115",
+      "state": "paid"
+    },
+    {
+      "odooId": 8009,
+      "partner": "JOSE ASAEL GUTIERREZ MONTEON",
+      "amount": 3498,
+      "date": "2026-05-04",
+      "journal": "Bank",
+      "memo": "INV/2026/00175",
+      "state": "paid"
+    },
+    {
+      "odooId": 8008,
+      "partner": "GERARDO VELAZQUEZ VALADEZ",
+      "amount": 2300,
+      "date": "2026-05-05",
+      "journal": "Bank",
+      "memo": "INV/2026/00090",
+      "state": "paid"
+    },
+    {
+      "odooId": 8007,
+      "partner": "Litzy Ávalos Meza",
+      "amount": 17790,
+      "date": "2026-05-05",
+      "journal": "Bank",
+      "memo": "INV/2026/00336",
+      "state": "paid"
+    },
+    {
+      "odooId": 8006,
+      "partner": "Litzy Ávalos Meza",
+      "amount": 8000,
+      "date": "2026-02-13",
+      "journal": "Bank",
+      "memo": "INV/2026/00336",
+      "state": "paid"
+    },
+    {
+      "odooId": 8005,
+      "partner": "LAURA ELENA MURILLO DE FLORES",
+      "amount": 35100,
+      "date": "2026-04-14",
+      "journal": "Bank",
+      "memo": "INV/2026/00335",
+      "state": "paid"
+    },
+    {
+      "odooId": 8004,
+      "partner": "JOSE MARTIN SANCHEZ ACOSTA",
+      "amount": 12500,
+      "date": "2026-04-29",
+      "journal": "Bank",
+      "memo": "INV/2026/00334",
+      "state": "paid"
+    },
+    {
+      "odooId": 8003,
+      "partner": "JOSE MARTIN SANCHEZ ACOSTA",
+      "amount": 7500,
+      "date": "2026-04-22",
+      "journal": "Bank",
+      "memo": "INV/2026/00334",
+      "state": "paid"
+    },
+    {
+      "odooId": 8002,
+      "partner": "JOSE MARTIN SANCHEZ ACOSTA",
+      "amount": 5000,
+      "date": "2026-03-21",
+      "journal": "Bank",
+      "memo": "INV/2026/00334",
+      "state": "paid"
+    },
+    {
+      "odooId": 8001,
+      "partner": "AURORA MICHAELLE GOMEZ VELAZQUEZ",
+      "amount": 12500,
+      "date": "2026-04-29",
+      "journal": "Bank",
+      "memo": "INV/2026/00333",
+      "state": "paid"
+    },
+    {
+      "odooId": 8000,
+      "partner": "AURORA MICHAELLE GOMEZ VELAZQUEZ",
+      "amount": 7500,
+      "date": "2026-04-22",
+      "journal": "Bank",
+      "memo": "INV/2026/00333",
+      "state": "paid"
+    },
+    {
+      "odooId": 7999,
+      "partner": "AURORA MICHAELLE GOMEZ VELAZQUEZ",
+      "amount": 5000,
+      "date": "2026-03-21",
+      "journal": "Bank",
+      "memo": "INV/2026/00333",
+      "state": "paid"
+    },
+    {
+      "odooId": 7998,
+      "partner": "DIANA LUEVANO HERNANDEZ",
+      "amount": 100,
+      "date": "2026-03-09",
+      "journal": "Bank",
+      "memo": "INV/2026/00332",
+      "state": "paid"
+    },
+    {
+      "odooId": 7997,
+      "partner": "DIANA LUEVANO HERNANDEZ",
+      "amount": 2500,
+      "date": "2026-02-23",
+      "journal": "Bank",
+      "memo": "INV/2026/00332",
+      "state": "paid"
+    },
+    {
+      "odooId": 7996,
+      "partner": "DIANA LUEVANO HERNANDEZ",
+      "amount": 10000,
+      "date": "2026-01-26",
+      "journal": "Bank",
+      "memo": "INV/2026/00332",
+      "state": "paid"
+    },
+    {
+      "odooId": 7995,
+      "partner": "DIANA LUEVANO HERNANDEZ",
+      "amount": 5000,
+      "date": "2025-12-29",
+      "journal": "Bank",
+      "memo": "INV/2026/00332",
+      "state": "paid"
+    },
+    {
+      "odooId": 7994,
+      "partner": "DIANA LUEVANO HERNANDEZ",
+      "amount": 5000,
+      "date": "2025-08-06",
+      "journal": "Bank",
+      "memo": "INV/2026/00332",
+      "state": "paid"
+    },
+    {
+      "odooId": 7993,
+      "partner": "DIANA LUEVANO HERNANDEZ",
+      "amount": 5000,
+      "date": "2025-07-17",
+      "journal": "Bank",
+      "memo": "INV/2026/00332",
+      "state": "paid"
+    },
+    {
+      "odooId": 7992,
+      "partner": "CRISTAL JEANETTE SOLIS VIDAÑA",
+      "amount": 100,
+      "date": "2026-03-09",
+      "journal": "Bank",
+      "memo": "INV/2026/00331",
+      "state": "paid"
+    },
+    {
+      "odooId": 7991,
+      "partner": "CRISTAL JEANETTE SOLIS VIDAÑA",
+      "amount": 2500,
+      "date": "2026-02-23",
+      "journal": "Bank",
+      "memo": "INV/2026/00331",
+      "state": "paid"
+    },
+    {
+      "odooId": 7990,
+      "partner": "CRISTAL JEANETTE SOLIS VIDAÑA",
+      "amount": 10000,
+      "date": "2026-01-26",
+      "journal": "Bank",
+      "memo": "INV/2026/00331",
+      "state": "paid"
+    },
+    {
+      "odooId": 7989,
+      "partner": "CRISTAL JEANETTE SOLIS VIDAÑA",
+      "amount": 5000,
+      "date": "2025-12-29",
+      "journal": "Bank",
+      "memo": "INV/2026/00331",
+      "state": "paid"
+    },
+    {
+      "odooId": 7988,
+      "partner": "CRISTAL JEANETTE SOLIS VIDAÑA",
+      "amount": 5000,
+      "date": "2025-08-06",
+      "journal": "Bank",
+      "memo": "INV/2026/00331",
+      "state": "paid"
+    },
+    {
+      "odooId": 7987,
+      "partner": "CRISTAL JEANETTE SOLIS VIDAÑA",
+      "amount": 5000,
+      "date": "2025-07-17",
+      "journal": "Bank",
+      "memo": "INV/2026/00331",
+      "state": "paid"
+    },
+    {
+      "odooId": 7986,
+      "partner": "JUAN DIEGO VAZQUEZ HERNANDEZ",
+      "amount": 12600,
+      "date": "2025-09-15",
+      "journal": "Bank",
+      "memo": "INV/2026/00330",
+      "state": "paid"
+    },
+    {
+      "odooId": 7985,
+      "partner": "JUAN DIEGO VAZQUEZ HERNANDEZ",
+      "amount": 10000,
+      "date": "2025-09-12",
+      "journal": "Bank",
+      "memo": "INV/2026/00330",
+      "state": "paid"
+    },
+    {
+      "odooId": 7984,
+      "partner": "JUAN DIEGO VAZQUEZ HERNANDEZ",
+      "amount": 5000,
+      "date": "2025-06-24",
+      "journal": "Bank",
+      "memo": "INV/2026/00330",
+      "state": "paid"
+    },
+    {
+      "odooId": 7983,
+      "partner": "JOSE GUILLERMO RUBIO RUIZ",
+      "amount": 10600,
+      "date": "2026-04-20",
+      "journal": "Bank",
+      "memo": "INV/2026/00329",
+      "state": "paid"
+    },
+    {
+      "odooId": 7982,
+      "partner": "JOSE GUILLERMO RUBIO RUIZ",
+      "amount": 12000,
+      "date": "2026-03-03",
+      "journal": "Bank",
+      "memo": "INV/2026/00329",
+      "state": "paid"
+    },
+    {
+      "odooId": 7981,
+      "partner": "JOSE GUILLERMO RUBIO RUIZ",
+      "amount": 5000,
+      "date": "2026-02-10",
+      "journal": "Bank",
+      "memo": "INV/2026/00329",
+      "state": "paid"
+    },
+    {
+      "odooId": 7979,
+      "partner": "FELIPE DE JESUS RUBIO RUIZ",
+      "amount": 5650,
+      "date": "2026-04-02",
+      "journal": "Bank",
+      "memo": "INV/2026/00328",
+      "state": "paid"
+    },
+    {
+      "odooId": 7975,
+      "partner": "FELIPE DE JESUS MURILLO GARCIA",
+      "amount": 14100,
+      "date": "2026-03-06",
+      "journal": "Bank",
+      "memo": "INV/2026/00327",
+      "state": "paid"
+    },
+    {
+      "odooId": 7974,
+      "partner": "FELIPE DE JESUS MURILLO GARCIA",
+      "amount": 8500,
+      "date": "2026-02-26",
+      "journal": "Bank",
+      "memo": "INV/2026/00327",
+      "state": "paid"
+    },
+    {
+      "odooId": 7973,
+      "partner": "FELIPE DE JESUS MURILLO GARCIA",
+      "amount": 5000,
+      "date": "2026-01-17",
+      "journal": "Bank",
+      "memo": "INV/2026/00327",
+      "state": "paid"
+    },
+    {
+      "odooId": 7972,
+      "partner": "GERARDO VELAZQUEZ VALADEZ",
+      "amount": 4600,
+      "date": "2026-04-30",
+      "journal": "Bank",
+      "memo": "INV/2026/00090",
+      "state": "paid"
+    },
+    {
+      "odooId": 7971,
+      "partner": "DAVID URIEL REYES PUGA",
+      "amount": 28300,
+      "date": "2026-01-28",
+      "journal": "Bank",
+      "memo": "INV/2026/00326",
+      "state": "paid"
+    },
+    {
+      "odooId": 7970,
+      "partner": "MA LUISA FLORES DE PALOS",
+      "amount": 28300,
+      "date": "2026-01-23",
+      "journal": "Bank",
+      "memo": "INV/2026/00325",
+      "state": "paid"
+    },
+    {
+      "odooId": 7969,
+      "partner": "BERTHA ELENA FLORES FLORES",
+      "amount": 28300,
+      "date": "2026-01-22",
+      "journal": "Bank",
+      "memo": "INV/2026/00324",
+      "state": "paid"
+    },
+    {
+      "odooId": 7968,
+      "partner": "ELBA TEJEDA DE LEON",
+      "amount": 28300,
+      "date": "2026-01-22",
+      "journal": "Bank",
+      "memo": "INV/2026/00323",
+      "state": "paid"
+    },
+    {
+      "odooId": 7967,
+      "partner": "IRMA YOLANDA PUGA RIVERA",
+      "amount": 28300,
+      "date": "2026-01-22",
+      "journal": "Bank",
+      "memo": "INV/2026/00322",
+      "state": "paid"
+    },
+    {
+      "odooId": 7966,
+      "partner": "DARIO EMMANUEL REYES PUGA",
+      "amount": 28300,
+      "date": "2026-01-22",
+      "journal": "Bank",
+      "memo": "INV/2026/00321",
+      "state": "paid"
+    },
+    {
+      "odooId": 7965,
+      "partner": "DARIO EMMANUEL REYES PUGA",
+      "amount": 28300,
+      "date": "2026-01-26",
+      "journal": "Bank",
+      "memo": "INV/2026/00321",
+      "state": "paid"
+    },
+    {
+      "odooId": 7964,
+      "partner": "NORMA SANDRA SANCHEZ ALVAREZ",
+      "amount": 28300,
+      "date": "2026-01-20",
+      "journal": "Bank",
+      "memo": "INV/2026/00320",
+      "state": "paid"
+    },
+    {
+      "odooId": 7963,
+      "partner": "BLANCA ESTELA CAMACHO CERDA",
+      "amount": 28300,
+      "date": "2026-01-19",
+      "journal": "Bank",
+      "memo": "INV/2026/00319",
+      "state": "paid"
+    },
+    {
+      "odooId": 7962,
+      "partner": "ELBA ARACELI ACEVES PUGA",
+      "amount": 23300,
+      "date": "2026-01-22",
+      "journal": "Bank",
+      "memo": "INV/2026/00318",
+      "state": "paid"
+    },
+    {
+      "odooId": 7961,
+      "partner": "ELBA ARACELI ACEVES PUGA",
+      "amount": 5000,
+      "date": "2026-01-17",
+      "journal": "Bank",
+      "memo": "INV/2026/00318",
+      "state": "paid"
+    },
+    {
+      "odooId": 7960,
+      "partner": "SOLEDAD MORALES TAVARES",
+      "amount": 4300,
+      "date": "2026-05-01",
+      "journal": "Bank",
+      "memo": "INV/2026/00081",
+      "state": "paid"
+    },
+    {
+      "odooId": 7959,
+      "partner": "SOLEDAD MORALES TAVARES",
+      "amount": 1800,
+      "date": "2026-05-02",
+      "journal": "Bank",
+      "memo": "INV/2026/00081",
+      "state": "paid"
+    },
+    {
+      "odooId": 7958,
+      "partner": "SOLEDAD MORALES TAVARES",
+      "amount": 3584,
+      "date": "2026-05-02",
+      "journal": "Bank",
+      "memo": "INV/2026/00081",
+      "state": "paid"
+    },
+    {
+      "odooId": 7957,
+      "partner": "TRINIDAD LUNA",
+      "amount": 9809,
+      "date": "2026-03-05",
+      "journal": "Bank",
+      "memo": "INV/2026/00317",
+      "state": "paid"
+    },
+    {
+      "odooId": 7956,
+      "partner": "TRINIDAD LUNA",
+      "amount": 35060,
+      "date": "2026-03-25",
+      "journal": "Bank",
+      "memo": "INV/2026/00317",
+      "state": "paid"
+    },
+    {
+      "odooId": 7955,
+      "partner": "TRINIDAD LUNA",
+      "amount": 10056,
+      "date": "2026-04-29",
+      "journal": "Bank",
+      "memo": "INV/2026/00317",
+      "state": "paid"
+    },
+    {
+      "odooId": 7954,
+      "partner": "TRINIDAD LUNA",
+      "amount": 28395,
+      "date": "2025-05-26",
+      "journal": "Bank",
+      "memo": "INV/2026/00317",
+      "state": "paid"
+    },
+    {
+      "odooId": 7953,
+      "partner": "TRINIDAD LUNA",
+      "amount": 5180,
+      "date": "2025-04-04",
+      "journal": "Bank",
+      "memo": "INV/2026/00317",
+      "state": "paid"
+    },
+    {
+      "odooId": 7952,
+      "partner": "IRMA RODRIGUEZ",
+      "amount": 25531,
+      "date": "2026-03-05",
+      "journal": "Bank",
+      "memo": "INV/2026/00316",
+      "state": "paid"
+    },
+    {
+      "odooId": 7951,
+      "partner": "IRMA RODRIGUEZ",
+      "amount": 29394,
+      "date": "2026-04-03",
+      "journal": "Bank",
+      "memo": "INV/2026/00316",
+      "state": "paid"
+    },
+    {
+      "odooId": 7950,
+      "partner": "IRMA RODRIGUEZ",
+      "amount": 28395,
+      "date": "2025-05-26",
+      "journal": "Bank",
+      "memo": "INV/2026/00316",
+      "state": "paid"
+    },
+    {
+      "odooId": 7949,
+      "partner": "IRMA RODRIGUEZ",
+      "amount": 5180,
+      "date": "2025-04-04",
+      "journal": "Bank",
+      "memo": "INV/2026/00316",
+      "state": "paid"
+    },
+    {
+      "odooId": 7948,
+      "partner": "MARCELINO HERNANDEZ ROJAS",
+      "amount": 245,
+      "date": "2026-04-30",
+      "journal": "Cash",
+      "memo": "INV/2026/00315",
+      "state": "in_process"
+    },
+    {
+      "odooId": 7947,
+      "partner": "MARCELINO HERNANDEZ ROJAS",
+      "amount": 21538,
+      "date": "2026-04-18",
+      "journal": "Bank",
+      "memo": "INV/2026/00315",
+      "state": "paid"
+    },
+    {
+      "odooId": 7946,
+      "partner": "MARCELINO HERNANDEZ ROJAS",
+      "amount": 9640,
+      "date": "2025-05-05",
+      "journal": "Bank",
+      "memo": "INV/2026/00315",
+      "state": "paid"
+    },
+    {
+      "odooId": 7945,
+      "partner": "MARCELINO HERNANDEZ ROJAS",
+      "amount": 21538,
+      "date": "2026-04-18",
+      "journal": "Bank",
+      "memo": "INV/2026/00315",
+      "state": "paid"
+    },
+    {
+      "odooId": 7944,
+      "partner": "MARCELINO HERNANDEZ ROJAS",
+      "amount": 20107,
+      "date": "2026-04-19",
+      "journal": "Bank",
+      "memo": "INV/2026/00315",
+      "state": "paid"
+    },
+    {
+      "odooId": 7943,
+      "partner": "MARCELINO HERNANDEZ ROJAS",
+      "amount": 18040,
+      "date": "2026-03-31",
+      "journal": "Bank",
+      "memo": "INV/2026/00315",
+      "state": "paid"
+    },
+    {
+      "odooId": 7942,
+      "partner": "MARCELINO HERNANDEZ ROJAS",
+      "amount": 18930,
+      "date": "2025-05-26",
+      "journal": "Bank",
+      "memo": "INV/2026/00315",
+      "state": "paid"
+    },
+    {
+      "odooId": 7941,
+      "partner": "MARCELINO HERNANDEZ ROJAS",
+      "amount": 10000,
+      "date": "2025-05-05",
+      "journal": "Bank",
+      "memo": "INV/2026/00315",
+      "state": "paid"
+    },
+    {
+      "odooId": 7940,
+      "partner": "BERTHA HERNANDEZ",
+      "amount": 246,
+      "date": "2026-04-30",
+      "journal": "Cash",
+      "memo": "INV/2026/00314",
+      "state": "in_process"
+    },
+    {
+      "odooId": 7939,
+      "partner": "BERTHA HERNANDEZ",
+      "amount": 21537,
+      "date": "2026-04-18",
+      "journal": "Bank",
+      "memo": "INV/2026/00314",
+      "state": "paid"
+    },
+    {
+      "odooId": 7938,
+      "partner": "BERTHA HERNANDEZ",
+      "amount": 20107,
+      "date": "2026-04-19",
+      "journal": "Bank",
+      "memo": "INV/2026/00314",
+      "state": "paid"
+    },
+    {
+      "odooId": 7937,
+      "partner": "BERTHA HERNANDEZ",
+      "amount": 18040,
+      "date": "2026-03-31",
+      "journal": "Bank",
+      "memo": "INV/2026/00314",
+      "state": "paid"
+    },
+    {
+      "odooId": 7936,
+      "partner": "BERTHA HERNANDEZ",
+      "amount": 18930,
+      "date": "2025-05-26",
+      "journal": "Bank",
+      "memo": "INV/2026/00314",
+      "state": "paid"
+    },
+    {
+      "odooId": 7935,
+      "partner": "BERTHA HERNANDEZ",
+      "amount": 9640,
+      "date": "2025-05-05",
+      "journal": "Bank",
+      "memo": "INV/2026/00314",
+      "state": "paid"
+    },
+    {
+      "odooId": 7934,
+      "partner": "JESUS MAURICIO COCONE MARQUEZ",
+      "amount": 78500,
+      "date": "2026-03-28",
+      "journal": "Bank",
+      "memo": "INV/2026/00313",
+      "state": "paid"
+    },
+    {
+      "odooId": 7933,
+      "partner": "JESUS MAURICIO COCONE MARQUEZ",
+      "amount": 10000,
+      "date": "2025-11-28",
+      "journal": "Bank",
+      "memo": "INV/2026/00313",
+      "state": "paid"
+    },
+    {
+      "odooId": 7932,
+      "partner": "EVELYN GUADALUPE SALGADO CASTELLANOS",
+      "amount": 1499,
+      "date": "2026-05-04",
+      "journal": "Bank",
+      "memo": "INV/2026/00082",
+      "state": "paid"
+    },
+    {
+      "odooId": 7931,
+      "partner": "YAZMIN AVALOS CORTES",
+      "amount": 500,
+      "date": "2026-04-10",
+      "journal": "Bank",
+      "memo": "INV/2026/00312",
+      "state": "paid"
+    },
+    {
+      "odooId": 7930,
+      "partner": "YAZMIN AVALOS CORTES",
+      "amount": 5500,
+      "date": "2026-04-10",
+      "journal": "Bank",
+      "memo": "INV/2026/00312",
+      "state": "paid"
+    },
+    {
+      "odooId": 7929,
+      "partner": "YAZMIN AVALOS CORTES",
+      "amount": 22500,
+      "date": "2026-03-22",
+      "journal": "Bank",
+      "memo": "INV/2026/00312",
+      "state": "paid"
+    },
+    {
+      "odooId": 7928,
+      "partner": "YAZMIN AVALOS CORTES",
+      "amount": 50000,
+      "date": "2026-03-04",
+      "journal": "Bank",
+      "memo": "INV/2026/00312",
+      "state": "paid"
+    },
+    {
+      "odooId": 7927,
+      "partner": "YAZMIN AVALOS CORTES",
+      "amount": 10000,
+      "date": "2025-11-28",
+      "journal": "Bank",
+      "memo": "INV/2026/00312",
+      "state": "paid"
+    },
+    {
+      "odooId": 7926,
+      "partner": "ALEJANDRA CORTES RODRIGUEZ",
+      "amount": 2500,
+      "date": "2026-04-20",
+      "journal": "Bank",
+      "memo": "INV/2026/00311",
+      "state": "paid"
+    },
+    {
+      "odooId": 7925,
+      "partner": "ALEJANDRA CORTES RODRIGUEZ",
+      "amount": 76000,
+      "date": "2026-01-16",
+      "journal": "Bank",
+      "memo": "INV/2026/00311",
+      "state": "paid"
+    },
+    {
+      "odooId": 7924,
+      "partner": "ALEJANDRA CORTES RODRIGUEZ",
+      "amount": 10000,
+      "date": "2025-11-28",
+      "journal": "Bank",
+      "memo": "INV/2026/00311",
+      "state": "paid"
+    },
+    {
+      "odooId": 7923,
+      "partner": "JESUS MANUEL TORRES SIMENTAL",
+      "amount": 15600,
+      "date": "2026-04-08",
+      "journal": "Bank",
+      "memo": "INV/2026/00310",
+      "state": "paid"
+    },
+    {
+      "odooId": 7922,
+      "partner": "JESUS MANUEL TORRES SIMENTAL",
+      "amount": 40000,
+      "date": "2026-03-27",
+      "journal": "Bank",
+      "memo": "INV/2026/00310",
+      "state": "paid"
+    },
+    {
+      "odooId": 7921,
+      "partner": "JESUS MANUEL TORRES SIMENTAL",
+      "amount": 10000,
+      "date": "2026-03-17",
+      "journal": "Bank",
+      "memo": "INV/2026/00310",
+      "state": "paid"
+    },
+    {
+      "odooId": 7920,
+      "partner": "YAZIL RAMIREZ",
+      "amount": 25600,
+      "date": "2026-04-24",
+      "journal": "Bank",
+      "memo": "INV/2026/00309",
+      "state": "paid"
+    },
+    {
+      "odooId": 7919,
+      "partner": "YAZIL RAMIREZ",
+      "amount": 50000,
+      "date": "2026-03-31",
+      "journal": "Bank",
+      "memo": "INV/2026/00309",
+      "state": "paid"
+    },
+    {
+      "odooId": 7918,
+      "partner": "YAZIL RAMIREZ",
+      "amount": 20000,
+      "date": "2026-03-23",
+      "journal": "Bank",
+      "memo": "INV/2026/00309",
+      "state": "paid"
+    }
+  ],
+  "duplicatesInternalFirestore": [
+    {
+      "a": {
+        "id": "Hi5VfMImtLYabmu7m3dJ",
+        "partner": "FELIPE DE JESUS RUBIO RUIZ",
+        "amount": 5650,
+        "date": "2026-04-02"
+      },
+      "b": {
+        "id": "QgcVvO5N2KxXvvcHMYRG",
+        "partner": "FELIPE DE JESUS RUBIO RUIZ",
+        "amount": 5650,
+        "date": "2026-04-04"
+      }
+    },
+    {
+      "a": {
+        "id": "8WxrSWKAKpZQbsX9yICK",
+        "partner": "JULIO EMIR ELIAS GALVAN",
+        "amount": 1000,
+        "date": "2026-05-11"
+      },
+      "b": {
+        "id": "xsPh6ah4fBluBV1u6Q1G",
+        "partner": "JULIO EMIR ELIAS GALVAN",
+        "amount": 1000,
+        "date": "2026-05-11"
+      }
+    }
+  ],
+  "duplicatesInternalOdoo": [
+    {
+      "a": {
+        "id": 8091,
+        "partner": "FATIMA GUADALUPE PARTIDA ORTEGA",
+        "amount": 1000,
+        "date": "2026-04-24",
+        "journal": "Bank"
+      },
+      "b": {
+        "id": 8017,
+        "partner": "FATIMA GUADALUPE PARTIDA ORTEGA",
+        "amount": 1000,
+        "date": "2026-04-24",
+        "journal": "Bank"
+      }
+    },
+    {
+      "a": {
+        "id": 8086,
+        "partner": "EFREN GODINEZ MENDOZA",
+        "amount": 1000,
+        "date": "2026-04-24",
+        "journal": "Bank"
+      },
+      "b": {
+        "id": 8016,
+        "partner": "EFREN GODINEZ MENDOZA",
+        "amount": 1000,
+        "date": "2026-04-24",
+        "journal": "Bank"
+      }
+    },
+    {
+      "a": {
+        "id": 8061,
+        "partner": "DIEGO ENRIQUE BORBOLLA GUTIERREZ",
+        "amount": 26600,
+        "date": "2026-02-20",
+        "journal": "Bank"
+      },
+      "b": {
+        "id": 8060,
+        "partner": "DIEGO ENRIQUE BORBOLLA GUTIERREZ",
+        "amount": 26600,
+        "date": "2026-02-22",
+        "journal": "Bank"
+      }
+    },
+    {
+      "a": {
+        "id": 8058,
+        "partner": "JULIO EMIR ELIAS GALVAN",
+        "amount": 400,
+        "date": "2026-04-16",
+        "journal": "Bank"
+      },
+      "b": {
+        "id": 8035,
+        "partner": "JULIO EMIR ELIAS GALVAN",
+        "amount": 400,
+        "date": "2026-04-16",
+        "journal": "Bank"
+      }
+    },
+    {
+      "a": {
+        "id": 8057,
+        "partner": "JULIO EMIR ELIAS GALVAN",
+        "amount": 1000,
+        "date": "2026-03-23",
+        "journal": "Bank"
+      },
+      "b": {
+        "id": 8034,
+        "partner": "JULIO EMIR ELIAS GALVAN",
+        "amount": 1000,
+        "date": "2026-03-23",
+        "journal": "Bank"
+      }
+    },
+    {
+      "a": {
+        "id": 8056,
+        "partner": "JULIO EMIR ELIAS GALVAN",
+        "amount": 1000,
+        "date": "2026-03-10",
+        "journal": "Bank"
+      },
+      "b": {
+        "id": 8033,
+        "partner": "JULIO EMIR ELIAS GALVAN",
+        "amount": 1000,
+        "date": "2026-03-10",
+        "journal": "Bank"
+      }
+    },
+    {
+      "a": {
+        "id": 8056,
+        "partner": "JULIO EMIR ELIAS GALVAN",
+        "amount": 1000,
+        "date": "2026-03-10",
+        "journal": "Bank"
+      },
+      "b": {
+        "id": 8030,
+        "partner": "JULIO EMIR ELIAS GALVAN",
+        "amount": 1000,
+        "date": "2026-03-10",
+        "journal": "Bank"
+      }
+    },
+    {
+      "a": {
+        "id": 8055,
+        "partner": "JULIO EMIR ELIAS GALVAN",
+        "amount": 500,
+        "date": "2026-02-23",
+        "journal": "Bank"
+      },
+      "b": {
+        "id": 8032,
+        "partner": "JULIO EMIR ELIAS GALVAN",
+        "amount": 500,
+        "date": "2026-02-23",
+        "journal": "Bank"
+      }
+    },
+    {
+      "a": {
+        "id": 8055,
+        "partner": "JULIO EMIR ELIAS GALVAN",
+        "amount": 500,
+        "date": "2026-02-23",
+        "journal": "Bank"
+      },
+      "b": {
+        "id": 8029,
+        "partner": "JULIO EMIR ELIAS GALVAN",
+        "amount": 500,
+        "date": "2026-02-23",
+        "journal": "Bank"
+      }
+    },
+    {
+      "a": {
+        "id": 8054,
+        "partner": "JULIO EMIR ELIAS GALVAN",
+        "amount": 5000,
+        "date": "2026-01-24",
+        "journal": "Bank"
+      },
+      "b": {
+        "id": 8031,
+        "partner": "JULIO EMIR ELIAS GALVAN",
+        "amount": 5000,
+        "date": "2026-01-24",
+        "journal": "Bank"
+      }
+    },
+    {
+      "a": {
+        "id": 8054,
+        "partner": "JULIO EMIR ELIAS GALVAN",
+        "amount": 5000,
+        "date": "2026-01-24",
+        "journal": "Bank"
+      },
+      "b": {
+        "id": 8028,
+        "partner": "JULIO EMIR ELIAS GALVAN",
+        "amount": 5000,
+        "date": "2026-01-24",
+        "journal": "Bank"
+      }
+    },
+    {
+      "a": {
+        "id": 8046,
+        "partner": "PAMELA GIOVANNA BUSQUETS GALLEGOS",
+        "amount": 2500,
+        "date": "2026-03-19",
+        "journal": "Bank"
+      },
+      "b": {
+        "id": 8045,
+        "partner": "PAMELA GIOVANNA BUSQUETS GALLEGOS",
+        "amount": 2500,
+        "date": "2026-03-19",
+        "journal": "Bank"
+      }
+    },
+    {
+      "a": {
+        "id": 8033,
+        "partner": "JULIO EMIR ELIAS GALVAN",
+        "amount": 1000,
+        "date": "2026-03-10",
+        "journal": "Bank"
+      },
+      "b": {
+        "id": 8030,
+        "partner": "JULIO EMIR ELIAS GALVAN",
+        "amount": 1000,
+        "date": "2026-03-10",
+        "journal": "Bank"
+      }
+    },
+    {
+      "a": {
+        "id": 8032,
+        "partner": "JULIO EMIR ELIAS GALVAN",
+        "amount": 500,
+        "date": "2026-02-23",
+        "journal": "Bank"
+      },
+      "b": {
+        "id": 8029,
+        "partner": "JULIO EMIR ELIAS GALVAN",
+        "amount": 500,
+        "date": "2026-02-23",
+        "journal": "Bank"
+      }
+    },
+    {
+      "a": {
+        "id": 8031,
+        "partner": "JULIO EMIR ELIAS GALVAN",
+        "amount": 5000,
+        "date": "2026-01-24",
+        "journal": "Bank"
+      },
+      "b": {
+        "id": 8028,
+        "partner": "JULIO EMIR ELIAS GALVAN",
+        "amount": 5000,
+        "date": "2026-01-24",
+        "journal": "Bank"
+      }
+    },
+    {
+      "a": {
+        "id": 7980,
+        "partner": "FELIPE DE JESUS RUBIO RUIZ",
+        "amount": 5650,
+        "date": "2026-04-04",
+        "journal": "Bank"
+      },
+      "b": {
+        "id": 7979,
+        "partner": "FELIPE DE JESUS RUBIO RUIZ",
+        "amount": 5650,
+        "date": "2026-04-02",
+        "journal": "Bank"
+      }
+    },
+    {
+      "a": {
+        "id": 7947,
+        "partner": "MARCELINO HERNANDEZ ROJAS",
+        "amount": 21538,
+        "date": "2026-04-18",
+        "journal": "Bank"
+      },
+      "b": {
+        "id": 7945,
+        "partner": "MARCELINO HERNANDEZ ROJAS",
+        "amount": 21538,
+        "date": "2026-04-18",
+        "journal": "Bank"
+      }
+    }
+  ],
+  "folderDuplicates": [
+    {
+      "key": "2025",
+      "folders": [
+        {
+          "id": 1797,
+          "name": "2025",
+          "parent": "EUROPA VERANO 2025",
+          "fileCount": null
+        },
+        {
+          "id": 1802,
+          "name": "2025",
+          "parent": null,
+          "fileCount": null
+        }
+      ]
+    },
+    {
+      "key": "nuevo espacio",
+      "folders": [
+        {
+          "id": 1431,
+          "name": "Nuevo espacio de trabajo",
+          "parent": "ITINERARIOS y flyers",
+          "fileCount": null
+        },
+        {
+          "id": 1433,
+          "name": "Nuevo espacio de trabajo",
+          "parent": "COMISIONES Y PAGOS",
+          "fileCount": null
+        },
+        {
+          "id": 1437,
+          "name": "Nuevo espacio de trabajo",
+          "parent": "PAGOS Y FACTURACION TARJETAS",
+          "fileCount": null
+        },
+        {
+          "id": 1463,
+          "name": "Nuevo espacio de trabajo",
+          "parent": "ITINERARIOS y flyers",
+          "fileCount": null
+        }
+      ]
+    },
+    {
+      "key": "chiapas junio",
+      "folders": [
+        {
+          "id": 1441,
+          "name": "CHIAPAS JUNIO ",
+          "parent": "Projects",
+          "fileCount": null
+        },
+        {
+          "id": 1532,
+          "name": "CHIAPAS JUNIO 2024",
+          "parent": "Projects",
+          "fileCount": null
+        },
+        {
+          "id": 1976,
+          "name": "CHIAPAS JUNIO 2026 HABITACION SENCILLA",
+          "parent": null,
+          "fileCount": null
+        },
+        {
+          "id": 1979,
+          "name": "CHIAPAS JUNIO 2026",
+          "parent": null,
+          "fileCount": 6
+        }
+      ]
+    },
+    {
+      "key": "europa verano",
+      "folders": [
+        {
+          "id": 1458,
+          "name": "EUROPA VERANO 2025",
+          "parent": "Projects",
+          "fileCount": null
+        },
+        {
+          "id": 1539,
+          "name": "EUROPA VERANO 2024",
+          "parent": "Projects",
+          "fileCount": null
+        },
+        {
+          "id": 1987,
+          "name": "EUROPA VERANO 2026",
+          "parent": null,
+          "fileCount": null
+        }
+      ]
+    },
+    {
+      "key": "turquia dubai",
+      "folders": [
+        {
+          "id": 1462,
+          "name": "TURQUIA DUBAI 2025",
+          "parent": "Projects",
+          "fileCount": null
+        },
+        {
+          "id": 1538,
+          "name": "TURQUIA & DUBAI AGOSTO 2024",
+          "parent": "Projects",
+          "fileCount": null
+        }
+      ]
+    },
+    {
+      "key": "diciembre",
+      "folders": [
+        {
+          "id": 1475,
+          "name": "DICIEMBRE",
+          "parent": "CUPONES 2025",
+          "fileCount": null
+        },
+        {
+          "id": 1733,
+          "name": "DICIEMBRE",
+          "parent": "CUPONES 2025",
+          "fileCount": null
+        }
+      ]
+    },
+    {
+      "key": "new york",
+      "folders": [
+        {
+          "id": 1483,
+          "name": "NEW YORK 2DA FECHA",
+          "parent": "Projects",
+          "fileCount": null
+        },
+        {
+          "id": 1487,
+          "name": "NEW YORK",
+          "parent": "Projects",
+          "fileCount": null
+        },
+        {
+          "id": 1593,
+          "name": "NEW YORK DICIEMBRE",
+          "parent": "Projects",
+          "fileCount": null
+        },
+        {
+          "id": 1615,
+          "name": "NEW YORK DICIEMBRE",
+          "parent": "Projects",
+          "fileCount": null
+        }
+      ]
+    },
+    {
+      "key": "mexico puebla",
+      "folders": [
+        {
+          "id": 1488,
+          "name": "MEXICO PUEBLA",
+          "parent": "Projects",
+          "fileCount": null
+        },
+        {
+          "id": 1744,
+          "name": "MEXICO PUEBLA ",
+          "parent": "Projects",
+          "fileCount": null
+        }
+      ]
+    },
+    {
+      "key": "medio oriente",
+      "folders": [
+        {
+          "id": 1492,
+          "name": "MEDIO ORIENTE",
+          "parent": "Projects",
+          "fileCount": null
+        },
+        {
+          "id": 1521,
+          "name": "MEDIO ORIENTE 2025",
+          "parent": "Projects",
+          "fileCount": null
+        },
+        {
+          "id": 1577,
+          "name": "MEDIO ORIENTE PRIVADO",
+          "parent": "Projects",
+          "fileCount": null
+        },
+        {
+          "id": 1590,
+          "name": "MEDIO ORIENTE PADRE",
+          "parent": "Projects",
+          "fileCount": null
+        }
+      ]
+    },
+    {
+      "key": "colombia noviembre",
+      "folders": [
+        {
+          "id": 1497,
+          "name": "COLOMBIA NOVIEMBRE",
+          "parent": "Projects",
+          "fileCount": null
+        },
+        {
+          "id": 1741,
+          "name": "COLOMBIA NOVIEMBRE 2025",
+          "parent": "Projects",
+          "fileCount": null
+        }
+      ]
+    },
+    {
+      "key": "chiapas abril",
+      "folders": [
+        {
+          "id": 1502,
+          "name": "CHIAPAS ABRIL 2024",
+          "parent": "Projects",
+          "fileCount": null
+        },
+        {
+          "id": 1569,
+          "name": "CHIAPAS ABRIL 2025",
+          "parent": "Projects",
+          "fileCount": null
+        }
+      ]
+    },
+    {
+      "key": "colombia mayo",
+      "folders": [
+        {
+          "id": 1504,
+          "name": "COLOMBIA MAYO 2024",
+          "parent": "Projects",
+          "fileCount": null
+        },
+        {
+          "id": 1512,
+          "name": "COLOMBIA MAYO 25",
+          "parent": "Projects",
+          "fileCount": null
+        },
+        {
+          "id": 1940,
+          "name": "COLOMBIA MAYO 2026 HAB SENCILLA",
+          "parent": null,
+          "fileCount": null
+        },
+        {
+          "id": 1942,
+          "name": "COLOMBIA MAYO 2026 ORIGINAL",
+          "parent": null,
+          "fileCount": 7
+        },
+        {
+          "id": 1949,
+          "name": "COLOMBIA MAYO 2026 TOURS",
+          "parent": null,
+          "fileCount": null
+        },
+        {
+          "id": 1952,
+          "name": "COLOMBIA MAYO 2026 VUELO DESDE GDL",
+          "parent": null,
+          "fileCount": 9
+        }
+      ]
+    },
+    {
+      "key": "asia mayo",
+      "folders": [
+        {
+          "id": 1506,
+          "name": "ASIA MAYO 2024",
+          "parent": "Projects",
+          "fileCount": null
+        },
+        {
+          "id": 1927,
+          "name": "ASIA MAYO 2026",
+          "parent": null,
+          "fileCount": 5
+        }
+      ]
+    },
+    {
+      "key": "colombia abril",
+      "folders": [
+        {
+          "id": 1510,
+          "name": "COLOMBIA ABRIL 2024",
+          "parent": "Projects",
+          "fileCount": null
+        },
+        {
+          "id": 1511,
+          "name": "COLOMBIA ABRIL",
+          "parent": "Projects",
+          "fileCount": null
+        }
+      ]
+    },
+    {
+      "key": "peru abril",
+      "folders": [
+        {
+          "id": 1513,
+          "name": "PERU ABRIL 2025",
+          "parent": "Projects",
+          "fileCount": null
+        },
+        {
+          "id": 1758,
+          "name": "PERU ABRIL 2026 ",
+          "parent": "Projects",
+          "fileCount": null
+        }
+      ]
+    },
+    {
+      "key": "colombia junio",
+      "folders": [
+        {
+          "id": 1515,
+          "name": "COLOMBIA JUNIO 2025",
+          "parent": "Projects",
+          "fileCount": null
+        },
+        {
+          "id": 1535,
+          "name": "COLOMBIA JUNIO 2024",
+          "parent": "Projects",
+          "fileCount": null
+        }
+      ]
+    },
+    {
+      "key": "colombia agosto",
+      "folders": [
+        {
+          "id": 1517,
+          "name": "COLOMBIA AGOSTO 2025",
+          "parent": "Projects",
+          "fileCount": null
+        },
+        {
+          "id": 1536,
+          "name": "COLOMBIA AGOSTO",
+          "parent": "Projects",
+          "fileCount": null
+        }
+      ]
+    },
+    {
+      "key": "argentina brasil",
+      "folders": [
+        {
+          "id": 1518,
+          "name": "ARGENTINA BRASIL AGOSTO",
+          "parent": "Projects",
+          "fileCount": null
+        },
+        {
+          "id": 1522,
+          "name": "ARGENTINA BRASIL NOV",
+          "parent": "Projects",
+          "fileCount": null
+        }
+      ]
+    },
+    {
+      "key": "europa septiembre",
+      "folders": [
+        {
+          "id": 1519,
+          "name": "EUROPA SEPTIEMBRE",
+          "parent": "Projects",
+          "fileCount": null
+        },
+        {
+          "id": 1527,
+          "name": "EUROPA SEPTIEMBRE 2024",
+          "parent": "Projects",
+          "fileCount": null
+        }
+      ]
+    },
+    {
+      "key": "playa del",
+      "folders": [
+        {
+          "id": 1525,
+          "name": "PLAYA DEL CARMEN SEPTIEMBRE",
+          "parent": "Projects",
+          "fileCount": null
+        },
+        {
+          "id": 1530,
+          "name": "PLAYA DEL CARMEN NOVIEMBRE",
+          "parent": "Projects",
+          "fileCount": null
+        },
+        {
+          "id": 1533,
+          "name": "PLAYA DEL CARMEN JUNIO 2024",
+          "parent": "Projects",
+          "fileCount": null
+        }
+      ]
+    },
+    {
+      "key": "chiapas octubre",
+      "folders": [
+        {
+          "id": 1526,
+          "name": "CHIAPAS OCTUBRE",
+          "parent": "Projects",
+          "fileCount": null
+        },
+        {
+          "id": 1775,
+          "name": "CHIAPAS OCTUBRE 2025",
+          "parent": "Projects",
+          "fileCount": null
+        }
+      ]
+    },
+    {
+      "key": "colombia octubre",
+      "folders": [
+        {
+          "id": 1528,
+          "name": "COLOMBIA OCTUBRE",
+          "parent": "Projects",
+          "fileCount": null
+        },
+        {
+          "id": 1609,
+          "name": "COLOMBIA OCTUBRE 2025",
+          "parent": "Projects",
+          "fileCount": null
+        }
+      ]
+    },
+    {
+      "key": "chiapas septiembre",
+      "folders": [
+        {
+          "id": 1542,
+          "name": "CHIAPAS SEPTIEMBRE",
+          "parent": "Projects",
+          "fileCount": null
+        },
+        {
+          "id": 1998,
+          "name": "CHIAPAS SEPTIEMBRE 2026",
+          "parent": null,
+          "fileCount": null
+        }
+      ]
+    },
+    {
+      "key": "frozen spreadsheets",
+      "folders": [
+        {
+          "id": 1546,
+          "name": "Frozen spreadsheets",
+          "parent": "PUBLICIDAD",
+          "fileCount": null
+        },
+        {
+          "id": 1547,
+          "name": "Frozen spreadsheets",
+          "parent": "COTIZACIONESS",
+          "fileCount": null
+        },
+        {
+          "id": 1548,
+          "name": "Frozen spreadsheets",
+          "parent": "EUROPA LONDRES OCTUBRE 2024",
+          "fileCount": null
+        }
+      ]
+    },
+    {
+      "key": "turquia winter",
+      "folders": [
+        {
+          "id": 1606,
+          "name": "TURQUIA WINTER NOVIEMBRE",
+          "parent": "Projects",
+          "fileCount": null
+        },
+        {
+          "id": 1621,
+          "name": "TURQUIA WINTER ENERO 2026",
+          "parent": "Projects",
+          "fileCount": null
+        }
+      ]
+    },
+    {
+      "key": "latam 2026",
+      "folders": [
+        {
+          "id": 1821,
+          "name": "LATAM 2026",
+          "parent": "Projects",
+          "fileCount": null
+        },
+        {
+          "id": 1823,
+          "name": "LATAM 2026/2027",
+          "parent": "PAGOS VIAJES 2026/2027 ",
+          "fileCount": null
+        }
+      ]
+    }
+  ]
+}

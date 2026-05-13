@@ -1,0 +1,338 @@
+{
+  "ts": "2026-05-12T22:20:13.827Z",
+  "payments_TEST": [
+    {
+      "id": 8125,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-pago3-orphan_retry_CLEANED_2026-05-12T18-58-15-043Z",
+      "state": "canceled",
+      "amount": 1,
+      "create_date": "2026-05-12 18:58:10"
+    },
+    {
+      "id": 8124,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-pago3-orphan_CLEANED_2026-05-12T18-58-15-043Z",
+      "state": "canceled",
+      "amount": 1,
+      "create_date": "2026-05-12 18:58:10"
+    },
+    {
+      "id": 8123,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-pago2_CLEANED_2026-05-12T18-58-15-043Z",
+      "state": "canceled",
+      "amount": 1,
+      "create_date": "2026-05-12 18:58:09"
+    },
+    {
+      "id": 8122,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-pago2_CLEANED_2026-05-12T18-58-15-043Z",
+      "state": "canceled",
+      "amount": 1,
+      "create_date": "2026-05-12 18:58:08"
+    },
+    {
+      "id": 8121,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-pago1_CLEANED_2026-05-12T18-58-15-043Z",
+      "state": "canceled",
+      "amount": 1,
+      "create_date": "2026-05-12 18:58:07"
+    },
+    {
+      "id": 8130,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-5_CLEANED_2026-05-12T18-58-15-043Z",
+      "state": "canceled",
+      "amount": 1,
+      "create_date": "2026-05-12 18:58:14"
+    },
+    {
+      "id": 8129,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-4_CLEANED_2026-05-12T18-58-15-043Z",
+      "state": "canceled",
+      "amount": 1,
+      "create_date": "2026-05-12 18:58:13"
+    },
+    {
+      "id": 8128,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-3_CLEANED_2026-05-12T18-58-15-043Z",
+      "state": "canceled",
+      "amount": 1,
+      "create_date": "2026-05-12 18:58:12"
+    },
+    {
+      "id": 8127,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-2_CLEANED_2026-05-12T18-58-15-043Z",
+      "state": "canceled",
+      "amount": 1,
+      "create_date": "2026-05-12 18:58:12"
+    },
+    {
+      "id": 8126,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-1_CLEANED_2026-05-12T18-58-15-043Z",
+      "state": "canceled",
+      "amount": 1,
+      "create_date": "2026-05-12 18:58:11"
+    }
+  ],
+  "payments_CLEANED": [
+    {
+      "id": 8125,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-pago3-orphan_retry_CLEANED_2026-05-12T18-58-15-043Z",
+      "state": "canceled",
+      "amount": 1,
+      "create_date": "2026-05-12 18:58:10"
+    },
+    {
+      "id": 8124,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-pago3-orphan_CLEANED_2026-05-12T18-58-15-043Z",
+      "state": "canceled",
+      "amount": 1,
+      "create_date": "2026-05-12 18:58:10"
+    },
+    {
+      "id": 8123,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-pago2_CLEANED_2026-05-12T18-58-15-043Z",
+      "state": "canceled",
+      "amount": 1,
+      "create_date": "2026-05-12 18:58:09"
+    },
+    {
+      "id": 8122,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-pago2_CLEANED_2026-05-12T18-58-15-043Z",
+      "state": "canceled",
+      "amount": 1,
+      "create_date": "2026-05-12 18:58:08"
+    },
+    {
+      "id": 8121,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-pago1_CLEANED_2026-05-12T18-58-15-043Z",
+      "state": "canceled",
+      "amount": 1,
+      "create_date": "2026-05-12 18:58:07"
+    },
+    {
+      "id": 8130,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-5_CLEANED_2026-05-12T18-58-15-043Z",
+      "state": "canceled",
+      "amount": 1,
+      "create_date": "2026-05-12 18:58:14"
+    },
+    {
+      "id": 8129,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-4_CLEANED_2026-05-12T18-58-15-043Z",
+      "state": "canceled",
+      "amount": 1,
+      "create_date": "2026-05-12 18:58:13"
+    },
+    {
+      "id": 8128,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-3_CLEANED_2026-05-12T18-58-15-043Z",
+      "state": "canceled",
+      "amount": 1,
+      "create_date": "2026-05-12 18:58:12"
+    },
+    {
+      "id": 8127,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-2_CLEANED_2026-05-12T18-58-15-043Z",
+      "state": "canceled",
+      "amount": 1,
+      "create_date": "2026-05-12 18:58:12"
+    },
+    {
+      "id": 8126,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-1_CLEANED_2026-05-12T18-58-15-043Z",
+      "state": "canceled",
+      "amount": 1,
+      "create_date": "2026-05-12 18:58:11"
+    }
+  ],
+  "attachments_TEST": [
+    {
+      "id": 45808,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0a-LAT-B-5.pdf_CLEANED_2026-05-12T19-13-56-719Z",
+      "create_date": "2026-05-12 19:13:55",
+      "res_model": "account.payment",
+      "res_id": 8132
+    },
+    {
+      "id": 45807,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0a-LAT-B-4.pdf_CLEANED_2026-05-12T19-13-56-719Z",
+      "create_date": "2026-05-12 19:13:55",
+      "res_model": "account.payment",
+      "res_id": 8132
+    },
+    {
+      "id": 45806,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0a-LAT-B-3.pdf_CLEANED_2026-05-12T19-13-56-719Z",
+      "create_date": "2026-05-12 19:13:55",
+      "res_model": "account.payment",
+      "res_id": 8132
+    },
+    {
+      "id": 45805,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0a-LAT-B-2.pdf_CLEANED_2026-05-12T19-13-56-719Z",
+      "create_date": "2026-05-12 19:13:55",
+      "res_model": "account.payment",
+      "res_id": 8132
+    },
+    {
+      "id": 45804,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0a-LAT-B-1.pdf_CLEANED_2026-05-12T19-13-56-719Z",
+      "create_date": "2026-05-12 19:13:55",
+      "res_model": "account.payment",
+      "res_id": 8132
+    },
+    {
+      "id": 45802,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0a-B.pdf_CLEANED_2026-05-12T19-13-56-719Z",
+      "create_date": "2026-05-12 19:13:53",
+      "res_model": "account.payment",
+      "res_id": 8132
+    },
+    {
+      "id": 45801,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0a-A.pdf_CLEANED_2026-05-12T19-13-56-719Z",
+      "create_date": "2026-05-12 19:13:53",
+      "res_model": "account.payment",
+      "res_id": 8132
+    },
+    {
+      "id": 45799,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0a-B.pdf_CLEANED_2026-05-12T19-13-52-872Z",
+      "create_date": "2026-05-12 19:12:17",
+      "res_model": "account.payment",
+      "res_id": 8131
+    },
+    {
+      "id": 45798,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0a-A.pdf_CLEANED_2026-05-12T19-13-52-993Z",
+      "create_date": "2026-05-12 19:12:17",
+      "res_model": "account.payment",
+      "res_id": 8131
+    }
+  ],
+  "attachments_CLEANED": [
+    {
+      "id": 45808,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0a-LAT-B-5.pdf_CLEANED_2026-05-12T19-13-56-719Z",
+      "create_date": "2026-05-12 19:13:55"
+    },
+    {
+      "id": 45807,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0a-LAT-B-4.pdf_CLEANED_2026-05-12T19-13-56-719Z",
+      "create_date": "2026-05-12 19:13:55"
+    },
+    {
+      "id": 45806,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0a-LAT-B-3.pdf_CLEANED_2026-05-12T19-13-56-719Z",
+      "create_date": "2026-05-12 19:13:55"
+    },
+    {
+      "id": 45805,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0a-LAT-B-2.pdf_CLEANED_2026-05-12T19-13-56-719Z",
+      "create_date": "2026-05-12 19:13:55"
+    },
+    {
+      "id": 45804,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0a-LAT-B-1.pdf_CLEANED_2026-05-12T19-13-56-719Z",
+      "create_date": "2026-05-12 19:13:55"
+    },
+    {
+      "id": 45802,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0a-B.pdf_CLEANED_2026-05-12T19-13-56-719Z",
+      "create_date": "2026-05-12 19:13:53"
+    },
+    {
+      "id": 45801,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0a-A.pdf_CLEANED_2026-05-12T19-13-56-719Z",
+      "create_date": "2026-05-12 19:13:53"
+    },
+    {
+      "id": 45799,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0a-B.pdf_CLEANED_2026-05-12T19-13-52-872Z",
+      "create_date": "2026-05-12 19:12:17"
+    },
+    {
+      "id": 45798,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0a-A.pdf_CLEANED_2026-05-12T19-13-52-993Z",
+      "create_date": "2026-05-12 19:12:17"
+    }
+  ],
+  "irmodeldata_TEST": [
+    {
+      "id": 555967,
+      "name": "payment_TEST_AROUNDA_2026-05-12_spike9-0b-pago3-orphan",
+      "model": "INVALID.model.does.not.exist",
+      "res_id": 8124,
+      "create_date": "2026-05-12 18:58:10"
+    },
+    {
+      "id": 555977,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-VERIFY-fakeresid_CLEANED_1778612632425",
+      "model": "account.payment",
+      "res_id": 999999999,
+      "create_date": "2026-05-12 19:03:51"
+    },
+    {
+      "id": 555976,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-VERIFY-resid0_CLEANED_1778612632168",
+      "model": "account.payment",
+      "res_id": 8121,
+      "create_date": "2026-05-12 19:03:51"
+    },
+    {
+      "id": 555974,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-VERIFY-unique_CLEANED_1778612631811",
+      "model": "account.payment",
+      "res_id": 8121,
+      "create_date": "2026-05-12 19:03:50"
+    },
+    {
+      "id": 555969,
+      "name": "payment_TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-1_CLEANED_2026-05-12T18-58-15-043Z",
+      "model": "account.payment",
+      "res_id": 8126,
+      "create_date": "2026-05-12 18:58:11"
+    },
+    {
+      "id": 555970,
+      "name": "payment_TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-2_CLEANED_2026-05-12T18-58-15-043Z",
+      "model": "account.payment",
+      "res_id": 8127,
+      "create_date": "2026-05-12 18:58:12"
+    },
+    {
+      "id": 555971,
+      "name": "payment_TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-3_CLEANED_2026-05-12T18-58-15-043Z",
+      "model": "account.payment",
+      "res_id": 8128,
+      "create_date": "2026-05-12 18:58:13"
+    },
+    {
+      "id": 555972,
+      "name": "payment_TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-4_CLEANED_2026-05-12T18-58-15-043Z",
+      "model": "account.payment",
+      "res_id": 8129,
+      "create_date": "2026-05-12 18:58:13"
+    },
+    {
+      "id": 555973,
+      "name": "payment_TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-5_CLEANED_2026-05-12T18-58-15-043Z",
+      "model": "account.payment",
+      "res_id": 8130,
+      "create_date": "2026-05-12 18:58:14"
+    },
+    {
+      "id": 555964,
+      "name": "payment_TEST_AROUNDA_2026-05-12_spike9-0b-pago1_CLEANED_2026-05-12T18-58-15-043Z",
+      "model": "account.payment",
+      "res_id": 8121,
+      "create_date": "2026-05-12 18:58:08"
+    },
+    {
+      "id": 555965,
+      "name": "payment_TEST_AROUNDA_2026-05-12_spike9-0b-pago2_CLEANED_2026-05-12T18-58-15-043Z",
+      "model": "account.payment",
+      "res_id": 8122,
+      "create_date": "2026-05-12 18:58:09"
+    }
+  ]
+}

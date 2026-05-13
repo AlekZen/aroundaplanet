@@ -1,0 +1,18 @@
+{
+  "finishedAt": "2026-05-12T19:03:52.550Z",
+  "findings": {
+    "uniqueConstraint": {
+      "exists": true,
+      "error": "XML-RPC fault: The operation cannot be completed: duplicate key value violates unique constraint \"ir_model_data_module_name_uniq_index\"\nDETAIL:  Key (module, name)=(__aroundaplanet__, TEST_AROUNDA_2026-05-12_spike9-0b-VERIFY-unique) already exists.\n"
+    },
+    "resIdZero": {
+      "accepted": true,
+      "extId": 555976,
+      "updatable": true
+    },
+    "fakeResId": {
+      "accepted": true,
+      "extId": 555977
+    }
+  }
+}

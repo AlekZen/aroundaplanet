@@ -1,0 +1,14 @@
+import admin from 'firebase-admin';
+import { readFileSync } from 'fs';
+const key = JSON.parse(readFileSync('.keys/arounda-planet-firebase-adminsdk-fbsvc-27080fdcfe.json','utf8'));
+admin.initializeApp({ credential: admin.credential.cert(key) });
+const db = admin.firestore();
+const dis = await db.collection('paymentDedupDismissals').get();
+console.log(`paymentDedupDismissals: ${dis.size} docs`);
+dis.forEach(d => console.log(`  ${d.id}: ${JSON.stringify(d.data()).slice(0,200)}`));
+const flag = await db.collection('paymentDedupFlags').get();
+console.log(`paymentDedupFlags: ${flag.size} docs`);
+const log = await db.collection('paymentDedupLog').get();
+console.log(`paymentDedupLog: ${log.size} docs`);
+log.forEach(d => console.log(`  ${d.id}: ${JSON.stringify(d.data()).slice(0,200)}`));
+process.exit(0);

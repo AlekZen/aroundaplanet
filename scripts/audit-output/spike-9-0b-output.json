@@ -1,0 +1,458 @@
+{
+  "startedAt": "2026-05-12T18:58:07.633Z",
+  "prefix": "TEST_AROUNDA_2026-05-12_",
+  "module": "__aroundaplanet__",
+  "uid": 2,
+  "partner": {
+    "id": 4314,
+    "name": "<"
+  },
+  "journal": {
+    "id": 13,
+    "name": "Bank",
+    "code": "BNK1",
+    "type": "bank"
+  },
+  "finishedAt": "2026-05-12T18:58:26.429Z",
+  "paymentIdsCreated": [
+    8121,
+    8122,
+    8123,
+    8124,
+    8125,
+    8126,
+    8127,
+    8128,
+    8129,
+    8130
+  ],
+  "extIdRecordIdsCreated": [
+    555964,
+    555965,
+    555969,
+    555970,
+    555971,
+    555972,
+    555973
+  ],
+  "e5Stats": {
+    "totalMs": {
+      "min": 537,
+      "p50": 599,
+      "p95": 617,
+      "max": 662
+    },
+    "gapBetweenCallsMs": {
+      "min": 0,
+      "p50": 0,
+      "p95": 0,
+      "max": 0
+    },
+    "iterations": [
+      {
+        "lookupMs": 196,
+        "createPaymentMs": 220,
+        "createExtIdMs": 183,
+        "totalMs": 599,
+        "gapBetweenCallsMs": 0
+      },
+      {
+        "lookupMs": 197,
+        "createPaymentMs": 350,
+        "createExtIdMs": 115,
+        "totalMs": 662,
+        "gapBetweenCallsMs": 0
+      },
+      {
+        "lookupMs": 135,
+        "createPaymentMs": 225,
+        "createExtIdMs": 177,
+        "totalMs": 537,
+        "gapBetweenCallsMs": 0
+      },
+      {
+        "lookupMs": 197,
+        "createPaymentMs": 230,
+        "createExtIdMs": 171,
+        "totalMs": 598,
+        "gapBetweenCallsMs": 0
+      },
+      {
+        "lookupMs": 199,
+        "createPaymentMs": 304,
+        "createExtIdMs": 114,
+        "totalMs": 617,
+        "gapBetweenCallsMs": 0
+      }
+    ]
+  },
+  "trace": [
+    {
+      "scenario": "E1",
+      "extIdName": "payment_TEST_AROUNDA_2026-05-12_spike9-0b-pago1",
+      "result": {
+        "isNew": true,
+        "odooPaymentId": 8121,
+        "extIdRecordId": 555964,
+        "timings": {
+          "lookupMs": 119,
+          "createPaymentMs": 179,
+          "createExtIdMs": 119,
+          "totalMs": 417,
+          "gapBetweenCallsMs": 0
+        }
+      }
+    },
+    {
+      "scenario": "E1-verify",
+      "extIdRow": {
+        "id": 555964,
+        "res_id": 8121,
+        "model": "account.payment"
+      },
+      "paymentRow": {
+        "id": 8121,
+        "name": "TEST_AROUNDA_2026-05-12_spike9-0b-pago1",
+        "state": "draft",
+        "amount": 1,
+        "partner_id": [
+          4314,
+          "<"
+        ],
+        "journal_id": [
+          13,
+          "Bank"
+        ]
+      }
+    },
+    {
+      "scenario": "E2-run1",
+      "result": {
+        "isNew": false,
+        "odooPaymentId": 8121,
+        "extIdRecordId": 555964,
+        "timings": {
+          "lookupMs": 123,
+          "createPaymentMs": 0,
+          "createExtIdMs": 0,
+          "totalMs": 123,
+          "gapBetweenCallsMs": 0
+        }
+      }
+    },
+    {
+      "scenario": "E2-run2",
+      "result": {
+        "isNew": false,
+        "odooPaymentId": 8121,
+        "extIdRecordId": 555964,
+        "timings": {
+          "lookupMs": 114,
+          "createPaymentMs": 0,
+          "createExtIdMs": 0,
+          "totalMs": 114,
+          "gapBetweenCallsMs": 0
+        }
+      }
+    },
+    {
+      "scenario": "E2-count",
+      "countPayments": 1
+    },
+    {
+      "scenario": "E3-a",
+      "result": {
+        "status": "fulfilled",
+        "value": {
+          "isNew": true,
+          "odooPaymentId": 8122,
+          "extIdRecordId": 555965,
+          "timings": {
+            "lookupMs": 116,
+            "createPaymentMs": 137,
+            "createExtIdMs": 358,
+            "totalMs": 611,
+            "gapBetweenCallsMs": 0
+          }
+        }
+      }
+    },
+    {
+      "scenario": "E3-b",
+      "result": {
+        "status": "fulfilled",
+        "value": {
+          "isNew": true,
+          "odooPaymentId": 8123,
+          "extIdRecordId": null,
+          "orphan": true,
+          "error": "XML-RPC fault: The operation cannot be completed: duplicate key value violates unique constraint \"ir_model_data_module_name_uniq_index\"\nDETAIL:  Key (module, name)=(__aroundaplanet__, payment_TEST_AROUNDA_2026-05-12_spike9-0b-pago2) already exists.\n",
+          "timings": {
+            "lookupMs": 408,
+            "createPaymentMs": 433,
+            "createExtIdMs": 169,
+            "totalMs": 1010,
+            "gapBetweenCallsMs": 0
+          }
+        }
+      }
+    },
+    {
+      "scenario": "E3-count",
+      "countPayments": 2,
+      "countExtId": 1
+    },
+    {
+      "scenario": "E4",
+      "firstPaymentId": 8124,
+      "createExtIdError": null,
+      "retry": {
+        "isNew": true,
+        "odooPaymentId": 8125,
+        "extIdRecordId": null,
+        "orphan": true,
+        "error": "XML-RPC fault: The operation cannot be completed: duplicate key value violates unique constraint \"ir_model_data_module_name_uniq_index\"\nDETAIL:  Key (module, name)=(__aroundaplanet__, payment_TEST_AROUNDA_2026-05-12_spike9-0b-pago3-orphan) already exists.\n",
+        "timings": {
+          "lookupMs": 200,
+          "createPaymentMs": 223,
+          "createExtIdMs": 178,
+          "totalMs": 601,
+          "gapBetweenCallsMs": 0
+        }
+      },
+      "dupCount": 2,
+      "totalMs": 1204
+    },
+    {
+      "scenario": "E5-stats",
+      "stats": {
+        "totalMs": {
+          "min": 537,
+          "p50": 599,
+          "p95": 617,
+          "max": 662
+        },
+        "gapBetweenCallsMs": {
+          "min": 0,
+          "p50": 0,
+          "p95": 0,
+          "max": 0
+        },
+        "iterations": [
+          {
+            "lookupMs": 196,
+            "createPaymentMs": 220,
+            "createExtIdMs": 183,
+            "totalMs": 599,
+            "gapBetweenCallsMs": 0
+          },
+          {
+            "lookupMs": 197,
+            "createPaymentMs": 350,
+            "createExtIdMs": 115,
+            "totalMs": 662,
+            "gapBetweenCallsMs": 0
+          },
+          {
+            "lookupMs": 135,
+            "createPaymentMs": 225,
+            "createExtIdMs": 177,
+            "totalMs": 537,
+            "gapBetweenCallsMs": 0
+          },
+          {
+            "lookupMs": 197,
+            "createPaymentMs": 230,
+            "createExtIdMs": 171,
+            "totalMs": 598,
+            "gapBetweenCallsMs": 0
+          },
+          {
+            "lookupMs": 199,
+            "createPaymentMs": 304,
+            "createExtIdMs": 114,
+            "totalMs": 617,
+            "gapBetweenCallsMs": 0
+          }
+        ]
+      }
+    }
+  ],
+  "cleanupLog": {
+    "payments": [
+      {
+        "id": 8121,
+        "prevState": "draft",
+        "cancelled": false,
+        "newName": "TEST_AROUNDA_2026-05-12_spike9-0b-pago1_CLEANED_2026-05-12T18-58-15-043Z"
+      },
+      {
+        "id": 8122,
+        "prevState": "draft",
+        "cancelled": false,
+        "newName": "TEST_AROUNDA_2026-05-12_spike9-0b-pago2_CLEANED_2026-05-12T18-58-15-043Z"
+      },
+      {
+        "id": 8123,
+        "prevState": "draft",
+        "cancelled": false,
+        "newName": "TEST_AROUNDA_2026-05-12_spike9-0b-pago2_CLEANED_2026-05-12T18-58-15-043Z"
+      },
+      {
+        "id": 8124,
+        "prevState": "draft",
+        "cancelled": false,
+        "newName": "TEST_AROUNDA_2026-05-12_spike9-0b-pago3-orphan_CLEANED_2026-05-12T18-58-15-043Z"
+      },
+      {
+        "id": 8125,
+        "prevState": "draft",
+        "cancelled": false,
+        "newName": "TEST_AROUNDA_2026-05-12_spike9-0b-pago3-orphan_retry_CLEANED_2026-05-12T18-58-15-043Z"
+      },
+      {
+        "id": 8126,
+        "prevState": "draft",
+        "cancelled": false,
+        "newName": "TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-1_CLEANED_2026-05-12T18-58-15-043Z"
+      },
+      {
+        "id": 8127,
+        "prevState": "draft",
+        "cancelled": false,
+        "newName": "TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-2_CLEANED_2026-05-12T18-58-15-043Z"
+      },
+      {
+        "id": 8128,
+        "prevState": "draft",
+        "cancelled": false,
+        "newName": "TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-3_CLEANED_2026-05-12T18-58-15-043Z"
+      },
+      {
+        "id": 8129,
+        "prevState": "draft",
+        "cancelled": false,
+        "newName": "TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-4_CLEANED_2026-05-12T18-58-15-043Z"
+      },
+      {
+        "id": 8130,
+        "prevState": "draft",
+        "cancelled": false,
+        "newName": "TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-5_CLEANED_2026-05-12T18-58-15-043Z"
+      }
+    ],
+    "extIds": [
+      {
+        "id": 555964,
+        "prevName": "payment_TEST_AROUNDA_2026-05-12_spike9-0b-pago1",
+        "newName": "payment_TEST_AROUNDA_2026-05-12_spike9-0b-pago1_CLEANED_2026-05-12T18-58-15-043Z",
+        "action": "renamed"
+      },
+      {
+        "id": 555965,
+        "prevName": "payment_TEST_AROUNDA_2026-05-12_spike9-0b-pago2",
+        "newName": "payment_TEST_AROUNDA_2026-05-12_spike9-0b-pago2_CLEANED_2026-05-12T18-58-15-043Z",
+        "action": "renamed"
+      },
+      {
+        "id": 555969,
+        "prevName": "payment_TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-1",
+        "newName": "payment_TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-1_CLEANED_2026-05-12T18-58-15-043Z",
+        "action": "renamed"
+      },
+      {
+        "id": 555970,
+        "prevName": "payment_TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-2",
+        "newName": "payment_TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-2_CLEANED_2026-05-12T18-58-15-043Z",
+        "action": "renamed"
+      },
+      {
+        "id": 555971,
+        "prevName": "payment_TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-3",
+        "newName": "payment_TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-3_CLEANED_2026-05-12T18-58-15-043Z",
+        "action": "renamed"
+      },
+      {
+        "id": 555972,
+        "prevName": "payment_TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-4",
+        "newName": "payment_TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-4_CLEANED_2026-05-12T18-58-15-043Z",
+        "action": "renamed"
+      },
+      {
+        "id": 555973,
+        "prevName": "payment_TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-5",
+        "newName": "payment_TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-5_CLEANED_2026-05-12T18-58-15-043Z",
+        "action": "renamed"
+      }
+    ],
+    "errors": [
+      {
+        "stage": "cancel-payment",
+        "pid": 8121,
+        "errAction": "XML-RPC fault: Traceback (most recent call last):\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 165, in xmlrpc_2\n    response = self._xmlrpc(service)\n               ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/custom/trial/saas_trial/controllers/main.py\", line 468, in _xmlrpc\n    res = super()._xmlrpc(service)\n          ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 140, in _xmlrpc\n    return dumps((result,))\n           ^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 114, in dumps\n    response = OdooMarshaller(allow_none=False).dumps(params)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 514, in dumps\n    dump(v, write)\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 536, in __dump\n    f(self, value, write)\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 540, in dump_nil\n    raise TypeError(\"cannot marshal None unless allow_none is enabled\")\nTypeError: cannot marshal None unless allow_none is enabled\n",
+        "errWrite": "XML-RPC fault: Traceback (most recent call last):\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 165, in xmlrpc_2\n    response = self._xmlrpc(service)\n               ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/custom/trial/saas_trial/controllers/main.py\", line 468, in _xmlrpc\n    res = super()._xmlrpc(service)\n          ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 139, in _xmlrpc\n    result = dispatch_rpc(service, method, params)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/http.py\", line 412, in dispatch_rpc\n    return dispatch(method, params)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 59, in dispatch\n    res = execute_kw(db, uid, *params[3:])\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 82, in execute_kw\n    return execute(db, uid, obj, method, *args, **kw or {})\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 88, in execute\n    res = execute_cr(cr, uid, obj, method, *args, **kw)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 73, in execute_cr\n    result = retrying(partial(odoo.api.call_kw, recs, method, args, kw), env)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 157, in retrying\n    result = func()\n             ^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/api.py\", line 535, in call_kw\n    result = getattr(recs, name)(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/hr_expense/models/account_payment.py\", line 28, in write\n    return super().write(vals)\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/account/models/account_payment.py\", line 990, in write\n    res = super().write(vals)\n          ^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/mail/models/mail_thread.py\", line 357, in write\n    result = super(MailThread, self).write(values)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/mail/models/mail_activity_mixin.py\", line 243, in write\n    return super(MailActivityMixin, self).write(vals)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/models.py\", line 4813, in write\n    field.write(self, value)\n  File \"/home/odoo/src/odoo/18.0/odoo/fields.py\", line 1213, in write\n    cache_value = self.convert_to_cache(value, records)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/fields.py\", line 3046, in convert_to_cache\n    raise ValueError(\"Wrong value for %s: %r\" % (self, value))\nValueError: Wrong value for account.payment.state: 'cancel'\n"
+      },
+      {
+        "stage": "cancel-payment",
+        "pid": 8122,
+        "errAction": "XML-RPC fault: Traceback (most recent call last):\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 165, in xmlrpc_2\n    response = self._xmlrpc(service)\n               ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/custom/trial/saas_trial/controllers/main.py\", line 468, in _xmlrpc\n    res = super()._xmlrpc(service)\n          ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 140, in _xmlrpc\n    return dumps((result,))\n           ^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 114, in dumps\n    response = OdooMarshaller(allow_none=False).dumps(params)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 514, in dumps\n    dump(v, write)\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 536, in __dump\n    f(self, value, write)\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 540, in dump_nil\n    raise TypeError(\"cannot marshal None unless allow_none is enabled\")\nTypeError: cannot marshal None unless allow_none is enabled\n",
+        "errWrite": "XML-RPC fault: Traceback (most recent call last):\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 165, in xmlrpc_2\n    response = self._xmlrpc(service)\n               ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/custom/trial/saas_trial/controllers/main.py\", line 468, in _xmlrpc\n    res = super()._xmlrpc(service)\n          ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 139, in _xmlrpc\n    result = dispatch_rpc(service, method, params)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/http.py\", line 412, in dispatch_rpc\n    return dispatch(method, params)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 59, in dispatch\n    res = execute_kw(db, uid, *params[3:])\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 82, in execute_kw\n    return execute(db, uid, obj, method, *args, **kw or {})\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 88, in execute\n    res = execute_cr(cr, uid, obj, method, *args, **kw)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 73, in execute_cr\n    result = retrying(partial(odoo.api.call_kw, recs, method, args, kw), env)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 157, in retrying\n    result = func()\n             ^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/api.py\", line 535, in call_kw\n    result = getattr(recs, name)(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/hr_expense/models/account_payment.py\", line 28, in write\n    return super().write(vals)\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/account/models/account_payment.py\", line 990, in write\n    res = super().write(vals)\n          ^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/mail/models/mail_thread.py\", line 357, in write\n    result = super(MailThread, self).write(values)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/mail/models/mail_activity_mixin.py\", line 243, in write\n    return super(MailActivityMixin, self).write(vals)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/models.py\", line 4813, in write\n    field.write(self, value)\n  File \"/home/odoo/src/odoo/18.0/odoo/fields.py\", line 1213, in write\n    cache_value = self.convert_to_cache(value, records)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/fields.py\", line 3046, in convert_to_cache\n    raise ValueError(\"Wrong value for %s: %r\" % (self, value))\nValueError: Wrong value for account.payment.state: 'cancel'\n"
+      },
+      {
+        "stage": "cancel-payment",
+        "pid": 8123,
+        "errAction": "XML-RPC fault: Traceback (most recent call last):\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 165, in xmlrpc_2\n    response = self._xmlrpc(service)\n               ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/custom/trial/saas_trial/controllers/main.py\", line 468, in _xmlrpc\n    res = super()._xmlrpc(service)\n          ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 140, in _xmlrpc\n    return dumps((result,))\n           ^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 114, in dumps\n    response = OdooMarshaller(allow_none=False).dumps(params)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 514, in dumps\n    dump(v, write)\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 536, in __dump\n    f(self, value, write)\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 540, in dump_nil\n    raise TypeError(\"cannot marshal None unless allow_none is enabled\")\nTypeError: cannot marshal None unless allow_none is enabled\n",
+        "errWrite": "XML-RPC fault: Traceback (most recent call last):\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 165, in xmlrpc_2\n    response = self._xmlrpc(service)\n               ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/custom/trial/saas_trial/controllers/main.py\", line 468, in _xmlrpc\n    res = super()._xmlrpc(service)\n          ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 139, in _xmlrpc\n    result = dispatch_rpc(service, method, params)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/http.py\", line 412, in dispatch_rpc\n    return dispatch(method, params)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 59, in dispatch\n    res = execute_kw(db, uid, *params[3:])\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 82, in execute_kw\n    return execute(db, uid, obj, method, *args, **kw or {})\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 88, in execute\n    res = execute_cr(cr, uid, obj, method, *args, **kw)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 73, in execute_cr\n    result = retrying(partial(odoo.api.call_kw, recs, method, args, kw), env)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 157, in retrying\n    result = func()\n             ^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/api.py\", line 535, in call_kw\n    result = getattr(recs, name)(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/hr_expense/models/account_payment.py\", line 28, in write\n    return super().write(vals)\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/account/models/account_payment.py\", line 990, in write\n    res = super().write(vals)\n          ^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/mail/models/mail_thread.py\", line 357, in write\n    result = super(MailThread, self).write(values)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/mail/models/mail_activity_mixin.py\", line 243, in write\n    return super(MailActivityMixin, self).write(vals)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/models.py\", line 4813, in write\n    field.write(self, value)\n  File \"/home/odoo/src/odoo/18.0/odoo/fields.py\", line 1213, in write\n    cache_value = self.convert_to_cache(value, records)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/fields.py\", line 3046, in convert_to_cache\n    raise ValueError(\"Wrong value for %s: %r\" % (self, value))\nValueError: Wrong value for account.payment.state: 'cancel'\n"
+      },
+      {
+        "stage": "cancel-payment",
+        "pid": 8124,
+        "errAction": "XML-RPC fault: Traceback (most recent call last):\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 165, in xmlrpc_2\n    response = self._xmlrpc(service)\n               ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/custom/trial/saas_trial/controllers/main.py\", line 468, in _xmlrpc\n    res = super()._xmlrpc(service)\n          ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 140, in _xmlrpc\n    return dumps((result,))\n           ^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 114, in dumps\n    response = OdooMarshaller(allow_none=False).dumps(params)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 514, in dumps\n    dump(v, write)\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 536, in __dump\n    f(self, value, write)\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 540, in dump_nil\n    raise TypeError(\"cannot marshal None unless allow_none is enabled\")\nTypeError: cannot marshal None unless allow_none is enabled\n",
+        "errWrite": "XML-RPC fault: Traceback (most recent call last):\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 165, in xmlrpc_2\n    response = self._xmlrpc(service)\n               ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/custom/trial/saas_trial/controllers/main.py\", line 468, in _xmlrpc\n    res = super()._xmlrpc(service)\n          ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 139, in _xmlrpc\n    result = dispatch_rpc(service, method, params)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/http.py\", line 412, in dispatch_rpc\n    return dispatch(method, params)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 59, in dispatch\n    res = execute_kw(db, uid, *params[3:])\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 82, in execute_kw\n    return execute(db, uid, obj, method, *args, **kw or {})\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 88, in execute\n    res = execute_cr(cr, uid, obj, method, *args, **kw)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 73, in execute_cr\n    result = retrying(partial(odoo.api.call_kw, recs, method, args, kw), env)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 157, in retrying\n    result = func()\n             ^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/api.py\", line 535, in call_kw\n    result = getattr(recs, name)(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/hr_expense/models/account_payment.py\", line 28, in write\n    return super().write(vals)\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/account/models/account_payment.py\", line 990, in write\n    res = super().write(vals)\n          ^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/mail/models/mail_thread.py\", line 357, in write\n    result = super(MailThread, self).write(values)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/mail/models/mail_activity_mixin.py\", line 243, in write\n    return super(MailActivityMixin, self).write(vals)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/models.py\", line 4813, in write\n    field.write(self, value)\n  File \"/home/odoo/src/odoo/18.0/odoo/fields.py\", line 1213, in write\n    cache_value = self.convert_to_cache(value, records)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/fields.py\", line 3046, in convert_to_cache\n    raise ValueError(\"Wrong value for %s: %r\" % (self, value))\nValueError: Wrong value for account.payment.state: 'cancel'\n"
+      },
+      {
+        "stage": "cancel-payment",
+        "pid": 8125,
+        "errAction": "XML-RPC fault: Traceback (most recent call last):\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 165, in xmlrpc_2\n    response = self._xmlrpc(service)\n               ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/custom/trial/saas_trial/controllers/main.py\", line 468, in _xmlrpc\n    res = super()._xmlrpc(service)\n          ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 140, in _xmlrpc\n    return dumps((result,))\n           ^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 114, in dumps\n    response = OdooMarshaller(allow_none=False).dumps(params)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 514, in dumps\n    dump(v, write)\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 536, in __dump\n    f(self, value, write)\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 540, in dump_nil\n    raise TypeError(\"cannot marshal None unless allow_none is enabled\")\nTypeError: cannot marshal None unless allow_none is enabled\n",
+        "errWrite": "XML-RPC fault: Traceback (most recent call last):\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 165, in xmlrpc_2\n    response = self._xmlrpc(service)\n               ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/custom/trial/saas_trial/controllers/main.py\", line 468, in _xmlrpc\n    res = super()._xmlrpc(service)\n          ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 139, in _xmlrpc\n    result = dispatch_rpc(service, method, params)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/http.py\", line 412, in dispatch_rpc\n    return dispatch(method, params)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 59, in dispatch\n    res = execute_kw(db, uid, *params[3:])\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 82, in execute_kw\n    return execute(db, uid, obj, method, *args, **kw or {})\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 88, in execute\n    res = execute_cr(cr, uid, obj, method, *args, **kw)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 73, in execute_cr\n    result = retrying(partial(odoo.api.call_kw, recs, method, args, kw), env)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 157, in retrying\n    result = func()\n             ^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/api.py\", line 535, in call_kw\n    result = getattr(recs, name)(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/hr_expense/models/account_payment.py\", line 28, in write\n    return super().write(vals)\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/account/models/account_payment.py\", line 990, in write\n    res = super().write(vals)\n          ^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/mail/models/mail_thread.py\", line 357, in write\n    result = super(MailThread, self).write(values)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/mail/models/mail_activity_mixin.py\", line 243, in write\n    return super(MailActivityMixin, self).write(vals)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/models.py\", line 4813, in write\n    field.write(self, value)\n  File \"/home/odoo/src/odoo/18.0/odoo/fields.py\", line 1213, in write\n    cache_value = self.convert_to_cache(value, records)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/fields.py\", line 3046, in convert_to_cache\n    raise ValueError(\"Wrong value for %s: %r\" % (self, value))\nValueError: Wrong value for account.payment.state: 'cancel'\n"
+      },
+      {
+        "stage": "cancel-payment",
+        "pid": 8126,
+        "errAction": "XML-RPC fault: Traceback (most recent call last):\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 165, in xmlrpc_2\n    response = self._xmlrpc(service)\n               ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/custom/trial/saas_trial/controllers/main.py\", line 468, in _xmlrpc\n    res = super()._xmlrpc(service)\n          ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 140, in _xmlrpc\n    return dumps((result,))\n           ^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 114, in dumps\n    response = OdooMarshaller(allow_none=False).dumps(params)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 514, in dumps\n    dump(v, write)\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 536, in __dump\n    f(self, value, write)\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 540, in dump_nil\n    raise TypeError(\"cannot marshal None unless allow_none is enabled\")\nTypeError: cannot marshal None unless allow_none is enabled\n",
+        "errWrite": "XML-RPC fault: Traceback (most recent call last):\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 165, in xmlrpc_2\n    response = self._xmlrpc(service)\n               ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/custom/trial/saas_trial/controllers/main.py\", line 468, in _xmlrpc\n    res = super()._xmlrpc(service)\n          ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 139, in _xmlrpc\n    result = dispatch_rpc(service, method, params)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/http.py\", line 412, in dispatch_rpc\n    return dispatch(method, params)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 59, in dispatch\n    res = execute_kw(db, uid, *params[3:])\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 82, in execute_kw\n    return execute(db, uid, obj, method, *args, **kw or {})\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 88, in execute\n    res = execute_cr(cr, uid, obj, method, *args, **kw)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 73, in execute_cr\n    result = retrying(partial(odoo.api.call_kw, recs, method, args, kw), env)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 157, in retrying\n    result = func()\n             ^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/api.py\", line 535, in call_kw\n    result = getattr(recs, name)(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/hr_expense/models/account_payment.py\", line 28, in write\n    return super().write(vals)\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/account/models/account_payment.py\", line 990, in write\n    res = super().write(vals)\n          ^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/mail/models/mail_thread.py\", line 357, in write\n    result = super(MailThread, self).write(values)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/mail/models/mail_activity_mixin.py\", line 243, in write\n    return super(MailActivityMixin, self).write(vals)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/models.py\", line 4813, in write\n    field.write(self, value)\n  File \"/home/odoo/src/odoo/18.0/odoo/fields.py\", line 1213, in write\n    cache_value = self.convert_to_cache(value, records)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/fields.py\", line 3046, in convert_to_cache\n    raise ValueError(\"Wrong value for %s: %r\" % (self, value))\nValueError: Wrong value for account.payment.state: 'cancel'\n"
+      },
+      {
+        "stage": "cancel-payment",
+        "pid": 8127,
+        "errAction": "XML-RPC fault: Traceback (most recent call last):\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 165, in xmlrpc_2\n    response = self._xmlrpc(service)\n               ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/custom/trial/saas_trial/controllers/main.py\", line 468, in _xmlrpc\n    res = super()._xmlrpc(service)\n          ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 140, in _xmlrpc\n    return dumps((result,))\n           ^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 114, in dumps\n    response = OdooMarshaller(allow_none=False).dumps(params)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 514, in dumps\n    dump(v, write)\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 536, in __dump\n    f(self, value, write)\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 540, in dump_nil\n    raise TypeError(\"cannot marshal None unless allow_none is enabled\")\nTypeError: cannot marshal None unless allow_none is enabled\n",
+        "errWrite": "XML-RPC fault: Traceback (most recent call last):\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 165, in xmlrpc_2\n    response = self._xmlrpc(service)\n               ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/custom/trial/saas_trial/controllers/main.py\", line 468, in _xmlrpc\n    res = super()._xmlrpc(service)\n          ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 139, in _xmlrpc\n    result = dispatch_rpc(service, method, params)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/http.py\", line 412, in dispatch_rpc\n    return dispatch(method, params)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 59, in dispatch\n    res = execute_kw(db, uid, *params[3:])\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 82, in execute_kw\n    return execute(db, uid, obj, method, *args, **kw or {})\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 88, in execute\n    res = execute_cr(cr, uid, obj, method, *args, **kw)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 73, in execute_cr\n    result = retrying(partial(odoo.api.call_kw, recs, method, args, kw), env)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 157, in retrying\n    result = func()\n             ^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/api.py\", line 535, in call_kw\n    result = getattr(recs, name)(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/hr_expense/models/account_payment.py\", line 28, in write\n    return super().write(vals)\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/account/models/account_payment.py\", line 990, in write\n    res = super().write(vals)\n          ^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/mail/models/mail_thread.py\", line 357, in write\n    result = super(MailThread, self).write(values)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/mail/models/mail_activity_mixin.py\", line 243, in write\n    return super(MailActivityMixin, self).write(vals)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/models.py\", line 4813, in write\n    field.write(self, value)\n  File \"/home/odoo/src/odoo/18.0/odoo/fields.py\", line 1213, in write\n    cache_value = self.convert_to_cache(value, records)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/fields.py\", line 3046, in convert_to_cache\n    raise ValueError(\"Wrong value for %s: %r\" % (self, value))\nValueError: Wrong value for account.payment.state: 'cancel'\n"
+      },
+      {
+        "stage": "cancel-payment",
+        "pid": 8128,
+        "errAction": "XML-RPC fault: Traceback (most recent call last):\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 165, in xmlrpc_2\n    response = self._xmlrpc(service)\n               ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/custom/trial/saas_trial/controllers/main.py\", line 468, in _xmlrpc\n    res = super()._xmlrpc(service)\n          ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 140, in _xmlrpc\n    return dumps((result,))\n           ^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 114, in dumps\n    response = OdooMarshaller(allow_none=False).dumps(params)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 514, in dumps\n    dump(v, write)\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 536, in __dump\n    f(self, value, write)\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 540, in dump_nil\n    raise TypeError(\"cannot marshal None unless allow_none is enabled\")\nTypeError: cannot marshal None unless allow_none is enabled\n",
+        "errWrite": "XML-RPC fault: Traceback (most recent call last):\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 165, in xmlrpc_2\n    response = self._xmlrpc(service)\n               ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/custom/trial/saas_trial/controllers/main.py\", line 468, in _xmlrpc\n    res = super()._xmlrpc(service)\n          ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 139, in _xmlrpc\n    result = dispatch_rpc(service, method, params)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/http.py\", line 412, in dispatch_rpc\n    return dispatch(method, params)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 59, in dispatch\n    res = execute_kw(db, uid, *params[3:])\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 82, in execute_kw\n    return execute(db, uid, obj, method, *args, **kw or {})\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 88, in execute\n    res = execute_cr(cr, uid, obj, method, *args, **kw)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 73, in execute_cr\n    result = retrying(partial(odoo.api.call_kw, recs, method, args, kw), env)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 157, in retrying\n    result = func()\n             ^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/api.py\", line 535, in call_kw\n    result = getattr(recs, name)(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/hr_expense/models/account_payment.py\", line 28, in write\n    return super().write(vals)\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/account/models/account_payment.py\", line 990, in write\n    res = super().write(vals)\n          ^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/mail/models/mail_thread.py\", line 357, in write\n    result = super(MailThread, self).write(values)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/mail/models/mail_activity_mixin.py\", line 243, in write\n    return super(MailActivityMixin, self).write(vals)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/models.py\", line 4813, in write\n    field.write(self, value)\n  File \"/home/odoo/src/odoo/18.0/odoo/fields.py\", line 1213, in write\n    cache_value = self.convert_to_cache(value, records)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/fields.py\", line 3046, in convert_to_cache\n    raise ValueError(\"Wrong value for %s: %r\" % (self, value))\nValueError: Wrong value for account.payment.state: 'cancel'\n"
+      },
+      {
+        "stage": "cancel-payment",
+        "pid": 8129,
+        "errAction": "XML-RPC fault: Traceback (most recent call last):\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 165, in xmlrpc_2\n    response = self._xmlrpc(service)\n               ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/custom/trial/saas_trial/controllers/main.py\", line 468, in _xmlrpc\n    res = super()._xmlrpc(service)\n          ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 140, in _xmlrpc\n    return dumps((result,))\n           ^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 114, in dumps\n    response = OdooMarshaller(allow_none=False).dumps(params)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 514, in dumps\n    dump(v, write)\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 536, in __dump\n    f(self, value, write)\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 540, in dump_nil\n    raise TypeError(\"cannot marshal None unless allow_none is enabled\")\nTypeError: cannot marshal None unless allow_none is enabled\n",
+        "errWrite": "XML-RPC fault: Traceback (most recent call last):\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 165, in xmlrpc_2\n    response = self._xmlrpc(service)\n               ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/custom/trial/saas_trial/controllers/main.py\", line 468, in _xmlrpc\n    res = super()._xmlrpc(service)\n          ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 139, in _xmlrpc\n    result = dispatch_rpc(service, method, params)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/http.py\", line 412, in dispatch_rpc\n    return dispatch(method, params)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 59, in dispatch\n    res = execute_kw(db, uid, *params[3:])\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 82, in execute_kw\n    return execute(db, uid, obj, method, *args, **kw or {})\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 88, in execute\n    res = execute_cr(cr, uid, obj, method, *args, **kw)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 73, in execute_cr\n    result = retrying(partial(odoo.api.call_kw, recs, method, args, kw), env)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 157, in retrying\n    result = func()\n             ^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/api.py\", line 535, in call_kw\n    result = getattr(recs, name)(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/hr_expense/models/account_payment.py\", line 28, in write\n    return super().write(vals)\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/account/models/account_payment.py\", line 990, in write\n    res = super().write(vals)\n          ^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/mail/models/mail_thread.py\", line 357, in write\n    result = super(MailThread, self).write(values)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/mail/models/mail_activity_mixin.py\", line 243, in write\n    return super(MailActivityMixin, self).write(vals)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/models.py\", line 4813, in write\n    field.write(self, value)\n  File \"/home/odoo/src/odoo/18.0/odoo/fields.py\", line 1213, in write\n    cache_value = self.convert_to_cache(value, records)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/fields.py\", line 3046, in convert_to_cache\n    raise ValueError(\"Wrong value for %s: %r\" % (self, value))\nValueError: Wrong value for account.payment.state: 'cancel'\n"
+      },
+      {
+        "stage": "cancel-payment",
+        "pid": 8130,
+        "errAction": "XML-RPC fault: Traceback (most recent call last):\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 165, in xmlrpc_2\n    response = self._xmlrpc(service)\n               ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/custom/trial/saas_trial/controllers/main.py\", line 468, in _xmlrpc\n    res = super()._xmlrpc(service)\n          ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 140, in _xmlrpc\n    return dumps((result,))\n           ^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 114, in dumps\n    response = OdooMarshaller(allow_none=False).dumps(params)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 514, in dumps\n    dump(v, write)\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 536, in __dump\n    f(self, value, write)\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 540, in dump_nil\n    raise TypeError(\"cannot marshal None unless allow_none is enabled\")\nTypeError: cannot marshal None unless allow_none is enabled\n",
+        "errWrite": "XML-RPC fault: Traceback (most recent call last):\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 165, in xmlrpc_2\n    response = self._xmlrpc(service)\n               ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/custom/trial/saas_trial/controllers/main.py\", line 468, in _xmlrpc\n    res = super()._xmlrpc(service)\n          ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 139, in _xmlrpc\n    result = dispatch_rpc(service, method, params)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/http.py\", line 412, in dispatch_rpc\n    return dispatch(method, params)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 59, in dispatch\n    res = execute_kw(db, uid, *params[3:])\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 82, in execute_kw\n    return execute(db, uid, obj, method, *args, **kw or {})\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 88, in execute\n    res = execute_cr(cr, uid, obj, method, *args, **kw)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 73, in execute_cr\n    result = retrying(partial(odoo.api.call_kw, recs, method, args, kw), env)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 157, in retrying\n    result = func()\n             ^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/api.py\", line 535, in call_kw\n    result = getattr(recs, name)(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/hr_expense/models/account_payment.py\", line 28, in write\n    return super().write(vals)\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/account/models/account_payment.py\", line 990, in write\n    res = super().write(vals)\n          ^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/mail/models/mail_thread.py\", line 357, in write\n    result = super(MailThread, self).write(values)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/mail/models/mail_activity_mixin.py\", line 243, in write\n    return super(MailActivityMixin, self).write(vals)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/models.py\", line 4813, in write\n    field.write(self, value)\n  File \"/home/odoo/src/odoo/18.0/odoo/fields.py\", line 1213, in write\n    cache_value = self.convert_to_cache(value, records)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/fields.py\", line 3046, in convert_to_cache\n    raise ValueError(\"Wrong value for %s: %r\" % (self, value))\nValueError: Wrong value for account.payment.state: 'cancel'\n"
+      }
+    ],
+    "verification": {
+      "totalPayments": 10,
+      "cancelled": 0,
+      "renamed": 10,
+      "totalExtIds": 7,
+      "extIdsRenamed": 7
+    }
+  }
+}

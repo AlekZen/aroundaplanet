@@ -1,0 +1,13 @@
+import admin from 'firebase-admin';
+import { readFileSync } from 'fs';
+const key = JSON.parse(readFileSync('.keys/arounda-planet-firebase-adminsdk-fbsvc-27080fdcfe.json','utf8'));
+admin.initializeApp({ credential: admin.credential.cert(key) });
+const doc = await admin.firestore().collection('payments').doc('50Nc0cUwhzbZqBUEnEZ9').get();
+const d = doc.data();
+console.log('payment.odooPaymentId:', d?.odooPaymentId ?? '(null)');
+console.log('payment.odooSyncStatus:', d?.odooSyncStatus ?? '(null)');
+console.log('payment.linkedAt:', d?.linkedAt?.toDate?.()?.toISOString() ?? '(null)');
+const logs = await admin.firestore().collection('paymentReconciliationLog').where('firestorePaymentId','==','50Nc0cUwhzbZqBUEnEZ9').get();
+console.log('reconciliationLog entries:', logs.size);
+logs.forEach(l => console.log('  ->', JSON.stringify({id: l.id, ...l.data(), createdAt: l.data().createdAt?.toDate?.()?.toISOString()}).slice(0,300)));
+process.exit(0);

@@ -1,0 +1,138 @@
+{
+  "runbook": "9.7",
+  "startedAt": "2026-05-12T19:35:32.813Z",
+  "finishedAt": "2026-05-12T19:35:53.501Z",
+  "odoo_url": "https://aroundaplanet.odoo.com",
+  "uid": 2,
+  "accountPaymentModelId": 455,
+  "summary": {
+    "total": 5,
+    "created": 5,
+    "skipped": 0,
+    "errors": 0
+  },
+  "fields": [
+    {
+      "name": "x_firebase_payment_id",
+      "status": "created",
+      "odoo_id": 22927,
+      "ttype": "char",
+      "state": "manual",
+      "relation": null,
+      "selection": null,
+      "help": "UID del pago Firestore vinculado para sync bidireccional Epic 9",
+      "index": true,
+      "verify": {
+        "stateOk": true,
+        "ttypeOk": true,
+        "relationOk": true,
+        "allOk": true
+      }
+    },
+    {
+      "name": "x_firebase_agent_uid",
+      "status": "created",
+      "odoo_id": 22933,
+      "ttype": "char",
+      "state": "manual",
+      "relation": null,
+      "selection": null,
+      "help": "UID Firebase del agente que registró el pago",
+      "index": false,
+      "verify": {
+        "stateOk": true,
+        "ttypeOk": true,
+        "relationOk": true,
+        "allOk": true
+      }
+    },
+    {
+      "name": "x_ocr_confidence",
+      "status": "created",
+      "odoo_id": 22935,
+      "ttype": "float",
+      "state": "manual",
+      "relation": null,
+      "selection": null,
+      "help": "Confianza OCR del comprobante (0-1) si vino de Firestore con OCR Gemini",
+      "index": false,
+      "verify": {
+        "stateOk": true,
+        "ttypeOk": true,
+        "relationOk": true,
+        "allOk": true
+      }
+    },
+    {
+      "name": "x_canonical_payment_id",
+      "status": "created",
+      "odoo_id": 22937,
+      "ttype": "many2one",
+      "state": "manual",
+      "relation": "account.payment",
+      "selection": null,
+      "help": "Pago canónico cuando este es duplicado interno (Story 9.1 PARTE B)",
+      "index": false,
+      "verify": {
+        "stateOk": true,
+        "ttypeOk": true,
+        "relationOk": true,
+        "allOk": true
+      }
+    },
+    {
+      "name": "x_dup_status",
+      "status": "created",
+      "odoo_id": 22939,
+      "ttype": "selection",
+      "state": "manual",
+      "relation": null,
+      "selection": "[('canonico', 'Canónico'), ('secundario', 'Secundario')]",
+      "help": "Estado de deduplicación. Null = no es duplicado.",
+      "index": false,
+      "verify": {
+        "stateOk": true,
+        "ttypeOk": true,
+        "relationOk": true,
+        "allOk": true
+      }
+    }
+  ],
+  "finalVerification": [
+    {
+      "name": "x_firebase_payment_id",
+      "exists": true,
+      "odoo_id": 22927,
+      "ttype": "char",
+      "state": "manual"
+    },
+    {
+      "name": "x_firebase_agent_uid",
+      "exists": true,
+      "odoo_id": 22933,
+      "ttype": "char",
+      "state": "manual"
+    },
+    {
+      "name": "x_ocr_confidence",
+      "exists": true,
+      "odoo_id": 22935,
+      "ttype": "float",
+      "state": "manual"
+    },
+    {
+      "name": "x_canonical_payment_id",
+      "exists": true,
+      "odoo_id": 22937,
+      "ttype": "many2one",
+      "state": "manual"
+    },
+    {
+      "name": "x_dup_status",
+      "exists": true,
+      "odoo_id": 22939,
+      "ttype": "selection",
+      "state": "manual"
+    }
+  ]
+}

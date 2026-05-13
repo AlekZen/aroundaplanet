@@ -1,0 +1,258 @@
+{
+  "startedAt": "2026-05-12T19:13:52.304Z",
+  "prefix": "TEST_AROUNDA_2026-05-12_",
+  "spike": "spike9-0a",
+  "uid": 2,
+  "partner": {
+    "id": 4314,
+    "name": "<"
+  },
+  "journal": {
+    "id": 13,
+    "name": "Bank",
+    "code": "BNK1",
+    "type": "bank"
+  },
+  "payment": {
+    "id": 8132,
+    "state": "draft",
+    "memo": "TEST_AROUNDA_2026-05-12_spike9-0a-payment",
+    "amount": 1
+  },
+  "dummyPdfSize": 1024,
+  "finishedAt": "2026-05-12T19:14:01.118Z",
+  "paymentIdsCreated": [
+    8132
+  ],
+  "attachmentIdsCreated": [
+    45801,
+    45802,
+    45803,
+    45804,
+    45805,
+    45806,
+    45807,
+    45808
+  ],
+  "summary": {
+    "patternA_persisted": true,
+    "patternB_persisted": true,
+    "edge_orphan_res_id_accepted": true,
+    "search_by_res_returns_attachments": true,
+    "recommended_pattern": "B"
+  },
+  "latencyStats": {
+    "winner": "B",
+    "callsPerFlow": 1,
+    "min": 196,
+    "p50": 199,
+    "p95": 201,
+    "max": 207,
+    "iterations": [
+      {
+        "iter": 1,
+        "totalMs": 207,
+        "calls": 1
+      },
+      {
+        "iter": 2,
+        "totalMs": 196,
+        "calls": 1
+      },
+      {
+        "iter": 3,
+        "totalMs": 201,
+        "calls": 1
+      },
+      {
+        "iter": 4,
+        "totalMs": 197,
+        "calls": 1
+      },
+      {
+        "iter": 5,
+        "totalMs": 199,
+        "calls": 1
+      }
+    ]
+  },
+  "trace": [
+    {
+      "scenario": "A-create-then-write",
+      "attachmentId": 45801,
+      "before": {
+        "id": 45801,
+        "name": "TEST_AROUNDA_2026-05-12_spike9-0a-A.pdf",
+        "res_model": false,
+        "res_id": 0,
+        "mimetype": "application/pdf",
+        "file_size": 1024,
+        "public": false
+      },
+      "writeOk": true,
+      "writeErr": null,
+      "after": {
+        "id": 45801,
+        "name": "TEST_AROUNDA_2026-05-12_spike9-0a-A.pdf",
+        "res_model": "account.payment",
+        "res_id": 8132
+      },
+      "persisted": true,
+      "latencyMs": {
+        "create": 115,
+        "write": 114
+      }
+    },
+    {
+      "scenario": "B-create-with-res",
+      "attachmentId": 45802,
+      "createErr": null,
+      "after": {
+        "id": 45802,
+        "name": "TEST_AROUNDA_2026-05-12_spike9-0a-B.pdf",
+        "res_model": "account.payment",
+        "res_id": 8132,
+        "mimetype": "application/pdf"
+      },
+      "persisted": true,
+      "latencyMs": {
+        "create": 205
+      }
+    },
+    {
+      "scenario": "EDGE-orphan-res-id",
+      "attachmentId": 45803,
+      "createErr": null,
+      "after": null,
+      "readErr": "XML-RPC fault: Estos registros están restringidos.\n\nNoel Sahagun Cervantes (id=2) no tiene acceso 'leer' a:\n- Adjunto (ir.attachment)\n\nSi necesita acceso, pregúntele a un administrador.",
+      "searchHitAfterFail": false,
+      "latencyMs": 204
+    },
+    {
+      "scenario": "SEARCH-by-res",
+      "count": 2,
+      "ids": [
+        45802,
+        45801
+      ],
+      "latencyMs": 193
+    },
+    {
+      "scenario": "LAT-stats",
+      "stats": {
+        "winner": "B",
+        "callsPerFlow": 1,
+        "min": 196,
+        "p50": 199,
+        "p95": 201,
+        "max": 207,
+        "iterations": [
+          {
+            "iter": 1,
+            "totalMs": 207,
+            "calls": 1
+          },
+          {
+            "iter": 2,
+            "totalMs": 196,
+            "calls": 1
+          },
+          {
+            "iter": 3,
+            "totalMs": 201,
+            "calls": 1
+          },
+          {
+            "iter": 4,
+            "totalMs": 197,
+            "calls": 1
+          },
+          {
+            "iter": 5,
+            "totalMs": 199,
+            "calls": 1
+          }
+        ]
+      }
+    }
+  ],
+  "cleanupLog": {
+    "attachments": [
+      {
+        "id": 45801,
+        "prevName": "TEST_AROUNDA_2026-05-12_spike9-0a-A.pdf",
+        "newName": "TEST_AROUNDA_2026-05-12_spike9-0a-A.pdf_CLEANED_2026-05-12T19-13-56-719Z",
+        "renamed": true
+      },
+      {
+        "id": 45802,
+        "prevName": "TEST_AROUNDA_2026-05-12_spike9-0a-B.pdf",
+        "newName": "TEST_AROUNDA_2026-05-12_spike9-0a-B.pdf_CLEANED_2026-05-12T19-13-56-719Z",
+        "renamed": true
+      },
+      {
+        "id": 45804,
+        "prevName": "TEST_AROUNDA_2026-05-12_spike9-0a-LAT-B-1.pdf",
+        "newName": "TEST_AROUNDA_2026-05-12_spike9-0a-LAT-B-1.pdf_CLEANED_2026-05-12T19-13-56-719Z",
+        "renamed": true
+      },
+      {
+        "id": 45805,
+        "prevName": "TEST_AROUNDA_2026-05-12_spike9-0a-LAT-B-2.pdf",
+        "newName": "TEST_AROUNDA_2026-05-12_spike9-0a-LAT-B-2.pdf_CLEANED_2026-05-12T19-13-56-719Z",
+        "renamed": true
+      },
+      {
+        "id": 45806,
+        "prevName": "TEST_AROUNDA_2026-05-12_spike9-0a-LAT-B-3.pdf",
+        "newName": "TEST_AROUNDA_2026-05-12_spike9-0a-LAT-B-3.pdf_CLEANED_2026-05-12T19-13-56-719Z",
+        "renamed": true
+      },
+      {
+        "id": 45807,
+        "prevName": "TEST_AROUNDA_2026-05-12_spike9-0a-LAT-B-4.pdf",
+        "newName": "TEST_AROUNDA_2026-05-12_spike9-0a-LAT-B-4.pdf_CLEANED_2026-05-12T19-13-56-719Z",
+        "renamed": true
+      },
+      {
+        "id": 45808,
+        "prevName": "TEST_AROUNDA_2026-05-12_spike9-0a-LAT-B-5.pdf",
+        "newName": "TEST_AROUNDA_2026-05-12_spike9-0a-LAT-B-5.pdf_CLEANED_2026-05-12T19-13-56-719Z",
+        "renamed": true
+      }
+    ],
+    "payments": [
+      {
+        "id": 8132,
+        "prevState": "draft",
+        "cancelled": false,
+        "newName": "false_CLEANED_2026-05-12T19-13-56-719Z"
+      }
+    ],
+    "errors": [
+      {
+        "stage": "read-attachment",
+        "id": 45803,
+        "err": "XML-RPC fault: Estos registros están restringidos.\n\nNoel Sahagun Cervantes (id=2) no tiene acceso 'leer' a:\n- Adjunto (ir.attachment)\n\nSi necesita acceso, pregúntele a un administrador.",
+        "note": "blind-write fallback"
+      },
+      {
+        "stage": "cleanup-attachment",
+        "id": 45803,
+        "err": "XML-RPC fault: Estos registros están restringidos.\n\nNoel Sahagun Cervantes (id=2) no tiene acceso 'leer' a:\n- Adjunto (ir.attachment)\n\nSi necesita acceso, pregúntele a un administrador."
+      },
+      {
+        "stage": "cancel-payment",
+        "pid": 8132,
+        "errAction": "XML-RPC fault: Traceback (most recent call last):\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 165, in xmlrpc_2\n    response = self._xmlrpc(service)\n               ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/custom/trial/saas_trial/controllers/main.py\", line 468, in _xmlrpc\n    res = super()._xmlrpc(service)\n          ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 140, in _xmlrpc\n    return dumps((result,))\n           ^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 114, in dumps\n    response = OdooMarshaller(allow_none=False).dumps(params)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 514, in dumps\n    dump(v, write)\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 536, in __dump\n    f(self, value, write)\n  File \"/usr/lib/python3.12/xmlrpc/client.py\", line 540, in dump_nil\n    raise TypeError(\"cannot marshal None unless allow_none is enabled\")\nTypeError: cannot marshal None unless allow_none is enabled\n",
+        "errWrite": "XML-RPC fault: Traceback (most recent call last):\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 165, in xmlrpc_2\n    response = self._xmlrpc(service)\n               ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/custom/trial/saas_trial/controllers/main.py\", line 468, in _xmlrpc\n    res = super()._xmlrpc(service)\n          ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 139, in _xmlrpc\n    result = dispatch_rpc(service, method, params)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/http.py\", line 412, in dispatch_rpc\n    return dispatch(method, params)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 59, in dispatch\n    res = execute_kw(db, uid, *params[3:])\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 82, in execute_kw\n    return execute(db, uid, obj, method, *args, **kw or {})\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 88, in execute\n    res = execute_cr(cr, uid, obj, method, *args, **kw)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 73, in execute_cr\n    result = retrying(partial(odoo.api.call_kw, recs, method, args, kw), env)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 157, in retrying\n    result = func()\n             ^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/api.py\", line 535, in call_kw\n    result = getattr(recs, name)(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/hr_expense/models/account_payment.py\", line 28, in write\n    return super().write(vals)\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/account/models/account_payment.py\", line 990, in write\n    res = super().write(vals)\n          ^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/mail/models/mail_thread.py\", line 357, in write\n    result = super(MailThread, self).write(values)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/mail/models/mail_activity_mixin.py\", line 243, in write\n    return super(MailActivityMixin, self).write(vals)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/models.py\", line 4813, in write\n    field.write(self, value)\n  File \"/home/odoo/src/odoo/18.0/odoo/fields.py\", line 1213, in write\n    cache_value = self.convert_to_cache(value, records)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/fields.py\", line 3046, in convert_to_cache\n    raise ValueError(\"Wrong value for %s: %r\" % (self, value))\nValueError: Wrong value for account.payment.state: 'cancel'\n"
+      }
+    ],
+    "verification": {
+      "totalAttachments": 8,
+      "renamed": 7,
+      "totalPayments": 1,
+      "cancelled": 0
+    }
+  }
+}

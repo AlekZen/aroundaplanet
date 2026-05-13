@@ -1,0 +1,9 @@
+{
+  "finishedAt": "2026-05-12T19:14:59.705Z",
+  "cancelledPaymentIds": [
+    8131,
+    8132
+  ],
+  "draftsRemaining": 0,
+  "orphanAttachment45803Result": "acl-blocked: XML-RPC fault: Estos registros están restringidos."
+}

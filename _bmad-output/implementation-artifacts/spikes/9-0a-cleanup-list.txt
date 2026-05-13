@@ -1,0 +1,20 @@
+# Spike 9.0a cleanup list — 2026-05-12T19:14:01.119Z
+# Formato: <modelo>:<id>:<nuevo_nombre>[:<extra>]
+# Política: active=False + rename _CLEANED_<ts>. NUNCA unlink.
+ir.attachment:45801:TEST_AROUNDA_2026-05-12_spike9-0a-A.pdf_CLEANED_2026-05-12T19-13-56-719Z
+ir.attachment:45802:TEST_AROUNDA_2026-05-12_spike9-0a-B.pdf_CLEANED_2026-05-12T19-13-56-719Z
+ir.attachment:45804:TEST_AROUNDA_2026-05-12_spike9-0a-LAT-B-1.pdf_CLEANED_2026-05-12T19-13-56-719Z
+ir.attachment:45805:TEST_AROUNDA_2026-05-12_spike9-0a-LAT-B-2.pdf_CLEANED_2026-05-12T19-13-56-719Z
+ir.attachment:45806:TEST_AROUNDA_2026-05-12_spike9-0a-LAT-B-3.pdf_CLEANED_2026-05-12T19-13-56-719Z
+ir.attachment:45807:TEST_AROUNDA_2026-05-12_spike9-0a-LAT-B-4.pdf_CLEANED_2026-05-12T19-13-56-719Z
+ir.attachment:45808:TEST_AROUNDA_2026-05-12_spike9-0a-LAT-B-5.pdf_CLEANED_2026-05-12T19-13-56-719Z
+account.payment:8132:false_CLEANED_2026-05-12T19-13-56-719Z:state=draft
+
+# Followup 2026-05-12T19:14:45.607Z
+
+ir.attachment:45803:ACL-LOCKED-NEEDS-ADMIN-CLEANUP (orphan res_id=999999 — record rules bloquean acceso al user 'noelnumata@gmail.com')
+
+# Followup 2026-05-12T19:14:59.705Z
+account.payment:8131:state=canceled (followup)
+account.payment:8132:state=canceled (followup)
+ir.attachment:45803:ACL-LOCKED-NEEDS-ADMIN-CLEANUP (orphan res_id=999999 — record rules bloquean acceso al user 'noelnumata@gmail.com')

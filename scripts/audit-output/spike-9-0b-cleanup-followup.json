@@ -1,0 +1,122 @@
+{
+  "finishedAt": "2026-05-12T18:59:19.411Z",
+  "paymentIds": [
+    8121,
+    8122,
+    8123,
+    8124,
+    8125,
+    8126,
+    8127,
+    8128,
+    8129,
+    8130
+  ],
+  "actionCancelResults": [
+    {
+      "pid": 8121,
+      "cancelOk": true,
+      "cancelErr": "marshal-none-but-applied"
+    },
+    {
+      "pid": 8122,
+      "cancelOk": true,
+      "cancelErr": "marshal-none-but-applied"
+    },
+    {
+      "pid": 8123,
+      "cancelOk": true,
+      "cancelErr": "marshal-none-but-applied"
+    },
+    {
+      "pid": 8124,
+      "cancelOk": true,
+      "cancelErr": "marshal-none-but-applied"
+    },
+    {
+      "pid": 8125,
+      "cancelOk": true,
+      "cancelErr": "marshal-none-but-applied"
+    },
+    {
+      "pid": 8126,
+      "cancelOk": true,
+      "cancelErr": "marshal-none-but-applied"
+    },
+    {
+      "pid": 8127,
+      "cancelOk": true,
+      "cancelErr": "marshal-none-but-applied"
+    },
+    {
+      "pid": 8128,
+      "cancelOk": true,
+      "cancelErr": "marshal-none-but-applied"
+    },
+    {
+      "pid": 8129,
+      "cancelOk": true,
+      "cancelErr": "marshal-none-but-applied"
+    },
+    {
+      "pid": 8130,
+      "cancelOk": true,
+      "cancelErr": "marshal-none-but-applied"
+    }
+  ],
+  "finalRows": [
+    {
+      "id": 8121,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-pago1_CLEANED_2026-05-12T18-58-15-043Z",
+      "state": "canceled"
+    },
+    {
+      "id": 8122,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-pago2_CLEANED_2026-05-12T18-58-15-043Z",
+      "state": "canceled"
+    },
+    {
+      "id": 8123,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-pago2_CLEANED_2026-05-12T18-58-15-043Z",
+      "state": "canceled"
+    },
+    {
+      "id": 8124,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-pago3-orphan_CLEANED_2026-05-12T18-58-15-043Z",
+      "state": "canceled"
+    },
+    {
+      "id": 8125,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-pago3-orphan_retry_CLEANED_2026-05-12T18-58-15-043Z",
+      "state": "canceled"
+    },
+    {
+      "id": 8126,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-1_CLEANED_2026-05-12T18-58-15-043Z",
+      "state": "canceled"
+    },
+    {
+      "id": 8127,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-2_CLEANED_2026-05-12T18-58-15-043Z",
+      "state": "canceled"
+    },
+    {
+      "id": 8128,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-3_CLEANED_2026-05-12T18-58-15-043Z",
+      "state": "canceled"
+    },
+    {
+      "id": 8129,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-4_CLEANED_2026-05-12T18-58-15-043Z",
+      "state": "canceled"
+    },
+    {
+      "id": 8130,
+      "name": "TEST_AROUNDA_2026-05-12_spike9-0b-pago-e5-5_CLEANED_2026-05-12T18-58-15-043Z",
+      "state": "canceled"
+    }
+  ],
+  "finalStateCounts": {
+    "canceled": 10
+  }
+}

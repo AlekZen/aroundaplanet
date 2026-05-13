@@ -127,16 +127,16 @@ development_status:
   # =============================================
   # Epic 9: Sync Bidireccional de Pagos (9 stories: 2 spikes + 7 features)
   # =============================================
-  epic-9: in-progress
+  epic-9: in-progress  # 5/9 done (sesión 36 2026-05-12)
   9-0a-spike-documents-res-id: done
-  9-0b-spike-idempotencia-2call: ready-for-dev
-  9-1-reconciliacion-retroactiva-dedup-odoo: ready-for-dev  # PARTE A + PARTE B consolidadas (2026-05-12) tras confirmar custom fields existen en Odoo prod
+  9-0b-spike-idempotencia-2call: done  # patrón invertido validado, snippet code-ready
+  9-1-reconciliacion-retroactiva-dedup-odoo: done  # 5 commits (9367080+d4bd035+88c54c6+9a5a475+948fcb6) PARTE A+B browser smoke verified
   9-1a-reconciliacion-retroactiva-firestore-odoo: superseded  # consolidada en 9-1
   9-1b-dedup-interno-odoo: superseded  # consolidada en 9-1 (decisión: x_dup_status selection en lugar de tags)
-  9-2-push-firestore-odoo-idempotente: backlog
-  9-3-pull-odoo-firestore-mirror: backlog
-  9-4-documents-attachment-individual: backlog
-  9-5-folder-dedup-odoo-documents: backlog
-  9-6-ux-admin-sync-conflictos: backlog
-  9-7-schema-zod-studio-runbook: done
+  9-2-push-firestore-odoo-idempotente: done  # 2026-05-12 smoke verificado: Felipe RUBIO $5,000 → Odoo account.payment 8134 state=draft, idempotencia 409 ALREADY_SYNCED, badge UI Synced #8134·Bank
+  9-3-pull-odoo-firestore-mirror: backlog  # SIGUIENTE recomendado para completar bidireccionalidad
+  9-4-documents-attachment-individual: backlog  # depende solo del spike 9.0a (done)
+  9-5-folder-dedup-odoo-documents: backlog  # sin deps, 26 clusters de carpetas
+  9-6-ux-admin-sync-conflictos: backlog  # depende de 9.3
+  9-7-schema-zod-studio-runbook: done  # custom fields creados via XML-RPC subagente (no Paloma): x_firebase_payment_id, x_firebase_agent_uid, x_ocr_confidence, x_canonical_payment_id, x_dup_status
   epic-9-retrospective: optional
