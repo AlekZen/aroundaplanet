@@ -21,7 +21,7 @@ import {
   PAYMENT_STATUS_LABELS, PAYMENT_METHOD_LABELS,
   type PaymentStatus, type PaymentMethod, type OdooSyncStatus,
 } from '@/schemas/paymentSchema'
-import { OdooSyncBadge } from '@/components/payments/OdooSyncBadge'
+import { SyncStatusBadge } from '@/components/payments/SyncStatusBadge'
 
 interface PaymentItem {
   id: string
@@ -53,7 +53,9 @@ interface PaymentItem {
   odooPaymentId: number | null
   odooSyncStatus: OdooSyncStatus | null
   odooJournalName: string | null
+  odooSyncedAt: string | null
   odooLastError: string | null
+  odooSyncDismissedReason: string | null
   createdAt: string | null
   updatedAt: string | null
 }
@@ -305,11 +307,9 @@ export function VerificationPanel() {
                         {formatCurrency(payment.amountCents)} · {PAYMENT_METHOD_LABELS[payment.paymentMethod]} · {formatDate(payment.date)}
                       </p>
                       {payment.status === 'verified' && (
-                        <OdooSyncBadge
-                          status={payment.odooSyncStatus}
-                          odooPaymentId={payment.odooPaymentId}
-                          odooJournalName={payment.odooJournalName}
-                          odooLastError={payment.odooLastError}
+                        <SyncStatusBadge
+                          payment={payment}
+                          paymentId={payment.id}
                           className="mt-1"
                         />
                       )}
@@ -494,11 +494,9 @@ export function VerificationPanel() {
                     Verificado el {formatDate(selectedPayment.verifiedAt)}
                   </div>
                   <div className="flex items-center justify-between gap-2">
-                    <OdooSyncBadge
-                      status={selectedPayment.odooSyncStatus}
-                      odooPaymentId={selectedPayment.odooPaymentId}
-                      odooJournalName={selectedPayment.odooJournalName}
-                      odooLastError={selectedPayment.odooLastError}
+                    <SyncStatusBadge
+                      payment={selectedPayment}
+                      paymentId={selectedPayment.id}
                     />
                     {(selectedPayment.odooSyncStatus === 'error' || selectedPayment.odooSyncStatus === 'orphan') && (
                       <Button

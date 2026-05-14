@@ -769,4 +769,32 @@ describe('AC8 — pull-payments core (Story 9.3)', () => {
     const amountConflict = build.conflicts.find((c) => c.field === 'amount')
     expect(amountConflict).toBeUndefined()
   })
+
+  it('16. Guard dismissed: pago con odooSyncStatus=dismissed → outcome=skipped sin mirror ni conflicts (Story 9.6 F1)', async () => {
+    // Sembrar doc con status dismissed
+    setDoc('payments/fsIdDismissed', {
+      odooSyncStatus: 'dismissed',
+      odooSyncDismissedReason: 'Duplicado confirmado manual',
+      status: 'verified',
+      amountCents: 500000,
+    })
+
+    const odooRow = makeOdooRow({
+      id: 9999,
+      x_firebase_payment_id: 'fsIdDismissed',
+      write_date: '2026-05-14 13:00:00',
+    })
+
+    const result = await processOdooPayment(odooRow, makeCtx())
+
+    expect(result.outcome).toBe('skipped')
+    expect(result.reason).toBe('dismissed')
+    expect(result.conflicts).toBe(0)
+    expect(result.alertCreated).toBe(false)
+    // No debe haberse creado ningún conflicto
+    expect(mockConfDocSet).not.toHaveBeenCalled()
+    // El doc no debe haber sido modificado (status dismissed intacto)
+    const docData = docStore.get('payments/fsIdDismissed')
+    expect(docData?.odooSyncStatus).toBe('dismissed')
+  })
 })

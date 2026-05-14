@@ -113,6 +113,7 @@ export const ODOO_SYNC_STATUSES = [
   'error',
   'orphan',
   'legacy_linked',
+  'dismissed',
 ] as const
 
 export type OdooSyncStatus = (typeof ODOO_SYNC_STATUSES)[number]
@@ -207,6 +208,11 @@ export const paymentOdooSyncSchema = z.object({
   odooLastError: z.string().max(2000).nullable().optional(),
   syncRetryCount: z.number().int().min(0).optional(),
 
+  // === Dismissed (Story 9.6) ===
+  odooSyncDismissedAt: lwwTimestamp.nullable().optional(),
+  odooSyncDismissedBy: z.string().max(128).nullable().optional(),
+  odooSyncDismissedReason: z.string().max(500).nullable().optional(),
+
   // === Reconciliación retroactiva (Story 9.1) ===
   linkedAt: lwwTimestamp.nullable().optional(),
   linkedBy: z.string().max(128).nullable().optional(),
@@ -248,6 +254,13 @@ export const paymentOdooSyncSchema = z.object({
     {
       message: 'odooReconciled=true requiere al menos un odooReconciledInvoiceIds',
       path: ['odooReconciledInvoiceIds'],
+    },
+  )
+  .refine(
+    (d) => d.odooSyncStatus !== 'dismissed' || (d.odooSyncDismissedReason ?? '').length >= 5,
+    {
+      message: 'odooSyncStatus="dismissed" requiere odooSyncDismissedReason (min 5 chars)',
+      path: ['odooSyncDismissedReason'],
     },
   )
 
@@ -326,6 +339,11 @@ export const PAYMENT_FIELD_OWNERSHIP = {
   odooSyncedAt: 'bridge',
   odooLastError: 'bridge',
   syncRetryCount: 'bridge',
+
+  // Dismissed metadata (bridge — Story 9.6)
+  odooSyncDismissedAt: 'bridge',
+  odooSyncDismissedBy: 'bridge',
+  odooSyncDismissedReason: 'bridge',
 } as const satisfies Record<string, FieldOwnership>
 
 export type PaymentFieldName = keyof typeof PAYMENT_FIELD_OWNERSHIP

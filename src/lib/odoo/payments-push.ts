@@ -257,6 +257,8 @@ export interface SyncedPaymentDoc {
   agentId?: string | null
   orderId?: string | null
   ocrResult?: { confidence?: number | null } | null
+  /** Estado del sync — si 'dismissed' el push se skipea sin throw. */
+  odooSyncStatus?: string | null
 }
 
 export interface SyncVerifiedPaymentResult {
@@ -275,6 +277,11 @@ export async function syncVerifiedPaymentToOdoo(
   firestoreId: string,
   paymentData: SyncedPaymentDoc,
 ): Promise<SyncVerifiedPaymentResult> {
+  // Guard: pagos dismissed no se pushean (Story 9.6 F1).
+  if (paymentData.odooSyncStatus === 'dismissed') {
+    return { status: 'error', isNew: false, orphan: false, error: 'dismissed', retryable: false }
+  }
+
   const paymentRef = getFirestoreInstance().collection(PAYMENTS_COLLECTION).doc(firestoreId)
 
   try {

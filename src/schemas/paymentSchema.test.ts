@@ -473,6 +473,36 @@ describe('paymentSchema', () => {
       })
       expect(result.success).toBe(true)
     })
+
+    // Story 9.6 F1 — dismissed refine
+    it('acepta odooSyncStatus=dismissed con odooSyncDismissedReason válida', () => {
+      const result = paymentOdooSyncSchema.safeParse({
+        odooSyncStatus: 'dismissed',
+        odooSyncDismissedReason: 'Pago duplicado confirmado',
+        odooSyncDismissedBy: 'paloma@aroundaplanet.com',
+        odooSyncDismissedAt: new Date(),
+      })
+      expect(result.success).toBe(true)
+    })
+
+    it('rechaza odooSyncStatus=dismissed sin odooSyncDismissedReason (o < 5 chars)', () => {
+      const sinReason = paymentOdooSyncSchema.safeParse({
+        odooSyncStatus: 'dismissed',
+      })
+      expect(sinReason.success).toBe(false)
+      expect(
+        sinReason.error?.issues.some((i) => i.path.includes('odooSyncDismissedReason')),
+      ).toBe(true)
+
+      const corta = paymentOdooSyncSchema.safeParse({
+        odooSyncStatus: 'dismissed',
+        odooSyncDismissedReason: 'ok',
+      })
+      expect(corta.success).toBe(false)
+      expect(
+        corta.error?.issues.some((i) => i.path.includes('odooSyncDismissedReason')),
+      ).toBe(true)
+    })
   })
 
   describe('PAYMENT_FIELD_OWNERSHIP matrix', () => {

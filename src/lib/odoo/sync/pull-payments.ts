@@ -491,6 +491,18 @@ export async function processOdooPayment(
   }
 
   const prevData = docSnap.data() ?? {}
+
+  // Guard: pagos dismissed se skipean sin escribir mirror ni encolar conflictos (Story 9.6 F1).
+  if (prevData.odooSyncStatus === 'dismissed') {
+    return {
+      outcome: 'skipped',
+      firestoreId: resolved.firestoreId,
+      conflicts: 0,
+      alertCreated: false,
+      reason: 'dismissed',
+    }
+  }
+
   const prev: FirestorePaymentSnapshot = {
     id: resolved.firestoreId,
     odooPaymentId: prevData.odooPaymentId ?? null,

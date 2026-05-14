@@ -168,7 +168,9 @@ export async function GET(request: NextRequest) {
         odooPaymentId: d.odooPaymentId ?? null,
         odooSyncStatus: d.odooSyncStatus ?? null,
         odooJournalName: d.odooJournalName ?? null,
+        odooSyncedAt: d.odooSyncedAt?.toDate?.()?.toISOString() ?? (typeof d.odooSyncedAt === 'string' ? d.odooSyncedAt : null),
         odooLastError: d.odooLastError ?? null,
+        odooSyncDismissedReason: d.odooSyncDismissedReason ?? null,
         createdAt: d.createdAt?.toDate?.()?.toISOString() ?? null,
         updatedAt: d.updatedAt?.toDate?.()?.toISOString() ?? null,
       }

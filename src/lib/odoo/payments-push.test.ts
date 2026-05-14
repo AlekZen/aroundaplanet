@@ -280,6 +280,19 @@ describe('syncVerifiedPaymentToOdoo', () => {
     )
   })
 
+  it('pago con odooSyncStatus=dismissed → skipped sin llamar Odoo ni Firestore (Story 9.6 F1)', async () => {
+    const result = await syncVerifiedPaymentToOdoo('pay-dismissed', {
+      ...paymentData,
+      odooSyncStatus: 'dismissed',
+    })
+    expect(result.status).toBe('error')
+    expect(result.error).toBe('dismissed')
+    expect(result.retryable).toBe(false)
+    // No debe haber llamadas a Odoo ni a Firestore
+    expect(mockSearchRead).not.toHaveBeenCalled()
+    expect(mockSet).not.toHaveBeenCalled()
+  })
+
   it('transient error en payment.create → status error, retryable=true', async () => {
     mockSearchRead.mockResolvedValueOnce([{ id: 4314 }])
     mockSearchRead.mockResolvedValueOnce([{ id: 13, name: 'Bank' }])

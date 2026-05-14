@@ -155,6 +155,13 @@
         { "fieldPath": "status", "order": "ASCENDING" },
         { "fieldPath": "createdAt", "order": "DESCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "paymentConflicts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "resolvedAt", "order": "DESCENDING" }
+      ]
     }
   ],
   "fieldOverrides": [
