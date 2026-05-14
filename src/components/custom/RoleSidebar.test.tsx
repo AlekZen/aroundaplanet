@@ -24,6 +24,8 @@ vi.mock('@/components/ui/sidebar', () => ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   SidebarGroupContent: ({ children }: any) => <div>{children}</div>,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  SidebarGroupLabel: ({ children }: any) => <div data-testid="sidebar-group-label">{children}</div>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   SidebarHeader: ({ children, className }: any) => <div className={className}>{children}</div>,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   SidebarMenu: ({ children }: any) => <ul>{children}</ul>,
@@ -127,6 +129,16 @@ describe('RoleSidebar', () => {
     expect(screen.getByText('Mi Perfil')).toBeInTheDocument()
     // No debe tener items fantasma
     expect(screen.queryByText('Pagos')).not.toBeInTheDocument()
+  })
+
+  it('renders grouped section labels for admin', () => {
+    mockUsePathname.mockReturnValue('/admin/dashboard')
+    render(<RoleSidebar roles={['admin']} />)
+    const labels = screen.getAllByTestId('sidebar-group-label').map((el) => el.textContent)
+    expect(labels).toContain('General')
+    expect(labels).toContain('Operacion diaria')
+    expect(labels).toContain('Sincronizacion con Odoo')
+    expect(labels).toContain('Catalogo')
   })
 
   it('renders superadmin sections correctly with Verificacion', () => {

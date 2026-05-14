@@ -9,6 +9,7 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuItem,
@@ -19,68 +20,163 @@ import { RoleSwitcher } from '@/components/custom/RoleSwitcher'
 import { staggerChildren } from '@/lib/animations/variants'
 import { spring } from '@/lib/animations/transitions'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
-import { LayoutDashboard, CreditCard, BarChart3, Shield, UserCircle, RefreshCw, Map, Users, Plane, Contact, UserCheck, DollarSign, FileText, Link2, Copy } from 'lucide-react'
+import { LayoutDashboard, CreditCard, BarChart3, Shield, UserCircle, RefreshCw, Map as MapIcon, Users, Plane, Contact, UserCheck, DollarSign, FileText, Link2, Copy } from 'lucide-react'
 
 interface RoleSidebarProps {
   roles: string[]
   className?: string
 }
 
-const SECTIONS_BY_ROLE: Record<string, Array<{ id: string; label: string; icon: React.ReactNode; href: string }>> = {
+type SidebarItem = { id: string; label: string; icon: React.ReactNode; href: string }
+type SidebarGroupDef = { id: string; label: string; items: SidebarItem[] }
+
+const GROUPS_BY_ROLE: Record<string, SidebarGroupDef[]> = {
   admin: [
-    { id: 'dashboard', label: 'Panel', icon: <LayoutDashboard className="h-5 w-5" />, href: '/admin/dashboard' },
-    { id: 'leads', label: 'Leads', icon: <Users className="h-5 w-5" />, href: '/admin/leads' },
-    { id: 'verification', label: 'Verificacion', icon: <CreditCard className="h-5 w-5" />, href: '/admin/verification' },
-    { id: 'reconciliation', label: 'Reconciliacion', icon: <Link2 className="h-5 w-5" />, href: '/admin/payments/reconciliation' },
-    { id: 'sync-console', label: 'Consola de Sync', icon: <RefreshCw className="h-5 w-5" />, href: '/admin/payments/sync-console' },
-    { id: 'duplicates', label: 'Duplicados Odoo', icon: <Copy className="h-5 w-5" />, href: '/admin/odoo/duplicates' },
-    { id: 'commissions', label: 'Comisiones', icon: <DollarSign className="h-5 w-5" />, href: '/admin/commissions' },
-    { id: 'trips', label: 'Viajes', icon: <Map className="h-5 w-5" />, href: '/admin/trips' },
-    { id: 'documents', label: 'Documentos', icon: <FileText className="h-5 w-5" />, href: '/admin/documents' },
-    { id: 'odoo-sync', label: 'Sync Odoo', icon: <RefreshCw className="h-5 w-5" />, href: '/admin/odoo-sync' },
-    { id: 'admin-my-trips', label: 'Mis Viajes', icon: <Plane className="h-5 w-5" />, href: '/admin/my-trips' },
-    { id: 'admin-profile', label: 'Mi Perfil', icon: <UserCircle className="h-5 w-5" />, href: '/admin/profile' },
+    {
+      id: 'general',
+      label: 'General',
+      items: [
+        { id: 'dashboard', label: 'Panel', icon: <LayoutDashboard className="h-5 w-5" />, href: '/admin/dashboard' },
+        { id: 'admin-my-trips', label: 'Mis Viajes', icon: <Plane className="h-5 w-5" />, href: '/admin/my-trips' },
+        { id: 'admin-profile', label: 'Mi Perfil', icon: <UserCircle className="h-5 w-5" />, href: '/admin/profile' },
+      ],
+    },
+    {
+      id: 'operacion',
+      label: 'Operacion diaria',
+      items: [
+        { id: 'leads', label: 'Leads', icon: <Users className="h-5 w-5" />, href: '/admin/leads' },
+        { id: 'verification', label: 'Verificacion', icon: <CreditCard className="h-5 w-5" />, href: '/admin/verification' },
+        { id: 'commissions', label: 'Comisiones', icon: <DollarSign className="h-5 w-5" />, href: '/admin/commissions' },
+      ],
+    },
+    {
+      id: 'sync-odoo',
+      label: 'Sincronizacion con Odoo',
+      items: [
+        { id: 'reconciliation', label: 'Reconciliacion', icon: <Link2 className="h-5 w-5" />, href: '/admin/payments/reconciliation' },
+        { id: 'sync-console', label: 'Consola de Sync', icon: <RefreshCw className="h-5 w-5" />, href: '/admin/payments/sync-console' },
+        { id: 'duplicates', label: 'Duplicados Odoo', icon: <Copy className="h-5 w-5" />, href: '/admin/odoo/duplicates' },
+        { id: 'odoo-sync', label: 'Sync Odoo', icon: <RefreshCw className="h-5 w-5" />, href: '/admin/odoo-sync' },
+      ],
+    },
+    {
+      id: 'catalogo',
+      label: 'Catalogo',
+      items: [
+        { id: 'trips', label: 'Viajes', icon: <MapIcon className="h-5 w-5" />, href: '/admin/trips' },
+        { id: 'documents', label: 'Documentos', icon: <FileText className="h-5 w-5" />, href: '/admin/documents' },
+      ],
+    },
   ],
   director: [
-    { id: 'dashboard', label: 'Dashboard', icon: <BarChart3 className="h-5 w-5" />, href: '/director/dashboard' },
-    { id: 'trips', label: 'Viajes', icon: <Map className="h-5 w-5" />, href: '/director/trips' },
-    { id: 'odoo-sync', label: 'Sync Odoo', icon: <RefreshCw className="h-5 w-5" />, href: '/director/odoo-sync' },
-    { id: 'director-my-trips', label: 'Mis Viajes', icon: <Plane className="h-5 w-5" />, href: '/director/my-trips' },
-    { id: 'director-profile', label: 'Mi Perfil', icon: <UserCircle className="h-5 w-5" />, href: '/director/profile' },
+    {
+      id: 'general',
+      label: 'General',
+      items: [
+        { id: 'dashboard', label: 'Dashboard', icon: <BarChart3 className="h-5 w-5" />, href: '/director/dashboard' },
+        { id: 'director-my-trips', label: 'Mis Viajes', icon: <Plane className="h-5 w-5" />, href: '/director/my-trips' },
+        { id: 'director-profile', label: 'Mi Perfil', icon: <UserCircle className="h-5 w-5" />, href: '/director/profile' },
+      ],
+    },
+    {
+      id: 'sync-odoo',
+      label: 'Sincronizacion con Odoo',
+      items: [
+        { id: 'odoo-sync', label: 'Sync Odoo', icon: <RefreshCw className="h-5 w-5" />, href: '/director/odoo-sync' },
+      ],
+    },
+    {
+      id: 'catalogo',
+      label: 'Catalogo',
+      items: [
+        { id: 'trips', label: 'Viajes', icon: <MapIcon className="h-5 w-5" />, href: '/director/trips' },
+      ],
+    },
   ],
   agente: [
-    { id: 'dashboard', label: 'Mi Negocio', icon: <LayoutDashboard className="h-5 w-5" />, href: '/agent/dashboard' },
-    { id: 'agent-clients', label: 'Mis Clientes', icon: <UserCheck className="h-5 w-5" />, href: '/agent/clients' },
-    { id: 'agent-my-trips', label: 'Mis Viajes', icon: <Plane className="h-5 w-5" />, href: '/agent/my-trips' },
-    { id: 'agent-profile', label: 'Mi Perfil', icon: <UserCircle className="h-5 w-5" />, href: '/agent/profile' },
+    {
+      id: 'general',
+      label: 'General',
+      items: [
+        { id: 'dashboard', label: 'Mi Negocio', icon: <LayoutDashboard className="h-5 w-5" />, href: '/agent/dashboard' },
+        { id: 'agent-clients', label: 'Mis Clientes', icon: <UserCheck className="h-5 w-5" />, href: '/agent/clients' },
+        { id: 'agent-my-trips', label: 'Mis Viajes', icon: <Plane className="h-5 w-5" />, href: '/agent/my-trips' },
+        { id: 'agent-profile', label: 'Mi Perfil', icon: <UserCircle className="h-5 w-5" />, href: '/agent/profile' },
+      ],
+    },
   ],
   superadmin: [
-    { id: 'users', label: 'Usuarios', icon: <Shield className="h-5 w-5" />, href: '/superadmin/users' },
-    { id: 'agents', label: 'Agentes', icon: <Contact className="h-5 w-5" />, href: '/superadmin/agents' },
-    { id: 'clients', label: 'Clientes', icon: <UserCheck className="h-5 w-5" />, href: '/superadmin/clients' },
-    { id: 'leads', label: 'Leads', icon: <Users className="h-5 w-5" />, href: '/superadmin/leads' },
-    { id: 'verification', label: 'Verificacion', icon: <CreditCard className="h-5 w-5" />, href: '/superadmin/verification' },
-    { id: 'reconciliation', label: 'Reconciliacion', icon: <Link2 className="h-5 w-5" />, href: '/admin/payments/reconciliation' },
-    { id: 'sync-console', label: 'Consola de Sync', icon: <RefreshCw className="h-5 w-5" />, href: '/admin/payments/sync-console' },
-    { id: 'duplicates', label: 'Duplicados Odoo', icon: <Copy className="h-5 w-5" />, href: '/admin/odoo/duplicates' },
-    { id: 'commissions', label: 'Comisiones', icon: <DollarSign className="h-5 w-5" />, href: '/superadmin/commissions' },
-    { id: 'trips', label: 'Viajes', icon: <Map className="h-5 w-5" />, href: '/superadmin/trips' },
-    { id: 'documents', label: 'Documentos', icon: <FileText className="h-5 w-5" />, href: '/superadmin/documents' },
-    { id: 'odoo-sync', label: 'Sync Odoo', icon: <RefreshCw className="h-5 w-5" />, href: '/superadmin/odoo-sync' },
-    { id: 'superadmin-my-trips', label: 'Mis Viajes', icon: <Plane className="h-5 w-5" />, href: '/superadmin/my-trips' },
-    { id: 'superadmin-profile', label: 'Mi Perfil', icon: <UserCircle className="h-5 w-5" />, href: '/superadmin/profile' },
+    {
+      id: 'general',
+      label: 'General',
+      items: [
+        { id: 'superadmin-my-trips', label: 'Mis Viajes', icon: <Plane className="h-5 w-5" />, href: '/superadmin/my-trips' },
+        { id: 'superadmin-profile', label: 'Mi Perfil', icon: <UserCircle className="h-5 w-5" />, href: '/superadmin/profile' },
+      ],
+    },
+    {
+      id: 'administracion',
+      label: 'Administracion',
+      items: [
+        { id: 'users', label: 'Usuarios', icon: <Shield className="h-5 w-5" />, href: '/superadmin/users' },
+        { id: 'agents', label: 'Agentes', icon: <Contact className="h-5 w-5" />, href: '/superadmin/agents' },
+        { id: 'clients', label: 'Clientes', icon: <UserCheck className="h-5 w-5" />, href: '/superadmin/clients' },
+      ],
+    },
+    {
+      id: 'operacion',
+      label: 'Operacion diaria',
+      items: [
+        { id: 'leads', label: 'Leads', icon: <Users className="h-5 w-5" />, href: '/superadmin/leads' },
+        { id: 'verification', label: 'Verificacion', icon: <CreditCard className="h-5 w-5" />, href: '/superadmin/verification' },
+        { id: 'commissions', label: 'Comisiones', icon: <DollarSign className="h-5 w-5" />, href: '/superadmin/commissions' },
+      ],
+    },
+    {
+      id: 'sync-odoo',
+      label: 'Sincronizacion con Odoo',
+      items: [
+        { id: 'reconciliation', label: 'Reconciliacion', icon: <Link2 className="h-5 w-5" />, href: '/admin/payments/reconciliation' },
+        { id: 'sync-console', label: 'Consola de Sync', icon: <RefreshCw className="h-5 w-5" />, href: '/admin/payments/sync-console' },
+        { id: 'duplicates', label: 'Duplicados Odoo', icon: <Copy className="h-5 w-5" />, href: '/admin/odoo/duplicates' },
+        { id: 'odoo-sync', label: 'Sync Odoo', icon: <RefreshCw className="h-5 w-5" />, href: '/superadmin/odoo-sync' },
+      ],
+    },
+    {
+      id: 'catalogo',
+      label: 'Catalogo',
+      items: [
+        { id: 'trips', label: 'Viajes', icon: <MapIcon className="h-5 w-5" />, href: '/superadmin/trips' },
+        { id: 'documents', label: 'Documentos', icon: <FileText className="h-5 w-5" />, href: '/superadmin/documents' },
+      ],
+    },
   ],
 }
 
 export function RoleSidebar({ roles, className }: RoleSidebarProps) {
   const pathname = usePathname()
-  const allSections = roles.flatMap((role) => SECTIONS_BY_ROLE[role] ?? [])
-  const seen = new Set<string>()
-  const sections = allSections.filter((s) => {
-    if (seen.has(s.href)) return false
-    seen.add(s.href)
-    return true
-  })
+
+  const groupsMap = new Map<string, SidebarGroupDef>()
+  const seenHrefs = new Set<string>()
+  for (const role of roles) {
+    const roleGroups = GROUPS_BY_ROLE[role] ?? []
+    for (const group of roleGroups) {
+      const items = group.items.filter((item) => {
+        if (seenHrefs.has(item.href)) return false
+        seenHrefs.add(item.href)
+        return true
+      })
+      if (items.length === 0) continue
+      const existing = groupsMap.get(group.id)
+      if (existing) {
+        existing.items = [...existing.items, ...items]
+      } else {
+        groupsMap.set(group.id, { id: group.id, label: group.label, items })
+      }
+    }
+  }
+  const groups = Array.from(groupsMap.values())
   const variants = useReducedMotion(staggerChildren)
 
   return (
@@ -92,27 +188,30 @@ export function RoleSidebar({ roles, className }: RoleSidebarProps) {
         </div>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <motion.div variants={variants} initial="hidden" animate="visible" transition={spring}>
-              <SidebarMenu>
-                {sections.map((section) => {
-                  const isActive = pathname === section.href || pathname?.startsWith(section.href + '/')
-                  return (
-                    <SidebarMenuItem key={section.href}>
-                      <SidebarMenuButton asChild isActive={isActive} tooltip={section.label}>
-                        <Link href={section.href}>
-                          {section.icon}
-                          <span>{section.label}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  )
-                })}
-              </SidebarMenu>
-            </motion.div>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <motion.div variants={variants} initial="hidden" animate="visible" transition={spring}>
+          {groups.map((group) => (
+            <SidebarGroup key={group.id}>
+              <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {group.items.map((item) => {
+                    const isActive = pathname === item.href || pathname?.startsWith(item.href + '/')
+                    return (
+                      <SidebarMenuItem key={item.href}>
+                        <SidebarMenuButton asChild isActive={isActive} tooltip={item.label}>
+                          <Link href={item.href}>
+                            {item.icon}
+                            <span>{item.label}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    )
+                  })}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          ))}
+        </motion.div>
       </SidebarContent>
       <SidebarFooter className="border-t border-sidebar-border p-2 space-y-2">
         <div className="group-data-[collapsible=icon]:hidden">
