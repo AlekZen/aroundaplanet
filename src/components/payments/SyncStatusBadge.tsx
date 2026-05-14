@@ -34,8 +34,14 @@ export interface SyncStatusBadgeProps {
     verifiedAt?: AnyTimestamp
     status?: string
   }
-  /** paymentId para links a sync-console (opcional; sin él el link no renderiza) */
+  /** paymentId para links de CTA (opcional; sin él el link no renderiza) */
   paymentId?: string
+  /**
+   * Href destino del link cuando showConsoleLink=true.
+   * Default: sync-console con anchor del pago.
+   * Pasar `/admin/verification/{id}` para ir directo al detalle del pago.
+   */
+  verificationHref?: string
   className?: string
 }
 
@@ -131,13 +137,15 @@ function deriveState(payment: SyncStatusBadgeProps['payment']): {
   }
 }
 
-export function SyncStatusBadge({ payment, paymentId, className }: SyncStatusBadgeProps) {
+export function SyncStatusBadge({ payment, paymentId, verificationHref, className }: SyncStatusBadgeProps) {
   const state = deriveState(payment)
   if (!state) return null
 
-  const consoleHref = paymentId
-    ? `/admin/payments/sync-console#queue?paymentId=${paymentId}`
-    : '/admin/payments/sync-console#queue'
+  const consoleHref =
+    verificationHref ??
+    (paymentId
+      ? `/admin/payments/sync-console#queue?paymentId=${paymentId}`
+      : '/admin/payments/sync-console#queue')
 
   const badge = (
     <Badge

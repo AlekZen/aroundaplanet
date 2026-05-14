@@ -27,7 +27,9 @@ const mockPayments = [
     id: 'pay001',
     clientName: 'María García',
     clientPhone: '3318001234',
-    amount: 500000,
+    amountCents: 500000,
+    tripName: 'ASIA MAYO 2026',
+    bankReference: 'BNET01002604240032176776',
     paymentMethod: 'transfer',
     // Legacy: sin odooSyncStatus (verificado antes de Story 9.2)
     odooSyncStatus: null,
@@ -39,9 +41,10 @@ const mockPayments = [
   },
   {
     id: 'pay002',
-    clientName: 'Carlos López',
+    agentName: 'PAGOS AROUNDAPLANET',
     clientPhone: null,
-    amount: 145000000,
+    amountCents: 145000000,
+    tripName: 'VUELTA AL MUNDO 33.8',
     paymentMethod: 'cash',
     odooSyncStatus: 'error',
     odooLastError: 'XML-RPC timeout after 30s al intentar create en Odoo prod',
@@ -57,7 +60,7 @@ const dismissedPayment = {
   id: 'pay003',
   clientName: 'Descartado',
   clientPhone: null,
-  amount: 10000,
+  amountCents: 10000,
   paymentMethod: 'cash',
   odooSyncStatus: 'dismissed',
   odooLastError: null,
@@ -92,7 +95,8 @@ describe('PushQueueTable', () => {
   it('renderiza 2 rows con los pagos mock', () => {
     render(<PushQueueTable />)
     expect(screen.getByText('María García')).toBeInTheDocument()
-    expect(screen.getByText('Carlos López')).toBeInTheDocument()
+    // pay002 no tiene clientName — usa agentName como fallback
+    expect(screen.getByText('PAGOS AROUNDAPLANET')).toBeInTheDocument()
   })
 
   it('muestra SyncStatusBadge para cada pago', () => {
@@ -103,10 +107,11 @@ describe('PushQueueTable', () => {
 
   it('muestra columnas de la tabla', () => {
     render(<PushQueueTable />)
-    expect(screen.getByText('Cliente')).toBeInTheDocument()
+    expect(screen.getByText('Pago')).toBeInTheDocument()
     expect(screen.getByText('Monto')).toBeInTheDocument()
     expect(screen.getByText('Método')).toBeInTheDocument()
-    expect(screen.getByText('Status')).toBeInTheDocument()
+    expect(screen.getByText('Estado')).toBeInTheDocument()
+    expect(screen.getByText('Verificado')).toBeInTheDocument()
     expect(screen.getByText('Último error')).toBeInTheDocument()
     expect(screen.getByText('Reintentos')).toBeInTheDocument()
     expect(screen.getByText('Acciones')).toBeInTheDocument()
@@ -208,7 +213,7 @@ describe('PushQueueTable', () => {
       return () => {}
     })
     render(<PushQueueTable />)
-    expect(screen.getByText(/Sin pagos pendientes en la cola/)).toBeInTheDocument()
+    expect(screen.getByText(/Sin pagos pendientes/)).toBeInTheDocument()
   })
 
   it('no renderiza pagos con odooPaymentId no nulo (filtro client-side)', () => {
@@ -216,7 +221,7 @@ describe('PushQueueTable', () => {
       id: 'pay004',
       clientName: 'Ya Sincronizado',
       clientPhone: null,
-      amount: 50000,
+      amountCents: 50000,
       paymentMethod: 'transfer',
       odooSyncStatus: null,
       odooLastError: null,
@@ -257,6 +262,6 @@ describe('PushQueueTable', () => {
     expect(screen.queryByText('Descartado')).not.toBeInTheDocument()
     // Los pagos no-dismissed sí aparecen
     expect(screen.getByText('María García')).toBeInTheDocument()
-    expect(screen.getByText('Carlos López')).toBeInTheDocument()
+    expect(screen.getByText('PAGOS AROUNDAPLANET')).toBeInTheDocument()
   })
 })

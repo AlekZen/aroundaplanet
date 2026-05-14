@@ -41,6 +41,7 @@ import { Label } from '@/components/ui/label'
 import { SyncStatusBadge } from '@/components/payments/SyncStatusBadge'
 import { PAYMENT_METHOD_LABELS } from '@/schemas/paymentSchema'
 import type { PaymentMethod } from '@/schemas/paymentSchema'
+import { toEpochMs } from '@/lib/odoo/sync/time'
 import type { AnyTimestamp } from '@/lib/odoo/sync/time'
 
 const db = getFirestore(firebaseApp)
@@ -57,11 +58,31 @@ function formatMoney(cents: number): string {
   }).format(cents / 100)
 }
 
+/** Convierte cualquier timestamp a "hace N días/horas/minutos" */
+function humanizeAgo(ts: AnyTimestamp | undefined): string {
+  const ms = toEpochMs(ts)
+  if (ms <= 0) return '—'
+  const diffMs = Date.now() - ms
+  const minutes = Math.floor(diffMs / 60_000)
+  if (minutes < 1) return 'hace un momento'
+  if (minutes < 60) return `hace ${minutes} min`
+  const hours = Math.floor(minutes / 60)
+  if (hours < 24) return `hace ${hours} h`
+  const days = Math.floor(hours / 24)
+  return `hace ${days} día${days !== 1 ? 's' : ''}`
+}
+
 interface QueuedPayment {
   id: string
   clientName?: string | null
   clientPhone?: string | null
-  amount?: number | null
+  agentName?: string | null
+  registeredByName?: string | null
+  tripName?: string | null
+  orderId?: string | null
+  bankName?: string | null
+  bankReference?: string | null
+  amountCents?: number | null
   paymentMethod?: string | null
   odooSyncStatus?: 'pending' | 'error' | 'dismissed' | null
   odooLastError?: string | null
@@ -76,7 +97,7 @@ interface QueuedPayment {
 
 interface DismissState {
   paymentId: string
-  clientName: string
+  displayName: string
 }
 
 // Auth via cookie de sesión (__session) — same-origin fetch la envía automáticamente.
@@ -151,9 +172,11 @@ export function PushQueueTable() {
 
   const openDismiss = useCallback((payment: QueuedPayment) => {
     setDismissReason('')
+    const displayName =
+      payment.clientName ?? payment.agentName ?? payment.registeredByName ?? payment.id
     setDismissState({
       paymentId: payment.id,
-      clientName: payment.clientName ?? payment.id,
+      displayName,
     })
   }, [])
 
@@ -203,20 +226,33 @@ export function PushQueueTable() {
   if (payments.length === 0) {
     return (
       <p className="py-4 text-center text-sm text-muted-foreground">
-        Sin pagos pendientes en la cola de sync.
+        Sin pagos pendientes — todos los pagos verificados están en Odoo (draft).
       </p>
     )
   }
 
   return (
     <>
+      {/* Contexto explicativo para equipo admin no técnico */}
+      <div className="mb-4 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+        <p className="font-medium">Pagos verificados pendientes de Odoo</p>
+        <p className="mt-1 text-xs">
+          Estos pagos ya fueron verificados en AroundaPlanet pero todavía no se registraron en
+          Odoo como borrador (draft). Reintenta el envío con &ldquo;Reintentar push&rdquo;. Si un
+          pago no debe sincronizarse (test, error), usa &ldquo;Descartar&rdquo; con un motivo.{' '}
+          <strong>Nota:</strong> &ldquo;Reintentar push&rdquo; NO publica el pago en Odoo, solo lo
+          crea como draft. Paloma sigue publicando manualmente.
+        </p>
+      </div>
+
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Cliente</TableHead>
+            <TableHead>Pago</TableHead>
             <TableHead>Monto</TableHead>
             <TableHead>Método</TableHead>
-            <TableHead>Status</TableHead>
+            <TableHead>Estado</TableHead>
+            <TableHead>Verificado</TableHead>
             <TableHead>Último error</TableHead>
             <TableHead>Reintentos</TableHead>
             <TableHead>Acciones</TableHead>
@@ -230,22 +266,40 @@ export function PushQueueTable() {
                 ? PAYMENT_METHOD_LABELS[p.paymentMethod as PaymentMethod]
                 : (p.paymentMethod ?? '—')
             const lastError = p.odooLastError ? truncate(p.odooLastError) : null
+            const displayName =
+              p.clientName ?? p.agentName ?? p.registeredByName ?? '— Sin nombre'
+            // /admin/verification no tiene ruta dinámica [id] — link a la lista
+            const verificationHref = `/admin/verification`
 
             return (
               <TableRow key={p.id}>
                 <TableCell>
-                  <span className="font-medium">{p.clientName ?? '—'}</span>
-                  {p.clientPhone ? (
-                    <span className="block text-xs text-muted-foreground">{p.clientPhone}</span>
+                  <span className="font-medium">{displayName}</span>
+                  {p.tripName ? (
+                    <span className="block text-xs text-muted-foreground">{p.tripName}</span>
+                  ) : null}
+                  {p.bankReference ? (
+                    <span
+                      className="block cursor-help text-xs text-muted-foreground"
+                      title={p.bankReference}
+                    >
+                      Ref: {p.bankReference.slice(0, 18)}{p.bankReference.length > 18 ? '…' : ''}
+                    </span>
                   ) : null}
                 </TableCell>
-                <TableCell>{p.amount != null ? formatMoney(p.amount) : '—'}</TableCell>
+                <TableCell>
+                  {p.amountCents != null ? formatMoney(p.amountCents) : '—'}
+                </TableCell>
                 <TableCell>{methodLabel}</TableCell>
                 <TableCell>
                   <SyncStatusBadge
                     payment={{ ...p, status: p.status ?? 'verified' }}
                     paymentId={p.id}
+                    verificationHref={verificationHref}
                   />
+                </TableCell>
+                <TableCell className="text-xs text-muted-foreground">
+                  {humanizeAgo(p.verifiedAt)}
                 </TableCell>
                 <TableCell>
                   {lastError ? (
@@ -277,6 +331,16 @@ export function PushQueueTable() {
                       onClick={() => openDismiss(p)}
                     >
                       Descartar
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      disabled={busy}
+                      onClick={() => {
+                        window.location.href = verificationHref
+                      }}
+                    >
+                      Ver pago
                     </Button>
                   </div>
                 </TableCell>
