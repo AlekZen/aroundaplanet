@@ -327,7 +327,8 @@ export function mapOdooToMirror(
 
   // memo
   {
-    const odooMemo = (odoo.memo ?? '').toString()
+    // Odoo XML-RPC retorna `false` para strings vacíos — NO usar `?? ''`.
+    const odooMemo = typeof odoo.memo === 'string' ? odoo.memo : ''
     const r = detectLwwConflict({
       field: 'memo',
       firestoreLww: lwwPrev.memo ?? null,
@@ -436,8 +437,10 @@ export async function resolveFirestoreDoc(
   prefetchedExtId: IrModelDataRow | undefined,
   db: Firestore = adminDb,
 ): Promise<ResolveResult> {
-  // Tier 1: x_firebase_payment_id directo
-  const customField = (odoo.x_firebase_payment_id ?? '').trim()
+  // Tier 1: x_firebase_payment_id directo.
+  // Odoo XML-RPC retorna `false` para campos string vacíos (NO string vacío). Coerce defensiva.
+  const rawCustom = odoo.x_firebase_payment_id
+  const customField = typeof rawCustom === 'string' ? rawCustom.trim() : ''
   if (customField) return { firestoreId: customField, tier: 1 }
 
   // Tier 2: ir.model.data prefetched (lookup por res_id)
@@ -630,7 +633,7 @@ export async function pullOdooPayments(
 
     // 2. Prefetch ir.model.data Tier 2
     const odooIdsWithoutCustom = allRows
-      .filter((r) => !(r.x_firebase_payment_id ?? '').trim())
+      .filter((r) => !(typeof r.x_firebase_payment_id === 'string' && r.x_firebase_payment_id.trim()))
       .map((r) => r.id)
     const extIdMap = odooIdsWithoutCustom.length
       ? await prefetchIrModelDataByResIds(client, odooIdsWithoutCustom)
