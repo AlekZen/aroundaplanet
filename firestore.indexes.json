@@ -157,19 +157,20 @@
       ]
     },
     {
-      "collectionGroup": "paymentConflicts",
-      "queryScope": "COLLECTION",
-      "fields": [
-        { "fieldPath": "resolvedAt", "order": "DESCENDING" }
-      ]
-    },
-    {
       "collectionGroup": "payments",
       "queryScope": "COLLECTION",
       "fields": [
         { "fieldPath": "status", "order": "ASCENDING" },
         { "fieldPath": "odooPaymentId", "order": "ASCENDING" },
         { "fieldPath": "verifiedAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "paymentConflicts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "resolvedAt", "order": "ASCENDING" },
+        { "fieldPath": "detectedAt", "order": "DESCENDING" }
       ]
     }
   ],
