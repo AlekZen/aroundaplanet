@@ -13,7 +13,6 @@ vi.mock('firebase/firestore', () => {
     getFirestore: vi.fn(() => ({})),
     collection: vi.fn(),
     query: vi.fn(),
-    where: vi.fn(),
     orderBy: vi.fn(),
     limit: vi.fn(),
     onSnapshot: onSnapshotMock,
@@ -23,6 +22,8 @@ vi.mock('firebase/firestore', () => {
 })
 
 import { onSnapshot, getDoc } from 'firebase/firestore'
+// Nota: `where` fue eliminado del componente — la query usa solo orderBy+limit y
+// filtra resolvedAt == null client-side para evitar el bug Web SDK con null + orderBy.
 import { ConflictsTable } from './ConflictsTable'
 
 const mockConflicts = [
@@ -113,5 +114,34 @@ describe('ConflictsTable', () => {
     })
     render(<ConflictsTable />)
     expect(screen.getByText(/Sin conflictos pendientes/)).toBeInTheDocument()
+  })
+
+  it('filtra client-side conflictos con resolvedAt no nulo', () => {
+    const resolvedConflict = {
+      paymentId: 'pay003',
+      field: 'memo',
+      firestoreValue: 'A',
+      odooValue: 'B',
+      firestoreWrittenAt: new Date().toISOString(),
+      odooWrittenAt: new Date().toISOString(),
+      detectedAt: new Date().toISOString(),
+      firestoreSource: 'firestore',
+      odooSource: 'odoo',
+      resolvedAt: new Date().toISOString(), // ya resuelto — debe filtrarse
+      conflictId: 'conflict003',
+    }
+    ;(onSnapshot as Mock).mockImplementation((_q: unknown, cb: (snap: unknown) => void) => {
+      cb({
+        docs: [...mockConflicts, resolvedConflict].map((c) => ({
+          id: c.conflictId,
+          data: () => c,
+        })),
+      })
+      return () => {}
+    })
+    render(<ConflictsTable />)
+    // Solo los 2 no-resueltos deben aparecer
+    const resolverBtns = screen.getAllByRole('button', { name: 'Resolver' })
+    expect(resolverBtns).toHaveLength(2)
   })
 })

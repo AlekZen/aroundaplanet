@@ -5,7 +5,6 @@ import {
   getFirestore,
   collection,
   query,
-  where,
   orderBy,
   limit,
   onSnapshot,
@@ -75,20 +74,24 @@ export function ConflictsTable() {
   const [selected, setSelected] = useState<ConflictDoc | null>(null)
 
   useEffect(() => {
+    // Filtramos resolvedAt == null client-side para evitar el bug del Web SDK
+    // con where(..., '==', null) + orderBy (Missing or insufficient permissions en prod).
     const q = query(
       collection(db, 'paymentConflicts'),
-      where('resolvedAt', '==', null),
       orderBy('detectedAt', 'desc'),
-      limit(100),
+      limit(200),
     )
 
     const unsub = onSnapshot(
       q,
       (snap) => {
-        const docs: ConflictDoc[] = snap.docs.map((d) => ({
-          ...(d.data() as PaymentConflict),
-          conflictId: d.id,
-        }))
+        const docs: ConflictDoc[] = snap.docs
+          .map((d) => ({
+            ...(d.data() as PaymentConflict),
+            conflictId: d.id,
+          }))
+          .filter((d) => d.resolvedAt == null)
+          .slice(0, 100)
         setConflicts(docs)
         setLoading(false)
       },

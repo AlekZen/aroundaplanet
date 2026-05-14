@@ -91,14 +91,14 @@ export function PushQueueTable() {
   const [dismissBusy, setDismissBusy] = useState(false)
 
   useEffect(() => {
-    // Query semánticamente correcta: "verified + sin odooPaymentId"
-    // Cubre casos legacy (sin odooSyncStatus), pending y error en un solo índice.
+    // Filtramos odooPaymentId == null client-side para evitar el bug del Web SDK
+    // con where(..., '==', null) + orderBy (Missing or insufficient permissions en prod).
+    // La colección es chica (decenas), sin impacto de performance.
     const q = query(
       collection(db, 'payments'),
       where('status', '==', 'verified'),
-      where('odooPaymentId', '==', null),
       orderBy('verifiedAt', 'desc'),
-      limit(100),
+      limit(200),
     )
 
     const unsub = onSnapshot(
@@ -109,8 +109,10 @@ export function PushQueueTable() {
             id: d.id,
             ...(d.data() as Omit<QueuedPayment, 'id'>),
           }))
-          // Excluir dismissed — son out-of-scope intencional
+          // Filtro client-side: sin odooPaymentId + excluir dismissed
+          .filter((p) => p.odooPaymentId == null)
           .filter((p) => p.odooSyncStatus !== 'dismissed')
+          .slice(0, 100)
         setPayments(docs)
         setLoading(false)
       },

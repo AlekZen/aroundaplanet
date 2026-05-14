@@ -211,6 +211,36 @@ describe('PushQueueTable', () => {
     expect(screen.getByText(/Sin pagos pendientes en la cola/)).toBeInTheDocument()
   })
 
+  it('no renderiza pagos con odooPaymentId no nulo (filtro client-side)', () => {
+    const syncedPayment = {
+      id: 'pay004',
+      clientName: 'Ya Sincronizado',
+      clientPhone: null,
+      amount: 50000,
+      paymentMethod: 'transfer',
+      odooSyncStatus: null,
+      odooLastError: null,
+      syncRetryCount: 0,
+      status: 'verified',
+      odooPaymentId: 8134, // ya tiene ID — debe filtrarse
+      verifiedAt: '2026-05-14T11:00:00Z',
+    }
+    ;(onSnapshot as Mock).mockImplementation(
+      (_q: unknown, cb: (snap: unknown) => void, _err?: unknown) => {
+        cb({
+          docs: [...mockPayments, syncedPayment].map((p) => ({
+            id: p.id,
+            data: () => p,
+          })),
+        })
+        return () => {}
+      },
+    )
+    render(<PushQueueTable />)
+    expect(screen.queryByText('Ya Sincronizado')).not.toBeInTheDocument()
+    expect(screen.getByText('María García')).toBeInTheDocument()
+  })
+
   it('no renderiza pagos con odooSyncStatus dismissed', () => {
     ;(onSnapshot as Mock).mockImplementation(
       (_q: unknown, cb: (snap: unknown) => void, _err?: unknown) => {

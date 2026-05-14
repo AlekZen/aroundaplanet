@@ -166,6 +166,14 @@
       ]
     },
     {
+      "collectionGroup": "payments",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "verifiedAt", "order": "DESCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "paymentConflicts",
       "queryScope": "COLLECTION",
       "fields": [
