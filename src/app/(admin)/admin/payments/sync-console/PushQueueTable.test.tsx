@@ -29,10 +29,12 @@ const mockPayments = [
     clientPhone: '3318001234',
     amount: 500000,
     paymentMethod: 'transfer',
-    odooSyncStatus: 'pending',
+    // Legacy: sin odooSyncStatus (verificado antes de Story 9.2)
+    odooSyncStatus: null,
     odooLastError: null,
     syncRetryCount: 0,
     status: 'verified',
+    odooPaymentId: null,
     verifiedAt: '2026-05-14T10:00:00Z',
   },
   {
@@ -45,9 +47,25 @@ const mockPayments = [
     odooLastError: 'XML-RPC timeout after 30s al intentar create en Odoo prod',
     syncRetryCount: 3,
     status: 'verified',
+    odooPaymentId: null,
     verifiedAt: '2026-05-13T08:00:00Z',
   },
 ]
+
+// Pago dismissed — NO debe aparecer en la tabla
+const dismissedPayment = {
+  id: 'pay003',
+  clientName: 'Descartado',
+  clientPhone: null,
+  amount: 10000,
+  paymentMethod: 'cash',
+  odooSyncStatus: 'dismissed',
+  odooLastError: null,
+  syncRetryCount: 0,
+  status: 'verified',
+  odooPaymentId: null,
+  verifiedAt: '2026-05-10T08:00:00Z',
+}
 
 beforeEach(() => {
   ;(onSnapshot as Mock).mockImplementation(
@@ -191,5 +209,24 @@ describe('PushQueueTable', () => {
     })
     render(<PushQueueTable />)
     expect(screen.getByText(/Sin pagos pendientes en la cola/)).toBeInTheDocument()
+  })
+
+  it('no renderiza pagos con odooSyncStatus dismissed', () => {
+    ;(onSnapshot as Mock).mockImplementation(
+      (_q: unknown, cb: (snap: unknown) => void, _err?: unknown) => {
+        cb({
+          docs: [...mockPayments, dismissedPayment].map((p) => ({
+            id: p.id,
+            data: () => p,
+          })),
+        })
+        return () => {}
+      },
+    )
+    render(<PushQueueTable />)
+    expect(screen.queryByText('Descartado')).not.toBeInTheDocument()
+    // Los pagos no-dismissed sí aparecen
+    expect(screen.getByText('María García')).toBeInTheDocument()
+    expect(screen.getByText('Carlos López')).toBeInTheDocument()
   })
 })

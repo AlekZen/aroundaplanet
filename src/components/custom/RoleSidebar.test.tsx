@@ -50,6 +50,7 @@ describe('RoleSidebar', () => {
     expect(screen.getByText('Panel')).toBeInTheDocument()
     expect(screen.getByText('Leads')).toBeInTheDocument()
     expect(screen.getByText('Verificacion')).toBeInTheDocument()
+    expect(screen.getByText('Consola de Sync')).toBeInTheDocument()
     expect(screen.getByText('Viajes')).toBeInTheDocument()
     expect(screen.getByText('Sync Odoo')).toBeInTheDocument()
     expect(screen.getByText('Mis Viajes')).toBeInTheDocument()
@@ -91,8 +92,8 @@ describe('RoleSidebar', () => {
     mockUsePathname.mockReturnValue('/admin/verification')
     render(<RoleSidebar roles={['admin']} />)
     const buttons = document.querySelectorAll('[data-active="false"]')
-    // Admin tiene 11 items (9 + reconciliacion + duplicates), 1 activo = 10 inactivos
-    expect(buttons.length).toBe(10)
+    // Admin tiene 12 items (9 + reconciliacion + sync-console + duplicates), 1 activo = 11 inactivos
+    expect(buttons.length).toBe(11)
   })
 
   it('renders combined sections for multiple roles', () => {
@@ -134,6 +135,7 @@ describe('RoleSidebar', () => {
     expect(screen.getByText('Usuarios')).toBeInTheDocument()
     expect(screen.getByText('Leads')).toBeInTheDocument()
     expect(screen.getByText('Verificacion')).toBeInTheDocument()
+    expect(screen.getByText('Consola de Sync')).toBeInTheDocument()
     expect(screen.getByText('Viajes')).toBeInTheDocument()
     expect(screen.getByText('Sync Odoo')).toBeInTheDocument()
     expect(screen.getByText('Mis Viajes')).toBeInTheDocument()

@@ -31,10 +31,12 @@ export default async function SyncConsolePage() {
     .get()
   const conflictsCount = conflictsSnap.data().count
 
-  // Count cola de push (pending + error)
+  // Count cola de push: verified + sin odooPaymentId (alineado con PushQueueTable).
+  // Puede over-contar dismissed (raro) — aceptable para KPI de cabecera.
   const pushQueueSnap = await adminDb
     .collection('payments')
-    .where('odooSyncStatus', 'in', ['pending', 'error'])
+    .where('status', '==', 'verified')
+    .where('odooPaymentId', '==', null)
     .count()
     .get()
   const pushQueueCount = pushQueueSnap.data().count

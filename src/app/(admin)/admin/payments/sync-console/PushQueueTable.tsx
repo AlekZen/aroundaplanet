@@ -63,7 +63,7 @@ interface QueuedPayment {
   clientPhone?: string | null
   amount?: number | null
   paymentMethod?: string | null
-  odooSyncStatus?: 'pending' | 'error' | null
+  odooSyncStatus?: 'pending' | 'error' | 'dismissed' | null
   odooLastError?: string | null
   syncRetryCount?: number | null
   verifiedAt?: AnyTimestamp
@@ -91,9 +91,12 @@ export function PushQueueTable() {
   const [dismissBusy, setDismissBusy] = useState(false)
 
   useEffect(() => {
+    // Query semánticamente correcta: "verified + sin odooPaymentId"
+    // Cubre casos legacy (sin odooSyncStatus), pending y error en un solo índice.
     const q = query(
       collection(db, 'payments'),
-      where('odooSyncStatus', 'in', ['pending', 'error']),
+      where('status', '==', 'verified'),
+      where('odooPaymentId', '==', null),
       orderBy('verifiedAt', 'desc'),
       limit(100),
     )
@@ -101,10 +104,13 @@ export function PushQueueTable() {
     const unsub = onSnapshot(
       q,
       (snap) => {
-        const docs: QueuedPayment[] = snap.docs.map((d) => ({
-          id: d.id,
-          ...(d.data() as Omit<QueuedPayment, 'id'>),
-        }))
+        const docs: QueuedPayment[] = snap.docs
+          .map((d) => ({
+            id: d.id,
+            ...(d.data() as Omit<QueuedPayment, 'id'>),
+          }))
+          // Excluir dismissed — son out-of-scope intencional
+          .filter((p) => p.odooSyncStatus !== 'dismissed')
         setPayments(docs)
         setLoading(false)
       },
