@@ -1,3 +1,5 @@
+// @ts-nocheck — script auxiliar standalone (dotenv no está en deps, se ejecuta vía tsx ad-hoc).
+// Excluir del typecheck del bundle. Si se necesita compilar, agregar `dotenv` a devDeps.
 /**
  * Auditoría one-shot: pagos reales en Odoo + módulo Documents.
  * Uso: pnpm tsx scripts/audit-odoo-payments.ts

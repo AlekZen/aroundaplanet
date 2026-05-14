@@ -66,4 +66,21 @@ env:
   #   value: "false"
   #   availability: [RUNTIME]
 
+  # === Story 9.3 — Pull Odoo→Firestore mirror + webhook fast-path ===
+  # Crear secrets en Cloud Secret Manager con `openssl rand -base64 32` antes del
+  # primer deploy de 9.3. Mantener `_PREV` vacío excepto durante rotaciones (24h
+  # max). Ver runbook _bmad-output/implementation-artifacts/runbooks/9-3-pull-setup.md
+  # - variable: ODOO_PULL_SCHEDULER_SECRET
+  #   secret: prod-odoo-pull-scheduler-secret
+  #   availability: [RUNTIME]
+  # - variable: ODOO_PULL_SCHEDULER_SECRET_PREV
+  #   secret: prod-odoo-pull-scheduler-secret-prev
+  #   availability: [RUNTIME]
+  # - variable: ODOO_WEBHOOK_SECRET
+  #   secret: prod-odoo-webhook-secret
+  #   availability: [RUNTIME]
+  # - variable: ODOO_WEBHOOK_SECRET_PREV
+  #   secret: prod-odoo-webhook-secret-prev
+  #   availability: [RUNTIME]
+
   # Firebase Admin SDK: uses ADC automatically in Cloud Run — no variable needed

@@ -163,6 +163,60 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // === PAYMENTS (Epic 3 + Epic 9 mirror) ===
+    // Read: agente (sus pagos), admin/director/superadmin.
+    // Write: NEVER from client (Admin SDK only via API routes + sync jobs).
+    // Los campos `odoo*` y `lww.*` son mirror — escritos SOLO por el pull (Story 9.3).
+    match /payments/{paymentId} {
+      allow read: if request.auth != null
+                  && (request.auth.token.agentId == resource.data.agentId
+                      || 'admin' in request.auth.token.roles
+                      || 'director' in request.auth.token.roles
+                      || 'superadmin' in request.auth.token.roles);
+      allow write: if false;
+    }
+
+    // === SYNC CURSORS (Story 9.3) ===
+    // Cursor de polling Odoo→Firestore. Solo Admin SDK escribe. Admin/director lee.
+    match /syncCursors/{cursorId} {
+      allow read: if request.auth != null
+                  && ('admin' in request.auth.token.roles
+                      || 'director' in request.auth.token.roles
+                      || 'superadmin' in request.auth.token.roles);
+      allow write: if false;
+    }
+
+    // === PAYMENT ALERTS (Story 9.3 + Story 9.6) ===
+    // Alertas detectadas por sync jobs (odoo_canceled, attachment_failed, etc).
+    // Write: NEVER from client. Read: admin+ y agente dueño del pago referenciado
+    // (el doc lleva paymentId; admin SDK decide rule por separado al consultar).
+    match /paymentAlerts/{alertId} {
+      allow read: if request.auth != null
+                  && ('admin' in request.auth.token.roles
+                      || 'director' in request.auth.token.roles
+                      || 'superadmin' in request.auth.token.roles);
+      allow write: if false;
+    }
+
+    // === PAYMENT CONFLICTS (Story 9.3 + Story 9.6) ===
+    // Cola de conflictos LWW Firestore↔Odoo. Solo Admin SDK escribe.
+    match /paymentConflicts/{conflictId} {
+      allow read: if request.auth != null
+                  && ('admin' in request.auth.token.roles
+                      || 'director' in request.auth.token.roles
+                      || 'superadmin' in request.auth.token.roles);
+      allow write: if false;
+    }
+
+    // === SYNC LOG (Story 9.2 + Story 9.3) ===
+    // Bitácora interna de operaciones del sync. Solo Admin SDK escribe.
+    match /syncLog/{logId} {
+      allow read: if request.auth != null
+                  && ('admin' in request.auth.token.roles
+                      || 'superadmin' in request.auth.token.roles);
+      allow write: if false;
+    }
+
     // === DEFAULT DENY ===
     // Any unspecified collection: denied
     match /{document=**} {
