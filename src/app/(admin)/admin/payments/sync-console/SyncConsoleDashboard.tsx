@@ -11,6 +11,7 @@ import { AlertTriangle } from 'lucide-react'
 import { ConflictsTable } from './ConflictsTable'
 import { PushQueueTable } from './PushQueueTable'
 import { AlertsTable } from './AlertsTable'
+import { AttachmentQueueTable } from './AttachmentQueueTable'
 import type { InitialCounts, CursorSummary } from './page'
 import type { PaymentAlertType } from '@/schemas/paymentAlertSchema'
 
@@ -46,7 +47,7 @@ interface Props {
 }
 
 export function SyncConsoleDashboard({ initialCounts, cursorSummary }: Props) {
-  const { conflicts, pushQueue, alerts, alertsByType } = initialCounts
+  const { conflicts, pushQueue, alerts, alertsByType, attachmentQueue } = initialCounts
   const { lastRunAt, summary, lastError, successRate24h } = cursorSummary
 
   function handleExport(section: 'conflicts' | 'queue' | 'alerts') {
@@ -61,7 +62,7 @@ export function SyncConsoleDashboard({ initialCounts, cursorSummary }: Props) {
   return (
     <div className="space-y-6">
       {/* KPI grid */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         {/* Conflictos pendientes */}
         <Link href="#conflicts" className="block">
           <KPICard
@@ -77,6 +78,16 @@ export function SyncConsoleDashboard({ initialCounts, cursorSummary }: Props) {
           <KPICard
             title="Cola de push"
             value={pushQueue}
+            variant="compact"
+            className="hover:border-primary/40 transition-colors cursor-pointer"
+          />
+        </Link>
+
+        {/* Comprobantes pendientes */}
+        <Link href="#attachments" className="block">
+          <KPICard
+            title="Comprobantes pendientes"
+            value={attachmentQueue}
             variant="compact"
             className="hover:border-primary/40 transition-colors cursor-pointer"
           />
@@ -161,6 +172,9 @@ export function SyncConsoleDashboard({ initialCounts, cursorSummary }: Props) {
           <TabsTrigger value="alerts" id="alerts">
             Alertas {alerts > 0 && <Badge variant="secondary" className="ml-1 text-xs px-1.5 py-0">{alerts}</Badge>}
           </TabsTrigger>
+          <TabsTrigger value="attachments" id="attachments">
+            Comprobantes {attachmentQueue > 0 && <Badge variant="secondary" className="ml-1 text-xs px-1.5 py-0">{attachmentQueue}</Badge>}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="conflicts" className="mt-4">
@@ -188,6 +202,10 @@ export function SyncConsoleDashboard({ initialCounts, cursorSummary }: Props) {
             </Button>
           </div>
           <AlertsTable />
+        </TabsContent>
+
+        <TabsContent value="attachments" className="mt-4">
+          <AttachmentQueueTable />
         </TabsContent>
       </Tabs>
     </div>

@@ -19,6 +19,7 @@ const defaultCounts: InitialCounts = {
   pushQueue: 5,
   alerts: 2,
   alertsByType: { odoo_canceled: 1, attachment_failed: 1 },
+  attachmentQueue: 4,
 }
 
 const defaultCursor: CursorSummary = {

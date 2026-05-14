@@ -13,6 +13,7 @@ export interface InitialCounts {
   pushQueue: number
   alerts: number
   alertsByType: Partial<Record<PaymentAlertType, number>>
+  attachmentQueue: number
 }
 
 export interface CursorSummary {
@@ -73,6 +74,18 @@ export default async function SyncConsolePage() {
   const summary: SyncCursorSummary | null = cursorData?.lastRunSummary ?? null
   const lastError: string | null = cursorData?.lastError ?? null
 
+  // Count comprobantes con error de attachment (odooPaymentId != null + status error).
+  // Se hace una sola query por 'error' ya que 'never' es el estado inicial de pagos sin
+  // comprobante registrado aún — no es un error visible operativamente hasta que falle.
+  // Para el KPI de cabecera esto es suficiente; AttachmentQueueTable hace filtrado completo client-side.
+  const attachmentQueueSnap = await adminDb
+    .collection('payments')
+    .where('status', '==', 'verified')
+    .where('odooAttachmentSyncStatus', '==', 'error')
+    .count()
+    .get()
+  const attachmentQueueCount = attachmentQueueSnap.data().count
+
   // Tasa de éxito: si hay summary con datos, calcular
   let successRate24h: number | null = null
   if (summary && typeof summary.fetched === 'number' && summary.fetched > 0) {
@@ -86,6 +99,7 @@ export default async function SyncConsolePage() {
     pushQueue: pushQueueCount,
     alerts: alertsTotal,
     alertsByType,
+    attachmentQueue: attachmentQueueCount,
   }
 
   const cursorSummary: CursorSummary = {

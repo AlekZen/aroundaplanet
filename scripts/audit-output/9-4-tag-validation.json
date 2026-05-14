@@ -1,0 +1,123 @@
+{
+  "timestamp": "2026-05-14T21:42:41.821Z",
+  "tenant": "https://aroundaplanet.odoo.com",
+  "tagId": 47,
+  "paymentIdUsed": 8131,
+  "scenarios": {
+    "escenario1_irAttachment_tagIds": {
+      "preCheck": {
+        "tag_ids_field": null
+      },
+      "createResult": {
+        "success": false,
+        "error": "XML-RPC fault: Traceback (most recent call last):\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 165, in xmlrpc_2\n    response = self._xmlrpc(service)\n               ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/custom/trial/saas_trial/controllers/main.py\", line 468, in _xmlrpc\n    res = super()._xmlrpc(service)\n          ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 139, in _xmlrpc\n    result = dispatch_rpc(service, method, params)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/http.py\", line 412, in dispatch_rpc\n    return dispatch(method, params)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 59, in dispatch\n    res = execute_kw(db, uid, *params[3:])\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 82, in execute_kw\n    return execute(db, uid, obj, method, *args, **kw or {})\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 88, in execute\n    res = execute_cr(cr, uid, obj, method, *args, **kw)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 73, in execute_cr\n    result = retrying(partial(odoo.api.call_kw, recs, method, args, kw), env)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 157, in retrying\n    result = func()\n             ^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/api.py\", line 535, in call_kw\n    result = getattr(recs, name)(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<decorator-gen-309>\", line 2, in create\n  File \"/home/odoo/src/odoo/18.0/odoo/api.py\", line 497, in _model_create_multi\n    return create(self, [arg])\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/enterprise/18.0/documents_account/models/ir_attachment.py\", line 10, in create\n    attachments = super().create(vals_list)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<decorator-gen-205>\", line 2, in create\n  File \"/home/odoo/src/odoo/18.0/odoo/api.py\", line 498, in _model_create_multi\n    return create(self, arg)\n           ^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/hr_expense/models/ir_attachment.py\", line 9, in create\n    attachments = super().create(vals_list)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<decorator-gen-189>\", line 2, in create\n  File \"/home/odoo/src/odoo/18.0/odoo/api.py\", line 498, in _model_create_multi\n    return create(self, arg)\n           ^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/website/models/ir_attachment.py\", line 22, in create\n    return super().create(vals_list)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<decorator-gen-158>\", line 2, in create\n  File \"/home/odoo/src/odoo/18.0/odoo/api.py\", line 498, in _model_create_multi\n    return create(self, arg)\n           ^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/enterprise/18.0/documents/models/ir_attachment.py\", line 95, in create\n    attachments = super().create(vals_list)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<decorator-gen-117>\", line 2, in create\n  File \"/home/odoo/src/odoo/18.0/odoo/api.py\", line 498, in _model_create_multi\n    return create(self, arg)\n           ^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/product/models/ir_attachment.py\", line 12, in create\n    attachments = super().create(vals_list)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<decorator-gen-15>\", line 2, in create\n  File \"/home/odoo/src/odoo/18.0/odoo/api.py\", line 498, in _model_create_multi\n    return create(self, arg)\n           ^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/models/ir_attachment.py\", line 669, in create\n    return super().create(vals_list)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<decorator-gen-0>\", line 2, in create\n  File \"/home/odoo/src/odoo/18.0/odoo/api.py\", line 498, in _model_create_multi\n    return create(self, arg)\n           ^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/models.py\", line 5005, in create\n    raise ValueError(\"Invalid field %r on model %r\" % (key, self._name))\nValueError: Invalid field 'tag_ids' on model 'ir.attachment'\n"
+      },
+      "reread": null,
+      "error": "XML-RPC fault: Traceback (most recent call last):\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 165, in xmlrpc_2\n    response = self._xmlrpc(service)\n               ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/custom/trial/saas_trial/controllers/main.py\", line 468, in _xmlrpc\n    res = super()._xmlrpc(service)\n          ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/controllers/rpc.py\", line 139, in _xmlrpc\n    result = dispatch_rpc(service, method, params)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/http.py\", line 412, in dispatch_rpc\n    return dispatch(method, params)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 59, in dispatch\n    res = execute_kw(db, uid, *params[3:])\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 82, in execute_kw\n    return execute(db, uid, obj, method, *args, **kw or {})\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 88, in execute\n    res = execute_cr(cr, uid, obj, method, *args, **kw)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 73, in execute_cr\n    result = retrying(partial(odoo.api.call_kw, recs, method, args, kw), env)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/service/model.py\", line 157, in retrying\n    result = func()\n             ^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/api.py\", line 535, in call_kw\n    result = getattr(recs, name)(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<decorator-gen-309>\", line 2, in create\n  File \"/home/odoo/src/odoo/18.0/odoo/api.py\", line 497, in _model_create_multi\n    return create(self, [arg])\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/enterprise/18.0/documents_account/models/ir_attachment.py\", line 10, in create\n    attachments = super().create(vals_list)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<decorator-gen-205>\", line 2, in create\n  File \"/home/odoo/src/odoo/18.0/odoo/api.py\", line 498, in _model_create_multi\n    return create(self, arg)\n           ^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/hr_expense/models/ir_attachment.py\", line 9, in create\n    attachments = super().create(vals_list)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<decorator-gen-189>\", line 2, in create\n  File \"/home/odoo/src/odoo/18.0/odoo/api.py\", line 498, in _model_create_multi\n    return create(self, arg)\n           ^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/website/models/ir_attachment.py\", line 22, in create\n    return super().create(vals_list)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<decorator-gen-158>\", line 2, in create\n  File \"/home/odoo/src/odoo/18.0/odoo/api.py\", line 498, in _model_create_multi\n    return create(self, arg)\n           ^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/enterprise/18.0/documents/models/ir_attachment.py\", line 95, in create\n    attachments = super().create(vals_list)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<decorator-gen-117>\", line 2, in create\n  File \"/home/odoo/src/odoo/18.0/odoo/api.py\", line 498, in _model_create_multi\n    return create(self, arg)\n           ^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/addons/product/models/ir_attachment.py\", line 12, in create\n    attachments = super().create(vals_list)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<decorator-gen-15>\", line 2, in create\n  File \"/home/odoo/src/odoo/18.0/odoo/api.py\", line 498, in _model_create_multi\n    return create(self, arg)\n           ^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/addons/base/models/ir_attachment.py\", line 669, in create\n    return super().create(vals_list)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<decorator-gen-0>\", line 2, in create\n  File \"/home/odoo/src/odoo/18.0/odoo/api.py\", line 498, in _model_create_multi\n    return create(self, arg)\n           ^^^^^^^^^^^^^^^^^\n  File \"/home/odoo/src/odoo/18.0/odoo/models.py\", line 5005, in create\n    raise ValueError(\"Invalid field %r on model %r\" % (key, self._name))\nValueError: Invalid field 'tag_ids' on model 'ir.attachment'\n"
+    },
+    "escenario2_documentsDocument_tagIds": {
+      "preCheck": {
+        "fields": {
+          "attachment_id": {
+            "type": "many2one",
+            "relation": "ir.attachment",
+            "required": false
+          },
+          "datas": {
+            "type": "binary",
+            "required": false
+          },
+          "res_model": {
+            "type": "char",
+            "required": false
+          },
+          "res_id": {
+            "type": "many2one_reference",
+            "required": false
+          },
+          "tag_ids": {
+            "type": "many2many",
+            "relation": "documents.tag",
+            "required": false
+          },
+          "folder_id": {
+            "type": "many2one",
+            "relation": "documents.document",
+            "required": false
+          }
+        },
+        "foldersError": "XML-RPC fault: Object documents.folder doesn't exist"
+      },
+      "folderUsed": null,
+      "createResult": {
+        "id": 2018,
+        "success": true
+      },
+      "reread": {
+        "id": 2018,
+        "name": "TEST_AROUNDA_9-4-tag-validation_1778794961820_2.pdf",
+        "tag_ids": [
+          47
+        ],
+        "attachment_id": [
+          45868,
+          "TEST_AROUNDA_9-4-tag-validation_1778794961820_2.pdf"
+        ],
+        "folder_id": false,
+        "res_model": "documents.document",
+        "res_id": 2018
+      },
+      "attachmentId": 45868,
+      "irAttachmentRead": {
+        "id": 45868,
+        "name": "TEST_AROUNDA_9-4-tag-validation_1778794961820_2.pdf",
+        "res_model": "documents.document",
+        "res_id": 2018,
+        "mimetype": "application/pdf"
+      },
+      "error": null
+    },
+    "escenario3_searchByTag": {
+      "searchResult": [
+        {
+          "id": 2018,
+          "name": "TEST_AROUNDA_9-4-tag-validation_1778794961820_2.pdf",
+          "attachment_id": [
+            45868,
+            "TEST_AROUNDA_9-4-tag-validation_1778794961820_2.pdf"
+          ],
+          "tag_ids": [
+            47
+          ]
+        }
+      ],
+      "docCreatedFound": true,
+      "error": null
+    }
+  },
+  "cleanup": [
+    {
+      "model": "documents.document",
+      "id": 2018,
+      "action": "rename _CLEANED_"
+    }
+  ],
+  "verdict": {
+    "irAttachmentAcceptsTagIds": false,
+    "irAttachmentTagPersisted": false,
+    "documentsDocumentWorks": true,
+    "documentsDocumentTagPersisted": true,
+    "searchByTagFindsDoc": true,
+    "recommendation": "DOCUMENTS_DOCUMENT_WRAPPER",
+    "story94Path": "Crear documents.document wrapper con tag_ids. Visible en Documents app filtrando por tag."
+  },
+  "cleanupLog": [
+    {
+      "model": "documents.document",
+      "id": 2018,
+      "action": "rename _CLEANED_",
+      "done": true,
+      "cleanedName": "_CLEANED_1778794974512_documents.document_2018"
+    }
+  ]
+}

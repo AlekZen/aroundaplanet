@@ -1,0 +1,123 @@
+{
+  "timestamp": "2026-05-14T21:45:57.927Z",
+  "tenant": "https://aroundaplanet.odoo.com",
+  "tagId": 47,
+  "prefix": "TEST_AROUNDA_9-4-chatter_1778795157926",
+  "steps": {
+    "step1_payment": {
+      "paymentId": 8152
+    },
+    "step2_createDoc": {
+      "docId": 2019,
+      "success": true,
+      "error": null,
+      "createPayload": {
+        "name": "TEST_AROUNDA_9-4-chatter_1778795157926.pdf",
+        "datas": "<base64 omitted>",
+        "mimetype": "application/pdf",
+        "res_model": "account.payment",
+        "res_id": 8152,
+        "tag_ids": [
+          [
+            6,
+            0,
+            [
+              47
+            ]
+          ]
+        ]
+      }
+    },
+    "step3_rereadDoc": {
+      "reread": {
+        "id": 2019,
+        "name": "TEST_AROUNDA_9-4-chatter_1778795157926.pdf",
+        "res_model": "account.payment",
+        "res_id": 8152,
+        "tag_ids": [
+          47
+        ],
+        "attachment_id": [
+          45869,
+          "TEST_AROUNDA_9-4-chatter_1778795157926.pdf"
+        ]
+      },
+      "error": null
+    },
+    "step4_irAttachmentSearch": {
+      "attachments": [
+        {
+          "id": 45869,
+          "name": "TEST_AROUNDA_9-4-chatter_1778795157926.pdf",
+          "res_model": "account.payment",
+          "res_id": 8152,
+          "mimetype": "application/pdf",
+          "file_size": 1024
+        }
+      ],
+      "foundInChatter": true,
+      "error": null
+    },
+    "step5_underlyingAttachment": {
+      "attachmentId": 45869,
+      "irAttachmentRead": {
+        "id": 45869,
+        "name": "TEST_AROUNDA_9-4-chatter_1778795157926.pdf",
+        "res_model": "account.payment",
+        "res_id": 8152,
+        "mimetype": "application/pdf"
+      },
+      "resModelIsPayment": true,
+      "error": null
+    },
+    "step6_mitigation": {
+      "attempted": false,
+      "writeSuccess": false,
+      "afterWriteRead": null,
+      "foundInChatterAfterWrite": false,
+      "error": null
+    }
+  },
+  "cleanup": [
+    {
+      "model": "account.payment",
+      "id": 8152,
+      "action": "cancel"
+    },
+    {
+      "model": "documents.document",
+      "id": 2019,
+      "action": "rename"
+    }
+  ],
+  "cleanupLog": [
+    {
+      "model": "account.payment",
+      "id": 8152,
+      "action": "cancel",
+      "done": true
+    },
+    {
+      "model": "documents.document",
+      "id": 2019,
+      "action": "rename",
+      "done": true,
+      "cleanedName": "_CLEANED_1778795170558_documents_document_2019"
+    }
+  ],
+  "verdict": {
+    "Q1_documentsDocPropagaResModelAlIrAttachment": true,
+    "Q2_writeIrAttachmentCambiaResModelSinError": "N/A (no necesario)",
+    "Q2_writeHaceVisibleEnChatter": "N/A",
+    "Q3_tagPersiste": true,
+    "caminoRecomendado": "B1",
+    "recomendacion": "Camino B1 (1 call): documents.document con res_model=payment + tag_ids. El ir.attachment subyacente hereda res_model=account.payment. Visible en chatter y en Documents por tag.",
+    "summary": {
+      "step4_foundInChatterSinMitigacion": true,
+      "step5_irAttResModel": "account.payment",
+      "step6_mitigacionAttempted": false,
+      "step6_writeSuccess": false,
+      "step6_foundAfterWrite": false
+    }
+  }
+}

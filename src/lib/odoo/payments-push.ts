@@ -22,6 +22,7 @@ import { getOdooClient, OdooClient } from '@/lib/odoo/client'
 import { AppError } from '@/lib/errors/AppError'
 import type { OdooDomain } from '@/types/odoo'
 import type { PaymentMethod } from '@/schemas/paymentSchema'
+import { syncReceiptToOdoo } from '@/lib/odoo/sync/receipt-attachment'
 
 // =====================================================================
 // Constantes
@@ -259,6 +260,8 @@ export interface SyncedPaymentDoc {
   ocrResult?: { confidence?: number | null } | null
   /** Estado del sync — si 'dismissed' el push se skipea sin throw. */
   odooSyncStatus?: string | null
+  /** URL del comprobante en Firebase Storage — usada por Story 9.4 attachment sync. */
+  receiptUrl?: string | null
 }
 
 export interface SyncVerifiedPaymentResult {
@@ -322,6 +325,22 @@ export async function syncVerifiedPaymentToOdoo(
       updatedAt: FieldValue.serverTimestamp(),
     }
     await paymentRef.set(mirror, { merge: true })
+
+    // Story 9.4 — sync best-effort del comprobante a Odoo Documents.
+    // Solo si el push fue exitoso non-orphan (sin odooPaymentId válido no se intenta).
+    // NUNCA degrada el resultado del push: errores se loggean en paymentAlerts + mirror.
+    if (!result.orphan && result.odooPaymentId > 0) {
+      try {
+        await syncReceiptToOdoo({
+          firestoreId,
+          odooPaymentId: result.odooPaymentId,
+          receiptUrl: paymentData.receiptUrl ?? null,
+        })
+      } catch (receiptErr) {
+        // Doble red de seguridad: syncReceiptToOdoo ya captura todo internamente.
+        console.error('[syncVerifiedPaymentToOdoo] syncReceiptToOdoo escapó (no debería)', receiptErr)
+      }
+    }
 
     return {
       status,

@@ -1,0 +1,12 @@
+{
+  "timestamp": "2026-05-14T21:40:29.441Z",
+  "tenant": "https://aroundaplanet.odoo.com",
+  "tagId": 47,
+  "tagModel": "documents.tag",
+  "tagName": "aroundaplanet_comprobante",
+  "action": "created",
+  "firestoreUpdated": true,
+  "uid": 2,
+  "startedAt": "2026-05-14T21:40:16.277Z",
+  "finishedAt": "2026-05-14T21:40:29.441Z"
+}

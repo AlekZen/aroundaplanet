@@ -1,5 +1,15 @@
 import { z } from 'zod'
 
+// === Razones tipificadas de fallo de attachment (Story 9.4) ===
+export const ATTACHMENT_FAILED_REASONS = [
+  'upload_failed',
+  'receipt_missing',
+  'tag_unavailable',
+  'invalid_mimetype',
+] as const
+export type AttachmentFailedReason = (typeof ATTACHMENT_FAILED_REASONS)[number]
+export const attachmentFailedReasonSchema = z.enum(ATTACHMENT_FAILED_REASONS)
+
 /**
  * Alertas operativas sobre pagos detectadas por los sync jobs (Stories 9.2, 9.3, 9.4).
  * Cada alerta es un doc en `paymentAlerts/{alertId}` con docId convencional
@@ -35,6 +45,9 @@ export const paymentAlertSchema = z.object({
   resolvedAt: alertTimestamp.nullable().optional(),
   resolvedBy: z.string().max(128).nullable().optional(),
   resolutionNote: z.string().max(500).nullable().optional(),
+  // Campos de contexto adicional para attachment_failed (Story 9.4)
+  reason: attachmentFailedReasonSchema.nullable().optional(),
+  errorMessage: z.string().max(2000).nullable().optional(),
 })
 
 export type PaymentAlert = z.infer<typeof paymentAlertSchema>
@@ -48,6 +61,8 @@ export const createPaymentAlertSchema = paymentAlertSchema.pick({
   firestoreStatus: true,
   detectedAt: true,
   runId: true,
+  reason: true,
+  errorMessage: true,
 })
 
 export type CreatePaymentAlert = z.infer<typeof createPaymentAlertSchema>

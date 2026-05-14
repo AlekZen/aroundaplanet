@@ -213,6 +213,14 @@ export const paymentOdooSyncSchema = z.object({
   odooSyncDismissedBy: z.string().max(128).nullable().optional(),
   odooSyncDismissedReason: z.string().max(500).nullable().optional(),
 
+  // === Attachment sync metadata (Story 9.4) ===
+  // 'never': pago aún sin intentar attachment (estado inicial implícito si el doc nunca pasó por verify)
+  // 'skipped_no_receipt': el pago se sincronizó push pero no tenía receiptUrl (legacy)
+  odooAttachmentSyncStatus: z.enum(['never', 'synced', 'error', 'skipped_no_receipt']).optional(),
+  odooAttachmentSyncedAt: lwwTimestamp.nullable().optional(),
+  odooAttachmentLastError: z.string().max(2000).nullable().optional(),
+  attachmentRetryCount: z.number().int().min(0).optional(),
+
   // === Reconciliación retroactiva (Story 9.1) ===
   linkedAt: lwwTimestamp.nullable().optional(),
   linkedBy: z.string().max(128).nullable().optional(),
@@ -261,6 +269,27 @@ export const paymentOdooSyncSchema = z.object({
     {
       message: 'odooSyncStatus="dismissed" requiere odooSyncDismissedReason (min 5 chars)',
       path: ['odooSyncDismissedReason'],
+    },
+  )
+  .refine(
+    (d) => {
+      if (d.odooAttachmentSyncStatus !== 'synced') return true
+      // Story 9.4: documents.document es el primario; ir.attachment subyacente es
+      // best-effort (la lectura post-create puede fallar y dejar odooAttachmentIds vacío).
+      const hasDoc = (d.odooDocumentId ?? null) !== null
+      const hasAttachment = (d.odooAttachmentIds?.length ?? 0) > 0
+      return hasDoc || hasAttachment
+    },
+    {
+      message: 'odooAttachmentSyncStatus="synced" requiere odooDocumentId o algún odooAttachmentIds',
+      path: ['odooDocumentId'],
+    },
+  )
+  .refine(
+    (d) => d.odooAttachmentSyncStatus !== 'error' || (d.odooAttachmentLastError ?? null) !== null,
+    {
+      message: 'odooAttachmentSyncStatus="error" requiere odooAttachmentLastError',
+      path: ['odooAttachmentLastError'],
     },
   )
 
@@ -344,6 +373,12 @@ export const PAYMENT_FIELD_OWNERSHIP = {
   odooSyncDismissedAt: 'bridge',
   odooSyncDismissedBy: 'bridge',
   odooSyncDismissedReason: 'bridge',
+
+  // Attachment sync metadata (bridge — Story 9.4)
+  odooAttachmentSyncStatus: 'bridge',
+  odooAttachmentSyncedAt: 'bridge',
+  odooAttachmentLastError: 'bridge',
+  attachmentRetryCount: 'bridge',
 } as const satisfies Record<string, FieldOwnership>
 
 export type PaymentFieldName = keyof typeof PAYMENT_FIELD_OWNERSHIP

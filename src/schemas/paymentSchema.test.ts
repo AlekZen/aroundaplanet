@@ -503,6 +503,69 @@ describe('paymentSchema', () => {
         corta.error?.issues.some((i) => i.path.includes('odooSyncDismissedReason')),
       ).toBe(true)
     })
+
+    // Story 9.4 — attachment sync metadata refines
+    it('acepta odooAttachmentSyncStatus=synced con odooAttachmentIds no vacío', () => {
+      const result = paymentOdooSyncSchema.safeParse({
+        odooAttachmentSyncStatus: 'synced',
+        odooAttachmentIds: [123],
+        odooAttachmentSyncedAt: new Date(),
+      })
+      expect(result.success).toBe(true)
+    })
+
+    it('acepta odooAttachmentSyncStatus=synced solo con odooDocumentId (sin odooAttachmentIds)', () => {
+      // Story 9.4: ir.attachment subyacente es best-effort; el primario es documents.document.
+      const result = paymentOdooSyncSchema.safeParse({
+        odooAttachmentSyncStatus: 'synced',
+        odooDocumentId: 2019,
+      })
+      expect(result.success).toBe(true)
+    })
+
+    it('rechaza odooAttachmentSyncStatus=synced sin odooDocumentId ni odooAttachmentIds', () => {
+      const result = paymentOdooSyncSchema.safeParse({
+        odooAttachmentSyncStatus: 'synced',
+      })
+      expect(result.success).toBe(false)
+      expect(
+        result.error?.issues.some((i) => i.path.includes('odooDocumentId')),
+      ).toBe(true)
+    })
+
+    it('rechaza odooAttachmentSyncStatus=error sin odooAttachmentLastError', () => {
+      const result = paymentOdooSyncSchema.safeParse({
+        odooAttachmentSyncStatus: 'error',
+        odooAttachmentLastError: null,
+      })
+      expect(result.success).toBe(false)
+      expect(
+        result.error?.issues.some((i) => i.path.includes('odooAttachmentLastError')),
+      ).toBe(true)
+    })
+
+    it('acepta odooAttachmentSyncStatus=error con odooAttachmentLastError presente', () => {
+      const result = paymentOdooSyncSchema.safeParse({
+        odooAttachmentSyncStatus: 'error',
+        odooAttachmentLastError: 'Timeout al subir PDF a Odoo Documents',
+        attachmentRetryCount: 2,
+      })
+      expect(result.success).toBe(true)
+    })
+
+    it('acepta odooAttachmentSyncStatus=skipped_no_receipt (legacy sin receiptUrl)', () => {
+      const result = paymentOdooSyncSchema.safeParse({
+        odooAttachmentSyncStatus: 'skipped_no_receipt',
+      })
+      expect(result.success).toBe(true)
+    })
+
+    it('acepta odooAttachmentSyncStatus=never (estado inicial implícito)', () => {
+      const result = paymentOdooSyncSchema.safeParse({
+        odooAttachmentSyncStatus: 'never',
+      })
+      expect(result.success).toBe(true)
+    })
   })
 
   describe('PAYMENT_FIELD_OWNERSHIP matrix', () => {
