@@ -147,7 +147,10 @@ development_status:
   # Source of truth: D:\dev\AlekContenido\Areas\Proyectos\AroundaPlanet\execution\plan-cierre-fase-0-may-2026.md
   # Deadline: 2026-05-23 (Cláusula Tercera convenio v4.0). Modo cierre estricto.
   epic-10: in-progress
-  10-1-pdf-contratos-cotizaciones: review  # sesión 43 — @react-pdf/renderer puro (sin CloudConvert), 1 template universal + catálogo Firestore. 1667 tests (+39). Smoke local ✓. Pendiente: deploy + smoke prod (AC10).
+  10-1-pdf-contratos-cotizaciones: deployed-awaiting-user-smoke  # sesión 43 — 3 builds prod (4fa35f2+8e7dcc8+d532706). @react-pdf/renderer puro + 1 template universal + 5 piloto lazy-seed. Stack final descartó CloudConvert/docxtemplater. Conexiones UI A+B+D + visibilidad cliente/agente + aceptación. 1707 tests (+50). Pendiente: smoke usuarios (Paloma+agentes).
+  10-1-1-orders-list-sidebar: done  # commit 8e7dcc8 — lista /admin/orders + Cotizaciones+Órdenes en sidebar admin/superadmin + Contratos agente + bottom nav cliente.
+  10-1-2-ui-connections: done  # commit d532706 — A: Pagos card en order detail · B: link orden en verificación · D: Asignar contrato desde Ventas del trip (mirror Firestore via /api/orders/from-odoo-sale).
+  10-1-3-contract-fields-dinamicos: deployed-awaiting-user-smoke  # build-009 commit 16149f5 — refactor: datos contract* viven en trips/{id}, NO en tabla aparte. Endpoint generate lee del trip. UI /admin/trips/[tripId] sección "Datos del contrato" inline autosave. 5 piloto backfilled (VAM/ASIA/COLOMBIA MAYO/EUROPA SEP/CHEPE ENERO). Resuelve bug Paloma "todos dicen Asia". Bug IAM signBlob también resuelto runtime (grantaccess Token Creator self-impersonation SA compute).
   10-2-prd-consolidado: pending  # PRD ejecutivo unificado + PDF export. Destila _bmad-output/planning-artifacts/prd/. PM+Tech-writer party-mode
   10-3-mapeo-odoo-completo: pending  # Architect. Destila Epic 9 gotchas + custom fields + patrón invertido + restricciones firmes
   10-4-roadmap-transformacion-visual: pending  # Architect+PM. Matriz impacto×esfuerzo + timeline 12m + anexo features Noel 30-mar
