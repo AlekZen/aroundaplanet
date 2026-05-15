@@ -33,11 +33,23 @@ async function loadDedupLog(): Promise<ClusterRow[]> {
     const rows: ClusterRow[] = []
     for (const doc of snap.docs) {
       const raw = doc.data()
-      const parsed = folderDedupLogSchema.safeParse(raw)
-      if (!parsed.success) continue
+      const executedAtMs = asMillis(raw.executedAt)
+      // Firestore Timestamp no matchea z.date() | z.string() del schema — convertir antes de parse.
+      const normalized = {
+        ...raw,
+        executedAt: executedAtMs ? new Date(executedAtMs).toISOString() : new Date(0).toISOString(),
+      }
+      const parsed = folderDedupLogSchema.safeParse(normalized)
+      if (!parsed.success) {
+        console.warn('[odoo-folders/dedup] doc no valida schema', {
+          docId: doc.id,
+          issues: parsed.error.issues.map((i) => `${i.path.join('.')}:${i.message}`),
+        })
+        continue
+      }
       rows.push({
         ...parsed.data,
-        executedAtMs: asMillis(raw.executedAt),
+        executedAtMs,
       })
     }
     rows.sort((a, b) => a.normalizedKey.localeCompare(b.normalizedKey))
