@@ -1,0 +1,12 @@
+{
+  "startedAt": "2026-05-15T15:44:14.232Z",
+  "finishedAt": "2026-05-15T15:45:04.871Z",
+  "dryRun": false,
+  "snapshotPath": "scripts/audit-output/9-5-folder-clusters-20260515T00102.json",
+  "clustersProcessed": 7,
+  "writesCanonical": 6,
+  "writesDuplicate": 10,
+  "skipsCanonical": 1,
+  "skipsDuplicate": 0,
+  "logs": 7
+}

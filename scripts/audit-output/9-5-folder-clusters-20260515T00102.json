@@ -1,0 +1,166 @@
+{
+  "generatedAt": "2026-05-15T00:10:26.666Z",
+  "tenant": "https://aroundaplanet.odoo.com",
+  "totalFolders": 182,
+  "totalClusters": 7,
+  "totalDuplicates": 10,
+  "clusters": [
+    {
+      "normalizedKey": "2025",
+      "canonical": {
+        "id": 1802,
+        "name": "2025",
+        "childrenCount": 3,
+        "createDate": "2026-02-04 00:11:43"
+      },
+      "duplicates": [
+        {
+          "id": 1797,
+          "name": "2025",
+          "childrenCount": 1,
+          "createDate": "2026-02-03 23:21:07",
+          "currentShortcutDocumentId": null,
+          "currentTagIds": []
+        }
+      ]
+    },
+    {
+      "normalizedKey": "asia mayo 2026",
+      "canonical": {
+        "id": 1932,
+        "name": "ASIA MAYO1 2026",
+        "childrenCount": 8,
+        "createDate": "2026-05-05 17:24:10"
+      },
+      "duplicates": [
+        {
+          "id": 1927,
+          "name": "ASIA MAYO 2026",
+          "childrenCount": 5,
+          "createDate": "2026-05-05 16:58:37",
+          "currentShortcutDocumentId": null,
+          "currentTagIds": []
+        }
+      ]
+    },
+    {
+      "normalizedKey": "diciembre",
+      "canonical": {
+        "id": 1475,
+        "name": "DICIEMBRE",
+        "childrenCount": 0,
+        "createDate": false
+      },
+      "duplicates": [
+        {
+          "id": 1733,
+          "name": "DICIEMBRE",
+          "childrenCount": 0,
+          "createDate": "2025-06-03 23:54:40",
+          "currentShortcutDocumentId": null,
+          "currentTagIds": []
+        }
+      ]
+    },
+    {
+      "normalizedKey": "frozen spreadsheets",
+      "canonical": {
+        "id": 1547,
+        "name": "Frozen spreadsheets",
+        "childrenCount": 6,
+        "createDate": false
+      },
+      "duplicates": [
+        {
+          "id": 1548,
+          "name": "Frozen spreadsheets",
+          "childrenCount": 2,
+          "createDate": false,
+          "currentShortcutDocumentId": null,
+          "currentTagIds": []
+        },
+        {
+          "id": 1546,
+          "name": "Frozen spreadsheets",
+          "childrenCount": 1,
+          "createDate": false,
+          "currentShortcutDocumentId": null,
+          "currentTagIds": []
+        }
+      ]
+    },
+    {
+      "normalizedKey": "mexico puebla",
+      "canonical": {
+        "id": 1488,
+        "name": "MEXICO PUEBLA",
+        "childrenCount": 1,
+        "createDate": false
+      },
+      "duplicates": [
+        {
+          "id": 1744,
+          "name": "MEXICO PUEBLA ",
+          "childrenCount": 1,
+          "createDate": "2025-06-05 21:48:19",
+          "currentShortcutDocumentId": null,
+          "currentTagIds": []
+        }
+      ]
+    },
+    {
+      "normalizedKey": "new york diciembre",
+      "canonical": {
+        "id": 1593,
+        "name": "NEW YORK DICIEMBRE",
+        "childrenCount": 1,
+        "createDate": "2025-04-01 23:45:32"
+      },
+      "duplicates": [
+        {
+          "id": 1615,
+          "name": "NEW YORK DICIEMBRE",
+          "childrenCount": 1,
+          "createDate": "2025-05-12 22:26:14",
+          "currentShortcutDocumentId": null,
+          "currentTagIds": []
+        }
+      ]
+    },
+    {
+      "normalizedKey": "nuevo espacio de trabajo",
+      "canonical": {
+        "id": 1433,
+        "name": "Nuevo espacio de trabajo",
+        "childrenCount": 5,
+        "createDate": false
+      },
+      "duplicates": [
+        {
+          "id": 1431,
+          "name": "Nuevo espacio de trabajo",
+          "childrenCount": 3,
+          "createDate": false,
+          "currentShortcutDocumentId": null,
+          "currentTagIds": []
+        },
+        {
+          "id": 1437,
+          "name": "Nuevo espacio de trabajo",
+          "childrenCount": 0,
+          "createDate": false,
+          "currentShortcutDocumentId": null,
+          "currentTagIds": []
+        },
+        {
+          "id": 1463,
+          "name": "Nuevo espacio de trabajo",
+          "childrenCount": 0,
+          "createDate": false,
+          "currentShortcutDocumentId": null,
+          "currentTagIds": []
+        }
+      ]
+    }
+  ]
+}

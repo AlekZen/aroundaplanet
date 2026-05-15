@@ -28,6 +28,7 @@ export const UploadReceiptResultSchema = z.object({
   mimetype: z.string().min(1),
   uploadedAt: z.string().datetime(),
   tagId: z.number().int().positive().nullable(),
+  folderId: z.number().int().positive().nullable(),
 })
 export type UploadReceiptResult = z.infer<typeof UploadReceiptResultSchema>
 
@@ -37,6 +38,8 @@ export interface UploadPaymentReceiptInput {
   fileName: string
   mimetype: string
   tagId?: number | null
+  /** Story 9.5: si presente, el document queda dentro del folder canónico. */
+  folderId?: number | null
 }
 
 /** @internal Exportado solo para tests con fake timers. */
@@ -95,6 +98,12 @@ export async function uploadPaymentReceipt(
   const client = getOdooClient()
   const base64 = input.receiptBuffer.toString('base64')
   const tagIdResolved = input.tagId ?? null
+  const folderIdResolved =
+    typeof input.folderId === 'number' &&
+    Number.isInteger(input.folderId) &&
+    input.folderId > 0
+      ? input.folderId
+      : null
 
   const createVals: Record<string, unknown> = {
     name: input.fileName,
@@ -106,6 +115,9 @@ export async function uploadPaymentReceipt(
   if (tagIdResolved !== null) {
     // Sintaxis x2many Odoo: [6, 0, ids] reemplaza la lista completa.
     createVals.tag_ids = [[6, 0, [tagIdResolved]]]
+  }
+  if (folderIdResolved !== null) {
+    createVals.folder_id = folderIdResolved
   }
 
   let lastError: Error | null = null
@@ -167,6 +179,7 @@ export async function uploadPaymentReceipt(
     mimetype: input.mimetype,
     uploadedAt: new Date().toISOString(),
     tagId: tagIdResolved,
+    folderId: folderIdResolved,
   }
   return UploadReceiptResultSchema.parse(result)
 }

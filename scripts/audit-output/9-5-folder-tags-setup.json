@@ -1,0 +1,17 @@
+{
+  "timestamp": "2026-05-15T00:09:40.096Z",
+  "tenant": "https://aroundaplanet.odoo.com",
+  "dryRun": false,
+  "canonico": {
+    "id": 49,
+    "action": "renamed"
+  },
+  "duplicado": {
+    "id": 50,
+    "action": "renamed"
+  },
+  "cleanup": {
+    "spikeFieldId": 22941
+  },
+  "uid": 2
+}

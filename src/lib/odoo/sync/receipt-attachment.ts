@@ -24,6 +24,7 @@ import {
   type AttachmentFailedReason,
 } from '@/schemas/paymentAlertSchema'
 import { AppError } from '@/lib/errors/AppError'
+import { resolveCanonicalFolderId } from '@/lib/odoo/folder-canonical'
 
 const PAYMENTS_COLLECTION = 'payments'
 const ALERTS_COLLECTION = 'paymentAlerts'
@@ -95,6 +96,9 @@ export interface SyncReceiptInput {
   firestoreId: string
   odooPaymentId: number
   receiptUrl?: string | null
+  /** Story 9.5: usados por `resolveCanonicalFolderId` para asignar folder canónico. */
+  tripDestino?: string | null
+  paymentDate?: Date | null
 }
 
 export interface SyncReceiptResult {
@@ -137,6 +141,27 @@ export async function syncReceiptToOdoo(
   // 2. Resolver tagId (puede ser null — el upload sigue degraded sin tag).
   const tagId = await getReceiptTagId()
 
+  // 2b. Story 9.5: resolver folder canónico (best-effort, default disabled por feature flag).
+  let folderId: number | null = null
+  if (
+    typeof input.tripDestino === 'string' &&
+    input.tripDestino.length > 0 &&
+    input.paymentDate instanceof Date &&
+    !Number.isNaN(input.paymentDate.getTime())
+  ) {
+    const folderResult = await resolveCanonicalFolderId({
+      tripDestino: input.tripDestino,
+      paymentDate: input.paymentDate,
+    })
+    folderId = folderResult.folderId
+    if (folderResult.source === 'error') {
+      console.warn('[syncReceiptToOdoo] resolveCanonicalFolderId error (degraded)', {
+        firestoreId,
+        error: folderResult.error,
+      })
+    }
+  }
+
   // 3. Pipeline download → upload con manejo de error tipificado.
   try {
     const { buffer, mimetype, fileName } = await downloadReceiptFromUrl(
@@ -150,6 +175,7 @@ export async function syncReceiptToOdoo(
       fileName,
       mimetype,
       tagId,
+      folderId,
     })
 
     // 4. Persistir mirror éxito.

@@ -208,6 +208,17 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // === FOLDER DEDUP LOG (Story 9.5) ===
+    // Bitácora de la dedup de folders Odoo Documents (33 clusters).
+    // Solo Admin SDK escribe (scripts/execute-9-5-folder-dedup.mjs).
+    match /folderDedupLog/{logId} {
+      allow read: if request.auth != null
+                  && ('admin' in request.auth.token.roles
+                      || 'director' in request.auth.token.roles
+                      || 'superadmin' in request.auth.token.roles);
+      allow write: if false;
+    }
+
     // === SYNC LOG (Story 9.2 + Story 9.3) ===
     // Bitácora interna de operaciones del sync. Solo Admin SDK escribe.
     match /syncLog/{logId} {
