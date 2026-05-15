@@ -36,6 +36,20 @@ service firebase.storage {
                    && request.resource.contentType.matches('image/.*|application/pdf');
     }
 
+    // === CONTRACTS (Story 10.1) ===
+    // PDFs de contratos. Contienen datos sensibles (nombre cliente, monto, datos bancarios).
+    // Lectura SOLO via signed URL (v4, 7 días) emitida por endpoint admin desde la service
+    // account. Las rules cierran el path; signed URLs hacen bypass por diseño.
+    match /contracts/{orderId}/{allPaths=**} {
+      allow read, write: if false;
+    }
+
+    // === QUOTATIONS (Story 10.1) ===
+    // Mismo patrón que contracts: lectura via signed URL únicamente.
+    match /quotations/{quotationId}/{allPaths=**} {
+      allow read, write: if false;
+    }
+
     // === DEFAULT DENY ===
     match /{allPaths=**} {
       allow read, write: if false;

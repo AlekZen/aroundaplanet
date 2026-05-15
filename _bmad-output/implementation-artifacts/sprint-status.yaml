@@ -127,7 +127,7 @@ development_status:
   # =============================================
   # Epic 9: Sync Bidireccional de Pagos (9 stories: 2 spikes + 7 features)
   # =============================================
-  epic-9: in-progress  # 5/9 done (sesión 36 2026-05-12)
+  epic-9: done  # 9/9 done + retrospective done (sesión 41 2026-05-15)
   9-0a-spike-documents-res-id: done
   9-0b-spike-idempotencia-2call: done  # patrón invertido validado, snippet code-ready
   9-1-reconciliacion-retroactiva-dedup-odoo: done  # 5 commits (9367080+d4bd035+88c54c6+9a5a475+948fcb6) PARTE A+B browser smoke verified
@@ -137,6 +137,19 @@ development_status:
   9-3-pull-odoo-firestore-mirror: done  # 4 commits (745eb09+a43dcd2+08a2433+7a6c8a0) — Cloud Scheduler 15min ENABLED + webhook fast-path live, mirror-only whitelist, LWW conflict queue, alerta odoo_canceled, 1422 tests baseline. Smoke local+prod Felipe RUBIO 8134 OK.
   9-4-documents-attachment-individual: done  # commit cb41522 build-2026-05-14-010 LIVE. Camino B1 (documents.document wrapper) tras 2 sub-spikes prod: ir.attachment.tag_ids NO existe, documents.document propaga res_model al ir.attachment subyacente. Tag id=47 + appConfig/odoo. Endpoint retry-attachment con guards + force=true para legacy_linked. +76 tests (1593 baseline). Code review Approved with minor (2 High + 3 Medium pre-commit). AC9 smoke prod pendiente.
   9-5-folder-dedup-odoo-documents: done  # 2 commits (ca3c015 + hotfix 1a0cb08). Audit prod: 7 clusters / 10 dup (memoria 33 sobre-estimada). Pivote Camino C: `shortcut_document_id` NO admite write post-create — solo tags planos `folder-canonico` id=49 + `folder-duplicado` id=50. Execute: 6 canon writes + 10 dup writes + 7 logs Firestore. Idempotencia validada. Smoke prod 5/6 escenarios verde (1 N/A por pivote): UI muestra 7 clusters, filtros nativos Odoo 7+10 confirmados via XML-RPC. Hotfix UI: Firestore Timestamp → ISO antes de safeParse. Build 352s + hotfix re-build.
-  9-6-ux-admin-sync-conflictos: review  # dev completo sesión 38 (Opus orquesta + Sonnet subagentes F1-F5). 1510/1510 tests, typecheck 0, lint 0. 17 archivos nuevos + 7 modificados. Playwright E2E test.skip por infra auth ausente. Pendiente: commit + push + AC9 prod smoke + code-review en chat fresco.
+  9-6-ux-admin-sync-conflictos: done  # 7 commits sesión 38 incluyendo 4 hotfixes prod + retro 9-6-retrospective.md. 1517/1517 tests al cierre.
   9-7-schema-zod-studio-runbook: done  # custom fields creados via XML-RPC subagente (no Paloma): x_firebase_payment_id, x_firebase_agent_uid, x_ocr_confidence, x_canonical_payment_id, x_dup_status
-  epic-9-retrospective: optional
+  epic-9-retrospective: done  # 2026-05-15 sesión 41 — epic-9-retrospective.md (12 lecciones técnicas, 4 mejoras BMAD, 5 mejoras /deploy, 7 restricciones firmes reforzadas, 0 regresiones)
+
+  # =============================================
+  # Epic 10: Cierre Fase 0 (contractual, 16-23 may 2026)
+  # =============================================
+  # Source of truth: D:\dev\AlekContenido\Areas\Proyectos\AroundaPlanet\execution\plan-cierre-fase-0-may-2026.md
+  # Deadline: 2026-05-23 (Cláusula Tercera convenio v4.0). Modo cierre estricto.
+  epic-10: in-progress
+  10-1-pdf-contratos-cotizaciones: review  # sesión 43 — @react-pdf/renderer puro (sin CloudConvert), 1 template universal + catálogo Firestore. 1667 tests (+39). Smoke local ✓. Pendiente: deploy + smoke prod (AC10).
+  10-2-prd-consolidado: pending  # PRD ejecutivo unificado + PDF export. Destila _bmad-output/planning-artifacts/prd/. PM+Tech-writer party-mode
+  10-3-mapeo-odoo-completo: pending  # Architect. Destila Epic 9 gotchas + custom fields + patrón invertido + restricciones firmes
+  10-4-roadmap-transformacion-visual: pending  # Architect+PM. Matriz impacto×esfuerzo + timeline 12m + anexo features Noel 30-mar
+  10-5-subfase-c-cierre: pending  # Contenedor 5.a DNS + 5.b documentación + 5.c entrega formal + 5.d propuesta Fase 1 ajustada
+  epic-10-retrospective: pending

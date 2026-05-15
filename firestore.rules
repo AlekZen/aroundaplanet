@@ -228,6 +228,53 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // === CONTRACT TEMPLATES (Story 10.1) ===
+    // Catálogo de plantillas por destino. Solo admin/superadmin lee desde cliente
+    // (UI selector). Write SIEMPRE via Admin SDK (lazy-seed + futuro CRUD admin).
+    match /contractTemplates/{templateId} {
+      allow read: if request.auth != null
+                  && ('admin' in request.auth.token.roles
+                      || 'superadmin' in request.auth.token.roles
+                      || 'director' in request.auth.token.roles);
+      allow write: if false;
+    }
+
+    // === CONTRACTS (Story 10.1 — sesión 43) ===
+    // Read:
+    //   - admin/superadmin/director siempre
+    //   - cliente dueño cuando sharedWithClient=true
+    //   - agente asignado cuando sharedWithAgent=true
+    // Write: Admin SDK únicamente (generate/share/accept endpoints).
+    match /contracts/{contractId} {
+      allow read: if request.auth != null
+                  && ('admin' in request.auth.token.roles
+                      || 'superadmin' in request.auth.token.roles
+                      || 'director' in request.auth.token.roles
+                      || (resource.data.sharedWithClient == true
+                          && resource.data.clientUserId == request.auth.uid)
+                      || (resource.data.sharedWithAgent == true
+                          && resource.data.agentId == request.auth.token.agentId));
+      allow write: if false;
+    }
+
+    // === QUOTATIONS (Story 10.1) ===
+    // Leads y cotizaciones. Read: admin/superadmin/director.
+    // Create público SOLO desde `/cotizar` con shape estricto (source='cotizar-public',
+    // status='lead', pdfUrl=null, pdfVersion=0). Update/delete: Admin SDK.
+    match /quotations/{quotationId} {
+      allow read: if request.auth != null
+                  && ('admin' in request.auth.token.roles
+                      || 'superadmin' in request.auth.token.roles
+                      || 'director' in request.auth.token.roles);
+      allow create: if request.resource.data.source == 'cotizar-public'
+                    && request.resource.data.status == 'lead'
+                    && request.resource.data.pdfUrl == null
+                    && request.resource.data.pdfVersion == 0
+                    && request.resource.data.whatsappSent == true
+                    && request.resource.data.createdBy == null;
+      allow update, delete: if false;
+    }
+
     // === DEFAULT DENY ===
     // Any unspecified collection: denied
     match /{document=**} {

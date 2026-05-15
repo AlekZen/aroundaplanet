@@ -20,7 +20,7 @@ import { RoleSwitcher } from '@/components/custom/RoleSwitcher'
 import { staggerChildren } from '@/lib/animations/variants'
 import { spring } from '@/lib/animations/transitions'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
-import { LayoutDashboard, CreditCard, BarChart3, Shield, UserCircle, RefreshCw, Map as MapIcon, Users, Plane, Contact, UserCheck, DollarSign, FileText, Link2, Copy } from 'lucide-react'
+import { LayoutDashboard, CreditCard, BarChart3, Shield, UserCircle, RefreshCw, Map as MapIcon, Users, Plane, Contact, UserCheck, DollarSign, FileText, Link2, Copy, ClipboardList } from 'lucide-react'
 
 interface RoleSidebarProps {
   roles: string[]
@@ -46,6 +46,7 @@ const GROUPS_BY_ROLE: Record<string, SidebarGroupDef[]> = {
       label: 'Operacion diaria',
       items: [
         { id: 'leads', label: 'Leads', icon: <Users className="h-5 w-5" />, href: '/admin/leads' },
+        { id: 'quotations', label: 'Cotizaciones', icon: <ClipboardList className="h-5 w-5" />, href: '/admin/quotations' },
         { id: 'verification', label: 'Verificacion', icon: <CreditCard className="h-5 w-5" />, href: '/admin/verification' },
         { id: 'commissions', label: 'Comisiones', icon: <DollarSign className="h-5 w-5" />, href: '/admin/commissions' },
       ],
@@ -101,6 +102,7 @@ const GROUPS_BY_ROLE: Record<string, SidebarGroupDef[]> = {
       items: [
         { id: 'dashboard', label: 'Mi Negocio', icon: <LayoutDashboard className="h-5 w-5" />, href: '/agent/dashboard' },
         { id: 'agent-clients', label: 'Mis Clientes', icon: <UserCheck className="h-5 w-5" />, href: '/agent/clients' },
+        { id: 'agent-contracts', label: 'Contratos', icon: <ClipboardList className="h-5 w-5" />, href: '/agent/contracts' },
         { id: 'agent-my-trips', label: 'Mis Viajes', icon: <Plane className="h-5 w-5" />, href: '/agent/my-trips' },
         { id: 'agent-profile', label: 'Mi Perfil', icon: <UserCircle className="h-5 w-5" />, href: '/agent/profile' },
       ],
@@ -129,6 +131,7 @@ const GROUPS_BY_ROLE: Record<string, SidebarGroupDef[]> = {
       label: 'Operacion diaria',
       items: [
         { id: 'leads', label: 'Leads', icon: <Users className="h-5 w-5" />, href: '/superadmin/leads' },
+        { id: 'quotations', label: 'Cotizaciones', icon: <ClipboardList className="h-5 w-5" />, href: '/admin/quotations' },
         { id: 'verification', label: 'Verificacion', icon: <CreditCard className="h-5 w-5" />, href: '/superadmin/verification' },
         { id: 'commissions', label: 'Comisiones', icon: <DollarSign className="h-5 w-5" />, href: '/superadmin/commissions' },
       ],

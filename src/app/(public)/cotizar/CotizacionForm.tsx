@@ -58,11 +58,40 @@ export function CotizacionForm() {
   const menores = form.watch('menores')
   const notas = form.watch('notas')
 
-  function onSubmit(data: CotizacionFormData) {
+  async function onSubmit(data: CotizacionFormData) {
     const message = buildCotizacionMessage(data)
     const url = buildWhatsAppUrl(WHATSAPP_COTIZACION_NUMBER, message)
     setPreview(message)
     setWaUrl(url)
+
+    // Persistir lead en Firestore antes del handoff a WhatsApp.
+    // Graceful degradation: si falla, el flujo a WhatsApp NO se bloquea (regla Story 10.1 AC6).
+    try {
+      await fetch('/api/quotations', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          source: 'cotizar-public',
+          whatsappSent: true,
+          leadSnapshot: {
+            nombreAgente: data.nombreAgente || null,
+            nombreCliente: data.nombreCliente,
+            tipoViaje: data.tipoViaje,
+            destino: data.destino,
+            fechaSalida: data.fechaSalida,
+            fechaRegreso: data.fechaRegreso,
+            adultos: data.adultos,
+            menores: data.menores,
+            edadesMenores: data.edadesMenores ?? '',
+            habitaciones: data.habitaciones,
+            presupuesto: data.presupuesto,
+            notas: data.notas ?? '',
+          },
+        }),
+      })
+    } catch {
+      // Silencioso — lead se pierde pero WhatsApp sigue abriendo.
+    }
   }
 
   function handleEdit() {

@@ -3,10 +3,11 @@
 import { BottomNavBar } from '@/components/custom/BottomNavBar'
 import { RoleSwitcher } from '@/components/custom/RoleSwitcher'
 import { PageTransition } from '@/components/shared/PageTransition'
-import { Plane, Globe, User } from 'lucide-react'
+import { Plane, Globe, User, FileSignature } from 'lucide-react'
 
 const CLIENT_TABS = [
   { id: 'my-trips', label: 'Mis Viajes', icon: <Plane className="h-5 w-5" />, href: '/client/my-trips' },
+  { id: 'contracts', label: 'Contratos', icon: <FileSignature className="h-5 w-5" />, href: '/client/contracts' },
   { id: 'catalog', label: 'Explorar', icon: <Globe className="h-5 w-5" />, href: '/viajes' },
   { id: 'profile', label: 'Perfil', icon: <User className="h-5 w-5" />, href: '/client/profile' },
 ]
