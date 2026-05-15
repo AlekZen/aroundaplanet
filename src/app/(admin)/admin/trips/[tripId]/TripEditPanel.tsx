@@ -5,6 +5,7 @@ import { useParams, useRouter, usePathname } from 'next/navigation'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -26,7 +27,7 @@ import type { TripDocument, OdooDocument } from '@/types/trip'
 
 // === Constants ===
 
-const EDITORIAL_FIELDS = ['slug', 'emotionalCopy', 'tags', 'highlights', 'difficulty', 'seoTitle', 'seoDescription'] as const
+const EDITORIAL_FIELDS = ['slug', 'emotionalCopy', 'tags', 'highlights', 'difficulty', 'seoTitle', 'seoDescription', 'contractPlazoDias', 'contractIncluye', 'contractVisitamos', 'contractNoIncluye', 'contractDisplayName'] as const
 const DIFFICULTY_OPTIONS = [
   { value: '', label: 'Sin definir' },
   { value: 'easy', label: 'Facil' },
@@ -60,6 +61,12 @@ interface TripData {
   documents: TripDocument[]
   odooDocuments: OdooDocument[]
   departures: DepartureData[]
+  // Story 10.1.3 — datos del contrato dinámicos por viaje
+  contractPlazoDias: number | null
+  contractIncluye: string[]
+  contractVisitamos: string[]
+  contractNoIncluye: string[]
+  contractDisplayName: string
 }
 
 interface DepartureData {
@@ -216,6 +223,11 @@ export function TripEditPanel() {
         emotionalCopy: data.emotionalCopy ?? '',
         tags: data.tags ?? [],
         highlights: data.highlights ?? [],
+        contractPlazoDias: typeof data.contractPlazoDias === 'number' ? data.contractPlazoDias : null,
+        contractIncluye: data.contractIncluye ?? [],
+        contractVisitamos: data.contractVisitamos ?? [],
+        contractNoIncluye: data.contractNoIncluye ?? [],
+        contractDisplayName: data.contractDisplayName ?? '',
         difficulty: data.difficulty ?? null,
         seoTitle: data.seoTitle ?? '',
         seoDescription: data.seoDescription ?? '',
@@ -804,6 +816,112 @@ export function TripEditPanel() {
                   </div>
                 </>
               )}
+            </CardContent>
+          </Card>
+
+          {/* Story 10.1.3 — Datos del contrato editables (dinámicos por viaje) */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Datos del contrato</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-xs text-muted-foreground">
+                Estos campos se usan al generar el PDF de contrato para cualquier orden de este
+                viaje. Cambios se guardan automáticamente.
+              </p>
+
+              <div className="space-y-2">
+                <Label htmlFor="contractDisplayName">Nombre del destino en el contrato</Label>
+                <Input
+                  id="contractDisplayName"
+                  value={trip.contractDisplayName}
+                  onChange={(e) => handleEditorialChange('contractDisplayName', e.target.value)}
+                  placeholder={trip.odooName}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Aparece en el encabezado del contrato. Si lo dejas vacío se usa “{trip.odooName}”.
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="contractPlazoDias">Plazo límite de pago (días antes del viaje)</Label>
+                <Input
+                  id="contractPlazoDias"
+                  type="number"
+                  min="1"
+                  max="365"
+                  value={trip.contractPlazoDias ?? ''}
+                  onChange={(e) => {
+                    const v = e.target.value.trim()
+                    const n = v === '' ? null : Number(v)
+                    handleEditorialChange('contractPlazoDias', n as never)
+                  }}
+                  placeholder="30"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Aparece en la cláusula segunda. Típico: 30 días nacional / 60 días intercontinental.
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="contractIncluye">INCLUYE (una línea por ítem)</Label>
+                <Textarea
+                  id="contractIncluye"
+                  rows={6}
+                  value={trip.contractIncluye.join('\n')}
+                  onChange={(e) => {
+                    const arr = e.target.value
+                      .split('\n')
+                      .map((s) => s.trim())
+                      .filter(Boolean)
+                    handleEditorialChange('contractIncluye', arr)
+                  }}
+                  placeholder={'Vuelos desde CDMX\nHotel 4 estrellas\nDesayunos\nTraslados aeroportuarios\nGuía local'}
+                />
+                <p className="text-xs text-muted-foreground">
+                  {trip.contractIncluye.length} ítem(s). Mínimo 1 para generar contrato.
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="contractVisitamos">VISITAMOS (una línea por ítem, opcional)</Label>
+                <Textarea
+                  id="contractVisitamos"
+                  rows={4}
+                  value={trip.contractVisitamos.join('\n')}
+                  onChange={(e) => {
+                    const arr = e.target.value
+                      .split('\n')
+                      .map((s) => s.trim())
+                      .filter(Boolean)
+                    handleEditorialChange('contractVisitamos', arr)
+                  }}
+                  placeholder={'China\nMalasia\nSingapur\nTailandia'}
+                />
+                <p className="text-xs text-muted-foreground">
+                  {trip.contractVisitamos.length} destino(s). Vacío oculta esa sección del Anexo 1.
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="contractNoIncluye">NO INCLUYE (una línea por ítem, opcional)</Label>
+                <Textarea
+                  id="contractNoIncluye"
+                  rows={3}
+                  value={trip.contractNoIncluye.join('\n')}
+                  onChange={(e) => {
+                    const arr = e.target.value
+                      .split('\n')
+                      .map((s) => s.trim())
+                      .filter(Boolean)
+                    handleEditorialChange('contractNoIncluye', arr)
+                  }}
+                  placeholder={'Alimentos no incluidos\nActividades en parque'}
+                />
+                <p className="text-xs text-muted-foreground">
+                  {trip.contractNoIncluye.length} ítem(s). Vacío oculta esa sección.
+                </p>
+              </div>
             </CardContent>
           </Card>
 

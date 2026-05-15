@@ -9,16 +9,14 @@ import {
   contractSnapshotSchema,
   type ContractSnapshot,
 } from '@/schemas/contractSchema'
-import { contractTemplateSchema } from '@/schemas/contractTemplateSchema'
+import { tripContractFieldsSchema, type TripContractFields } from '@/schemas/tripSchema'
 import { currencyToSpanish, formatMxnFromCents } from '@/lib/pdf/currencyToSpanish'
 import { renderAndUploadContract } from '@/lib/pdf/contracts/generate'
-import { findTemplateForTrip } from '@/lib/pdf/contracts/findTemplate'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
 
 const CONTRACTS = 'contracts'
-const CONTRACT_TEMPLATES = 'contractTemplates'
 const ORDERS = 'orders'
 const TRIPS = 'trips'
 const ODOO_AGENTS = 'odooAgents'
@@ -37,15 +35,56 @@ async function resolveAgentName(agentId: string | null | undefined): Promise<str
   return o.exists ? (o.data()?.name ?? null) : null
 }
 
-async function resolveTripName(tripId: string | null | undefined): Promise<string | null> {
-  if (!tripId) return null
+/**
+ * Lee los campos contract del trip Firestore y valida que estén completos.
+ * Cualquier viaje (actual o nuevo) genera contrato sin tocar código siempre que
+ * tenga sus `contract*` campos llenados en Firestore.
+ */
+async function loadTripContractFields(
+  tripId: string | null | undefined
+): Promise<
+  | { ok: true; tripDoc: Record<string, unknown>; contract: TripContractFields }
+  | { ok: false; reason: string }
+> {
+  if (!tripId) {
+    return {
+      ok: false,
+      reason: 'La orden no tiene tripId. Asigna el viaje a la orden antes de generar el contrato.',
+    }
+  }
   const t = await adminDb.collection(TRIPS).doc(tripId).get()
-  return t.data()?.odooName ?? t.data()?.name ?? null
+  if (!t.exists) {
+    return {
+      ok: false,
+      reason: `El viaje ${tripId} no existe en el catálogo Firestore.`,
+    }
+  }
+  const data = t.data()!
+  const displayName = (data.contractDisplayName ?? data.odooName ?? data.name) as string | undefined
+  const parsed = tripContractFieldsSchema.safeParse({
+    plazoDias: data.contractPlazoDias,
+    incluye: data.contractIncluye,
+    visitamos: data.contractVisitamos,
+    noIncluye: data.contractNoIncluye,
+    displayName,
+  })
+  if (!parsed.success) {
+    const missing: string[] = []
+    if (typeof data.contractPlazoDias !== 'number') missing.push('Plazo días')
+    if (!Array.isArray(data.contractIncluye) || data.contractIncluye.length === 0) missing.push('Incluye (al menos 1 ítem)')
+    if (!displayName) missing.push('Nombre del destino')
+    const reason = missing.length
+      ? `Faltan datos del contrato en el viaje: ${missing.join(', ')}.`
+      : (parsed.error.issues[0]?.message ?? 'Datos del contrato inválidos en el viaje.')
+    return { ok: false, reason: `${reason} Edítalos en /admin/trips/${tripId}.` }
+  }
+  return { ok: true, tripDoc: data, contract: parsed.data }
 }
 
 /**
  * POST /api/contracts/from-order/[orderId]/generate
  * Admin/superadmin genera (o regenera) un contrato PDF para una orden.
+ * Datos del contrato vienen del trip Firestore (no de plantillas separadas).
  */
 export async function POST(
   req: NextRequest,
@@ -62,6 +101,8 @@ export async function POST(
     if (!orderId) throw new AppError('VALIDATION_ERROR', 'orderId requerido', 400)
 
     const body = await req.json().catch(() => ({}))
+    // `templateId` ya no es requerido (no existe plantilla por destino) pero se
+    // mantiene en el schema por backward-compat. Los snapshotOverrides siguen vigentes.
     const parsed = createContractSchema.safeParse(body)
     if (!parsed.success) {
       throw new AppError(
@@ -70,47 +111,19 @@ export async function POST(
         400
       )
     }
-    const { templateId, snapshotOverrides } = parsed.data
+    const { snapshotOverrides } = parsed.data
 
-    // Resolver order + template en paralelo
-    const [orderSnap, templateSnap] = await Promise.all([
-      adminDb.collection(ORDERS).doc(orderId).get(),
-      adminDb.collection(CONTRACT_TEMPLATES).doc(templateId).get(),
-    ])
-
+    const orderSnap = await adminDb.collection(ORDERS).doc(orderId).get()
     if (!orderSnap.exists) throw new AppError('ORDER_NOT_FOUND', 'Orden no encontrada', 404)
-    if (!templateSnap.exists) throw new AppError('TEMPLATE_NOT_FOUND', 'Plantilla no encontrada', 404)
-
     const order = orderSnap.data()!
-    const templateParsed = contractTemplateSchema.safeParse({
-      ...templateSnap.data(),
-      templateId: templateSnap.id,
-    })
-    if (!templateParsed.success) {
-      throw new AppError('TEMPLATE_INVALID', 'Plantilla corrupta en Firestore', 500)
-    }
-    const template = templateParsed.data
 
-    // Datos base derivados de la orden
-    const [tripName, agentName] = await Promise.all([
-      resolveTripName(order.tripId as string | null | undefined),
-      resolveAgentName(order.agentId as string | null | undefined),
-    ])
-
-    // Defensa: confirmar que la plantilla seleccionada coincide con el viaje.
-    // Evita que un admin (o un bug de UI) genere contrato con plantilla equivocada.
-    const matchCheck = findTemplateForTrip(
-      tripName,
-      order.tripId as string | null | undefined,
-      [template]
-    )
-    if (!matchCheck.template) {
-      throw new AppError(
-        'TEMPLATE_TRIP_MISMATCH',
-        `La plantilla "${template.destinoLabel}" no corresponde al viaje "${tripName ?? order.tripId ?? 'sin nombre'}". Elige la plantilla correcta o crea una para este destino.`,
-        400
-      )
+    const tripLoad = await loadTripContractFields(order.tripId as string | null | undefined)
+    if (!tripLoad.ok) {
+      throw new AppError('TRIP_CONTRACT_NOT_CONFIGURED', tripLoad.reason, 400)
     }
+    const { contract: tripContract } = tripLoad
+
+    const agentName = await resolveAgentName(order.agentId as string | null | undefined)
 
     const montoTotalCents =
       typeof snapshotOverrides?.montoTotalCents === 'number'
@@ -134,9 +147,9 @@ export async function POST(
     const snapshotBase: ContractSnapshot = contractSnapshotSchema.parse({
       nombreCliente: snapshotOverrides?.nombreCliente ?? order.contactName ?? 'CLIENTE',
       nombreAcompanantes: snapshotOverrides?.nombreAcompanantes ?? null,
-      viajeDestino: snapshotOverrides?.viajeDestino ?? template.destinoLabel,
-      viajeTemporada: snapshotOverrides?.viajeTemporada ?? tripName ?? template.destinoLabel,
-      periodoViaje: snapshotOverrides?.periodoViaje ?? tripName ?? null,
+      viajeDestino: snapshotOverrides?.viajeDestino ?? tripContract.displayName,
+      viajeTemporada: snapshotOverrides?.viajeTemporada ?? tripContract.displayName,
+      periodoViaje: snapshotOverrides?.periodoViaje ?? tripContract.displayName,
       fechaSalida: snapshotOverrides?.fechaSalida ?? null,
       fechaRegreso: snapshotOverrides?.fechaRegreso ?? null,
       montoTotalCents,
@@ -163,10 +176,25 @@ export async function POST(
     const contractRef = adminDb.collection(CONTRACTS).doc()
     const generatedAtIso = new Date().toISOString()
 
+    // ContractDocument espera la shape de "ContractTemplate" (legacy). Adaptamos
+    // los datos del trip al shape esperado.
+    const templateForRender = {
+      templateId: `trip:${order.tripId}`,
+      templateKey: (order.tripId as string).replace(/[^a-z0-9-]/gi, '-').toLowerCase(),
+      destinoLabel: tripContract.displayName,
+      scope: (tripContract.plazoDias >= 30 ? 'internacional' : 'nacional') as 'internacional' | 'nacional',
+      plazoLimitePagoDias: tripContract.plazoDias,
+      anexoIncluye: tripContract.incluye,
+      anexoVisitamos: tripContract.visitamos,
+      anexoNoIncluye: tripContract.noIncluye,
+      active: true,
+      notes: null,
+    }
+
     const { pdfUrl, pdfStoragePath } = await renderAndUploadContract({
       contractId: contractRef.id,
       orderId,
-      template,
+      template: templateForRender,
       snapshot: snapshotBase,
       generatedAtIso,
     })
@@ -179,15 +207,15 @@ export async function POST(
     await contractRef.set({
       contractId: contractRef.id,
       orderId,
-      templateId: template.templateId,
-      templateKey: template.templateKey,
+      tripId: order.tripId ?? null,
+      templateId: templateForRender.templateId,
+      templateKey: templateForRender.templateKey,
       snapshot: snapshotBase,
       pdfUrl,
       pdfStoragePath,
       generatedBy: claims.uid,
       generatedByName,
       version,
-      // Sharing: ambos OFF por default. Admin activa explícitamente.
       clientUserId: order.userId ?? null,
       agentId: order.agentId ?? null,
       sharedWithClient: false,
@@ -199,7 +227,6 @@ export async function POST(
       createdAt: FieldValue.serverTimestamp(),
     })
 
-    // Backlink en la orden (latest)
     await adminDb.collection(ORDERS).doc(orderId).update({
       contractId: contractRef.id,
       contractPdfUrl: pdfUrl,

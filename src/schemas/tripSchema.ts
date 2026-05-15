@@ -168,9 +168,27 @@ export const tripEditorialUpdateSchema = z.object({
   seoTitle: z.string().max(70).optional(),
   seoDescription: z.string().max(160).optional(),
   isPublished: z.boolean().optional(),
+  // Story 10.1.3 — Datos del contrato editables por admin para que cualquier
+  // viaje (actual o nuevo) genere PDF sin tocar código.
+  contractPlazoDias: z.number().int().min(1).max(365).optional(),
+  contractIncluye: z.array(z.string().min(1).max(300)).max(40).optional(),
+  contractVisitamos: z.array(z.string().min(1).max(200)).max(80).optional(),
+  contractNoIncluye: z.array(z.string().min(1).max(200)).max(40).optional(),
+  contractDisplayName: z.string().max(120).optional(),
 }).strict().refine((data) => Object.keys(data).length > 0, {
   message: 'Se requiere al menos un campo para actualizar',
 })
+
+/** Story 10.1.3 — Datos del contrato extraídos de un trip Firestore. */
+export const tripContractFieldsSchema = z.object({
+  plazoDias: z.number().int().min(1).max(365),
+  incluye: z.array(z.string().min(1)).min(1, 'Al menos 1 item INCLUYE requerido'),
+  visitamos: z.array(z.string().min(1)).optional().default([]),
+  noIncluye: z.array(z.string().min(1)).optional().default([]),
+  displayName: z.string().min(1).max(120),
+})
+
+export type TripContractFields = z.infer<typeof tripContractFieldsSchema>
 
 // === Departure creation (POST /api/trips/[tripId]/departures) ===
 

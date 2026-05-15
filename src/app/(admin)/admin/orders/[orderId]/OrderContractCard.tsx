@@ -4,15 +4,6 @@ import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import type { ContractTemplate } from '@/schemas/contractTemplateSchema'
-import { findTemplateForTrip } from '@/lib/pdf/contracts/findTemplate'
 
 interface Props {
   orderId: string
@@ -37,12 +28,22 @@ type GenerateState =
   | { kind: 'success'; contractId: string; pdfUrl: string; version: number }
   | { kind: 'error'; message: string }
 
+interface ContractConfig {
+  ok: boolean
+  reason?: string
+  editUrl?: string
+  fields?: {
+    plazoDias: number
+    incluye: string[]
+    visitamos: string[]
+    noIncluye: string[]
+    displayName: string
+  }
+}
+
 export function OrderContractCard(props: Props) {
-  const [templates, setTemplates] = useState<ContractTemplate[] | null>(null)
-  const [loadingTemplates, setLoadingTemplates] = useState(true)
-  const [selectedTemplateId, setSelectedTemplateId] = useState<string>('')
-  const [matchReason, setMatchReason] = useState<string>('')
-  const [matchOk, setMatchOk] = useState<boolean>(false)
+  const [config, setConfig] = useState<ContractConfig | null>(null)
+  const [loadingConfig, setLoadingConfig] = useState(true)
   const [nombreOverride, setNombreOverride] = useState<string>(props.contactName ?? '')
   const [acompanantes, setAcompanantes] = useState<string>('')
   const [anticipoPesos, setAnticipoPesos] = useState<string>('')
@@ -51,6 +52,32 @@ export function OrderContractCard(props: Props) {
   const [sharedWithAgent, setSharedWithAgent] = useState(props.sharedWithAgent)
   const [shareError, setShareError] = useState<string | null>(null)
   const [sharePending, setSharePending] = useState<'client' | 'agent' | null>(null)
+
+  useEffect(() => {
+    if (!props.tripId) {
+      setConfig({
+        ok: false,
+        reason: 'La orden no tiene viaje asignado.',
+      })
+      setLoadingConfig(false)
+      return
+    }
+    let aborted = false
+    fetch(`/api/trips/${encodeURIComponent(props.tripId)}/contract-config`)
+      .then(async (r) => {
+        const data = (await r.json()) as ContractConfig
+        if (!aborted) setConfig(data)
+      })
+      .catch((e) => {
+        if (!aborted) setConfig({ ok: false, reason: (e as Error).message })
+      })
+      .finally(() => {
+        if (!aborted) setLoadingConfig(false)
+      })
+    return () => {
+      aborted = true
+    }
+  }, [props.tripId])
 
   async function toggleShare(target: 'client' | 'agent', next: boolean) {
     if (!props.existingContractId) return
@@ -75,50 +102,21 @@ export function OrderContractCard(props: Props) {
     }
   }
 
-  useEffect(() => {
-    let aborted = false
-    fetch('/api/contract-templates')
-      .then(async (r) => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`)
-        const data = (await r.json()) as { templates: ContractTemplate[] }
-        if (!aborted) {
-          setTemplates(data.templates)
-          // Auto-match destino → plantilla. Si NO match, deja selector vacío y bloquea generar.
-          const match = findTemplateForTrip(props.tripName, props.tripId, data.templates)
-          setMatchReason(match.reason)
-          setMatchOk(!!match.template)
-          if (match.template) {
-            setSelectedTemplateId(match.template.templateId)
-          }
-        }
-      })
-      .catch(() => {
-        if (!aborted) setTemplates([])
-      })
-      .finally(() => {
-        if (!aborted) setLoadingTemplates(false)
-      })
-    return () => {
-      aborted = true
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.tripId, props.tripName])
-
   async function handleGenerate() {
-    if (!selectedTemplateId) return
     setState({ kind: 'submitting' })
     try {
       const anticipoCents = anticipoPesos.trim()
         ? Math.round(Number(anticipoPesos) * 100)
         : null
 
-      const body: Record<string, unknown> = { templateId: selectedTemplateId }
       const overrides: Record<string, unknown> = {}
       if (nombreOverride.trim() && nombreOverride.trim() !== (props.contactName ?? '')) {
         overrides.nombreCliente = nombreOverride.trim()
       }
       if (acompanantes.trim()) overrides.nombreAcompanantes = acompanantes.trim()
       if (anticipoCents && anticipoCents > 0) overrides.anticipoCents = anticipoCents
+
+      const body: Record<string, unknown> = { templateId: `trip:${props.tripId ?? 'unknown'}` }
       if (Object.keys(overrides).length > 0) body.snapshotOverrides = overrides
 
       const res = await fetch(`/api/contracts/from-order/${props.orderId}/generate`, {
@@ -143,6 +141,7 @@ export function OrderContractCard(props: Props) {
   }
 
   const hasExisting = props.existingContractId && props.existingPdfUrl
+  const canGenerate = config?.ok && props.orderTotalCents > 0
 
   return (
     <section className="rounded-lg border border-border bg-card p-4 space-y-4">
@@ -167,41 +166,50 @@ export function OrderContractCard(props: Props) {
         </p>
       ) : null}
 
-      {loadingTemplates ? (
-        <Skeleton className="h-10 w-full" />
-      ) : templates && templates.length > 0 ? (
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-foreground">Plantilla para este viaje</label>
-          {matchOk ? (
-            <div className="rounded border-l-4 border-green-500 bg-green-50 p-2 text-xs">
-              ✓ {matchReason}. Cambia abajo solo si conoces una mejor.
-            </div>
-          ) : (
-            <div className="rounded border-l-4 border-red-500 bg-red-50 p-2 text-xs">
-              ⚠ {matchReason}
-              <br />
-              No se puede generar contrato hasta que exista una plantilla para este destino. Pide a
-              Alek que agregue la plantilla correspondiente al catálogo, o cambia el nombre del
-              viaje si el destino sí está en la lista pero con otro nombre.
-            </div>
-          )}
-          <Select value={selectedTemplateId} onValueChange={setSelectedTemplateId}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Selecciona destino" />
-            </SelectTrigger>
-            <SelectContent>
-              {templates.map((t) => (
-                <SelectItem key={t.templateId} value={t.templateId}>
-                  {t.destinoLabel} {t.scope === 'nacional' ? '(nacional)' : '(internacional)'}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+      {loadingConfig ? (
+        <Skeleton className="h-20 w-full" />
+      ) : config?.ok ? (
+        <div className="rounded border-l-4 border-green-500 bg-green-50 p-3 text-xs space-y-1">
+          <div>
+            <span className="font-medium">✓ Viaje configurado:</span> {config.fields?.displayName}
+          </div>
+          <div className="text-muted-foreground">
+            Plazo {config.fields?.plazoDias} días · {config.fields?.incluye.length} ítems INCLUYE
+            {config.fields && config.fields.visitamos.length > 0
+              ? ` · ${config.fields.visitamos.length} destinos VISITAMOS`
+              : ''}
+            {config.fields && config.fields.noIncluye.length > 0
+              ? ` · ${config.fields.noIncluye.length} ítems NO INCLUYE`
+              : ''}
+            {' · '}
+            <a
+              href={config.editUrl ?? '#'}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline"
+            >
+              Editar viaje
+            </a>
+          </div>
         </div>
       ) : (
-        <p className="text-sm text-muted-foreground">
-          No hay plantillas activas. Contacta soporte.
-        </p>
+        <div className="rounded border-l-4 border-red-500 bg-red-50 p-3 text-sm space-y-2">
+          <p>
+            <span className="font-medium">⚠ No se puede generar contrato todavía.</span>
+            <br />
+            {config?.reason ?? 'Información del contrato no configurada en este viaje.'}
+          </p>
+          {config?.editUrl ? (
+            <a
+              href={config.editUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block rounded bg-red-600 px-3 py-1 text-xs font-medium text-white hover:bg-red-700"
+            >
+              Editar viaje →
+            </a>
+          ) : null}
+        </div>
       )}
 
       <div className="space-y-2">
@@ -243,18 +251,13 @@ export function OrderContractCard(props: Props) {
 
       <Button
         onClick={handleGenerate}
-        disabled={
-          state.kind === 'submitting' ||
-          !selectedTemplateId ||
-          props.orderTotalCents <= 0 ||
-          !matchOk
-        }
+        disabled={state.kind === 'submitting' || !canGenerate}
         className="w-full"
       >
         {state.kind === 'submitting'
           ? 'Generando...'
-          : !matchOk
-            ? 'No se puede generar (plantilla faltante)'
+          : !canGenerate
+            ? 'No se puede generar todavía'
             : hasExisting
               ? `Regenerar contrato (v${(props.existingVersion ?? 1) + 1})`
               : 'Generar contrato PDF'}

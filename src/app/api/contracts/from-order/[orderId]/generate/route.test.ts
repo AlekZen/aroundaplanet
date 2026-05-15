@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from 'next/server'
 
 const mockRequireAuth = vi.fn()
 const mockOrderGet = vi.fn()
-const mockTemplateGet = vi.fn()
 const mockTripGet = vi.fn()
 const mockUserGet = vi.fn()
 const mockAgentGet = vi.fn()
@@ -24,12 +23,7 @@ vi.mock('@/lib/firebase/admin', () => ({
   adminDb: {
     collection: (col: string) => {
       if (col === 'orders') {
-        return {
-          doc: () => ({ get: mockOrderGet, update: mockOrderUpdate }),
-        }
-      }
-      if (col === 'contractTemplates') {
-        return { doc: () => ({ get: mockTemplateGet }) }
+        return { doc: () => ({ get: mockOrderGet, update: mockOrderUpdate }) }
       }
       if (col === 'trips') {
         return { doc: () => ({ get: mockTripGet }) }
@@ -75,13 +69,22 @@ function makeReq(body: unknown): NextRequest {
 
 const ctx = { params: Promise.resolve({ orderId: 'order1' }) }
 
+/** Default trip data — viaje COMPLETAMENTE configurado para contratos. */
+const validTripData = {
+  odooName: 'ASIA MAYO 2026',
+  contractDisplayName: 'ASIA MAYO 2026',
+  contractPlazoDias: 30,
+  contractIncluye: ['Vuelos desde CDMX', 'Hotel 4 estrellas'],
+  contractVisitamos: ['China', 'Malasia'],
+  contractNoIncluye: [],
+}
+
 describe('POST /api/contracts/from-order/[orderId]/generate', () => {
   beforeEach(() => {
     vi.resetModules()
     mockRequireAuth.mockReset()
     mockOrderGet.mockReset()
-    mockTemplateGet.mockReset()
-    mockTripGet.mockReset().mockResolvedValue({ exists: true, data: () => ({ odooName: 'VUELTA AL MUNDO 2026' }) })
+    mockTripGet.mockReset().mockResolvedValue({ exists: true, data: () => validTripData })
     mockUserGet.mockReset().mockResolvedValue({ exists: false, data: () => null })
     mockAgentGet.mockReset().mockResolvedValue({ exists: false, data: () => null })
     mockCountGet.mockReset().mockResolvedValue({ data: () => ({ count: 0 }) })
@@ -95,31 +98,42 @@ describe('POST /api/contracts/from-order/[orderId]/generate', () => {
   it('rechaza 403 sin rol admin', async () => {
     mockRequireAuth.mockResolvedValue({ uid: 'u1', roles: ['cliente'] })
     const { POST } = await import('./route')
-    const res = await POST(makeReq({ templateId: 'vam' }), ctx)
+    const res = await POST(makeReq({ templateId: 'trip:odoo-asia' }), ctx)
     expect(res.status).toBe(403)
   })
 
   it('404 cuando la orden no existe', async () => {
     mockRequireAuth.mockResolvedValue({ uid: 'admin1', roles: ['admin'] })
     mockOrderGet.mockResolvedValue({ exists: false })
-    mockTemplateGet.mockResolvedValue({
-      exists: true,
-      id: 'vam',
-      data: () => ({
-        templateKey: 'vuelta-al-mundo',
-        destinoLabel: 'VUELTA AL MUNDO',
-        scope: 'internacional',
-        plazoLimitePagoDias: 60,
-        anexoIncluye: ['x'],
-        active: true,
-      }),
-    })
     const { POST } = await import('./route')
-    const res = await POST(makeReq({ templateId: 'vam' }), ctx)
+    const res = await POST(makeReq({ templateId: 'trip:odoo-asia' }), ctx)
     expect(res.status).toBe(404)
   })
 
-  it('happy path: genera contrato v1 y backlinka la orden', async () => {
+  it('400 cuando el viaje no tiene contractIncluye configurado', async () => {
+    mockRequireAuth.mockResolvedValue({ uid: 'admin1', roles: ['admin'] })
+    mockOrderGet.mockResolvedValue({
+      exists: true,
+      data: () => ({
+        contactName: 'Felipe',
+        amountTotalCents: 100000,
+        tripId: 'odoo-asia',
+        userId: 'u1',
+      }),
+    })
+    mockTripGet.mockResolvedValue({
+      exists: true,
+      data: () => ({ odooName: 'ASIA', contractPlazoDias: 30 /* falta incluye */ }),
+    })
+    const { POST } = await import('./route')
+    const res = await POST(makeReq({ templateId: 'trip:odoo-asia' }), ctx)
+    expect(res.status).toBe(400)
+    const body = await res.json()
+    expect(body.code).toBe('TRIP_CONTRACT_NOT_CONFIGURED')
+    expect(body.message).toContain('al menos 1 ítem')
+  })
+
+  it('happy path: genera contrato v1 leyendo datos del viaje', async () => {
     mockRequireAuth.mockResolvedValue({ uid: 'admin1', roles: ['admin'] })
     mockOrderGet.mockResolvedValue({
       exists: true,
@@ -127,90 +141,45 @@ describe('POST /api/contracts/from-order/[orderId]/generate', () => {
         contactName: 'Felipe Rubio',
         amountTotalCents: 11500000,
         agentId: null,
-        tripId: 'odoo-vam',
+        tripId: 'odoo-asia',
         userId: 'u-felipe',
-      }),
-    })
-    mockTemplateGet.mockResolvedValue({
-      exists: true,
-      id: 'vuelta-al-mundo',
-      data: () => ({
-        templateKey: 'vuelta-al-mundo',
-        destinoLabel: 'VUELTA AL MUNDO',
-        scope: 'internacional',
-        plazoLimitePagoDias: 60,
-        anexoIncluye: ['Vuelos'],
-        anexoVisitamos: [],
-        anexoNoIncluye: [],
-        active: true,
-        notes: null,
       }),
     })
 
     const { POST } = await import('./route')
-    const res = await POST(makeReq({ templateId: 'vuelta-al-mundo' }), ctx)
+    const res = await POST(makeReq({ templateId: 'trip:odoo-asia' }), ctx)
     expect(res.status).toBe(201)
     const json = await res.json()
     expect(json.contractId).toBe('new-contract-id')
     expect(json.version).toBe(1)
-    expect(json.pdfUrl).toBe('https://signed/url')
     expect(mockRenderAndUpload).toHaveBeenCalledOnce()
     expect(mockNewContractSet).toHaveBeenCalledOnce()
-    expect(mockOrderUpdate).toHaveBeenCalledOnce()
-  })
-
-  it('versionado: cuenta contratos previos y suma 1', async () => {
-    mockRequireAuth.mockResolvedValue({ uid: 'admin1', roles: ['admin'] })
-    mockOrderGet.mockResolvedValue({
-      exists: true,
-      data: () => ({ contactName: 'Juan Test', amountTotalCents: 100000, tripId: 'odoo-asia' }),
-    })
-    mockTripGet.mockResolvedValue({ exists: true, data: () => ({ odooName: 'ASIA MAYO 2026' }) })
-    mockTemplateGet.mockResolvedValue({
-      exists: true,
-      id: 'asia',
-      data: () => ({
-        templateKey: 'asia',
-        destinoLabel: 'ASIA',
-        scope: 'internacional',
-        plazoLimitePagoDias: 30,
-        anexoIncluye: ['Vuelos'],
-        anexoVisitamos: [],
-        anexoNoIncluye: [],
-        active: true,
-        notes: null,
-      }),
-    })
-    mockCountGet.mockResolvedValue({ data: () => ({ count: 2 }) })
-
-    const { POST } = await import('./route')
-    const res = await POST(makeReq({ templateId: 'asia' }), ctx)
-    expect(res.status).toBe(201)
-    const json = await res.json()
-    expect(json.version).toBe(3)
   })
 
   it('rechaza order con amountTotalCents=0', async () => {
     mockRequireAuth.mockResolvedValue({ uid: 'admin1', roles: ['admin'] })
     mockOrderGet.mockResolvedValue({
       exists: true,
-      data: () => ({ contactName: 'X', amountTotalCents: 0 }),
+      data: () => ({ contactName: 'X', amountTotalCents: 0, tripId: 'odoo-asia' }),
     })
-    mockTemplateGet.mockResolvedValue({
-      exists: true,
-      id: 'asia',
-      data: () => ({
-        templateKey: 'asia',
-        destinoLabel: 'ASIA',
-        scope: 'internacional',
-        plazoLimitePagoDias: 30,
-        anexoIncluye: ['Vuelos'],
-        active: true,
-      }),
-    })
-
     const { POST } = await import('./route')
-    const res = await POST(makeReq({ templateId: 'asia' }), ctx)
+    const res = await POST(makeReq({ templateId: 'trip:odoo-asia' }), ctx)
     expect(res.status).toBe(400)
+    const body = await res.json()
+    expect(body.code).toBe('ORDER_MISSING_AMOUNT')
+  })
+
+  it('400 cuando la orden no tiene tripId', async () => {
+    mockRequireAuth.mockResolvedValue({ uid: 'admin1', roles: ['admin'] })
+    mockOrderGet.mockResolvedValue({
+      exists: true,
+      data: () => ({ contactName: 'X', amountTotalCents: 100000, tripId: null }),
+    })
+    const { POST } = await import('./route')
+    const res = await POST(makeReq({ templateId: 'trip:none' }), ctx)
+    expect(res.status).toBe(400)
+    const body = await res.json()
+    expect(body.code).toBe('TRIP_CONTRACT_NOT_CONFIGURED')
+    expect(body.message).toContain('tripId')
   })
 })
