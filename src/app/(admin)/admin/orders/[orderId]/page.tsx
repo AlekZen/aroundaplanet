@@ -1,6 +1,8 @@
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { adminDb } from '@/lib/firebase/admin'
 import { OrderContractCard } from './OrderContractCard'
+import { PAYMENT_STATUS_LABELS, PAYMENT_METHOD_LABELS, type PaymentStatus, type PaymentMethod } from '@/schemas/paymentSchema'
 
 export const metadata = {
   title: 'Detalle de orden | AroundaPlanet',
@@ -98,15 +100,82 @@ function formatMxn(cents: number): string {
   return `$${pesos} MXN`
 }
 
+interface PaymentRow {
+  paymentId: string
+  amountCents: number
+  paymentMethod: PaymentMethod
+  status: PaymentStatus
+  dateIso: string | null
+  createdAtIso: string | null
+  registeredByName: string | null
+  bankReference: string | null
+  receiptUrl: string | null
+  syncedToOdoo: boolean
+  odooPaymentId: number | null
+  odooState: string | null
+  odooJournalName: string | null
+}
+
+async function loadPayments(orderId: string): Promise<PaymentRow[]> {
+  const snap = await adminDb
+    .collection('payments')
+    .where('orderId', '==', orderId)
+    .get()
+  const rows: PaymentRow[] = snap.docs.map((d) => {
+    const data = d.data()
+    return {
+      paymentId: d.id,
+      amountCents: Number(data.amountCents ?? 0),
+      paymentMethod: (data.paymentMethod ?? 'transfer') as PaymentMethod,
+      status: (data.status ?? 'pending_verification') as PaymentStatus,
+      dateIso: data.date?.toDate?.()?.toISOString() ?? null,
+      createdAtIso: data.createdAt?.toDate?.()?.toISOString() ?? null,
+      registeredByName: data.registeredByName ?? null,
+      bankReference: data.bankReference ?? null,
+      receiptUrl: data.receiptUrl ?? null,
+      syncedToOdoo: data.syncedToOdoo === true || !!data.odooPaymentId,
+      odooPaymentId: data.odooPaymentId ?? null,
+      odooState: data.odooState ?? null,
+      odooJournalName: data.odooJournalName ?? null,
+    }
+  })
+  rows.sort((a, b) => (b.createdAtIso ?? '').localeCompare(a.createdAtIso ?? ''))
+  return rows
+}
+
+function formatDate(iso: string | null): string {
+  if (!iso) return '—'
+  try {
+    return new Date(iso).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })
+  } catch {
+    return iso
+  }
+}
+
+const STATUS_TONE: Record<PaymentStatus, string> = {
+  pending_verification: 'bg-yellow-100 text-yellow-800',
+  verified: 'bg-green-100 text-green-800',
+  rejected: 'bg-red-100 text-red-800',
+  info_requested: 'bg-blue-100 text-blue-800',
+}
+
 export default async function OrderDetailPage(props: { params: Promise<{ orderId: string }> }) {
   const { orderId } = await props.params
-  const order = await loadOrder(orderId)
+  const [order, payments] = await Promise.all([loadOrder(orderId), loadPayments(orderId)])
   if (!order) notFound()
+
+  const saldoCents = Math.max(order.amountTotalCents - order.amountPaidCents, 0)
+  const hasVerifiedPayment = payments.some((p) => p.status === 'verified')
+  const isFullyPaid = order.amountTotalCents > 0 && order.amountPaidCents >= order.amountTotalCents
 
   return (
     <div className="space-y-6 p-4">
       <div>
-        <h1 className="font-heading text-2xl font-semibold text-foreground">Orden #{order.orderId.slice(0, 8)}</h1>
+        <h1 className="font-heading text-2xl font-semibold text-foreground">
+          {order.orderId.startsWith('odoo-sale-')
+            ? `Orden Odoo S${order.orderId.replace('odoo-sale-', '')}`
+            : `Orden #${order.orderId.slice(0, 8)}`}
+        </h1>
         <p className="text-sm text-muted-foreground">Detalle de la orden y generación de contrato</p>
       </div>
 
@@ -133,7 +202,20 @@ export default async function OrderDetailPage(props: { params: Promise<{ orderId
             <dd className="col-span-2 font-semibold">{formatMxn(order.amountTotalCents)}</dd>
 
             <dt className="text-muted-foreground">Pagado</dt>
-            <dd className="col-span-2">{formatMxn(order.amountPaidCents)}</dd>
+            <dd className="col-span-2">
+              {formatMxn(order.amountPaidCents)}
+              {order.amountTotalCents > 0 && (
+                <span className="ml-2 text-xs text-muted-foreground">
+                  ({Math.round((order.amountPaidCents / order.amountTotalCents) * 100)}%)
+                </span>
+              )}
+            </dd>
+
+            <dt className="text-muted-foreground">Saldo</dt>
+            <dd className="col-span-2 font-semibold">
+              {formatMxn(saldoCents)}
+              {isFullyPaid && <span className="ml-2 text-green-700 text-xs">✓ Pagado completo</span>}
+            </dd>
           </dl>
         </section>
 
@@ -152,6 +234,86 @@ export default async function OrderDetailPage(props: { params: Promise<{ orderId
           hasClientUser={!!order.contactName /* placeholder visible — backend valida userId real */}
         />
       </div>
+
+      <section className="rounded-lg border border-border bg-card p-4 space-y-3">
+        <header className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="font-semibold text-foreground">Pagos de esta orden</h2>
+          <div className="flex flex-wrap gap-3 text-xs">
+            <Link
+              href={`/admin/verification?orderId=${order.orderId}`}
+              className="text-primary hover:underline"
+            >
+              Abrir en verificación →
+            </Link>
+            {hasVerifiedPayment && !order.contractId && (
+              <span className="rounded bg-yellow-100 text-yellow-900 px-2 py-0.5">
+                ⚠ Ya hay pago verificado, contrato no se ha generado todavía
+              </span>
+            )}
+          </div>
+        </header>
+
+        {payments.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            No hay pagos registrados todavía. El agente o cliente debe registrar el primer pago
+            desde el portal.
+          </p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-muted/50 text-left">
+                <tr>
+                  <th className="px-2 py-1.5 font-medium">Fecha</th>
+                  <th className="px-2 py-1.5 font-medium text-right">Monto</th>
+                  <th className="px-2 py-1.5 font-medium">Método</th>
+                  <th className="px-2 py-1.5 font-medium">Status</th>
+                  <th className="px-2 py-1.5 font-medium">Sync Odoo</th>
+                  <th className="px-2 py-1.5 font-medium">Comprobante</th>
+                  <th className="px-2 py-1.5 font-medium">Registrado por</th>
+                </tr>
+              </thead>
+              <tbody>
+                {payments.map((p) => (
+                  <tr key={p.paymentId} className="border-t border-border align-top">
+                    <td className="px-2 py-1.5 text-xs">{formatDate(p.dateIso ?? p.createdAtIso)}</td>
+                    <td className="px-2 py-1.5 text-right font-medium">{formatMxn(p.amountCents)}</td>
+                    <td className="px-2 py-1.5">{PAYMENT_METHOD_LABELS[p.paymentMethod]}</td>
+                    <td className="px-2 py-1.5">
+                      <span className={`inline-block rounded px-2 py-0.5 text-xs ${STATUS_TONE[p.status]}`}>
+                        {PAYMENT_STATUS_LABELS[p.status]}
+                      </span>
+                    </td>
+                    <td className="px-2 py-1.5 text-xs">
+                      {p.odooPaymentId
+                        ? `#${p.odooPaymentId} · ${p.odooJournalName ?? p.odooState ?? '—'}`
+                        : p.syncedToOdoo
+                          ? 'Sincronizando…'
+                          : p.status === 'verified'
+                            ? <span className="text-yellow-700">⏳ Pendiente push</span>
+                            : <span className="text-muted-foreground">—</span>}
+                    </td>
+                    <td className="px-2 py-1.5">
+                      {p.receiptUrl ? (
+                        <a
+                          href={p.receiptUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary hover:underline text-xs"
+                        >
+                          Ver
+                        </a>
+                      ) : (
+                        <span className="text-muted-foreground text-xs">—</span>
+                      )}
+                    </td>
+                    <td className="px-2 py-1.5 text-xs">{p.registeredByName ?? '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
     </div>
   )
 }

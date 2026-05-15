@@ -183,6 +183,7 @@ export function TripEditPanel() {
   // Sales data (on-demand from Odoo)
   const [sales, setSales] = useState<SalesData | null>(null)
   const [salesLoading, setSalesLoading] = useState(false)
+  const [contractCreatingId, setContractCreatingId] = useState<number | null>(null)
   const [salesError, setSalesError] = useState<string | null>(null)
 
   // New departure form
@@ -442,6 +443,41 @@ export function TripEditPanel() {
       setSalesLoading(false)
     }
   }, [tripId])
+
+  // Story 10.1.2 — Crear/abrir borrador de orden Firestore mirror para asignar contrato
+  // a una venta Odoo. Idempotente: si ya existe la mirror, solo navega.
+  const handleAssignContract = useCallback(
+    async (order: SaleOrder) => {
+      setContractCreatingId(order.orderId)
+      try {
+        const res = await fetch('/api/orders/from-odoo-sale', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            saleOrderId: order.orderId,
+            saleOrderName: order.orderName,
+            customerName: order.customerName,
+            customerPhone: order.customerPhone ?? null,
+            customerEmail: order.customerEmail ?? null,
+            agentName: order.agentName ?? null,
+            tripId,
+            tripName: trip?.odooName ?? null,
+            amountTotalCents: Math.round((order.amountTotal ?? 0) * 100),
+            amountPaidCents: Math.round((order.amountPaid ?? 0) * 100),
+            status: order.amountResidual <= 0 ? 'Completado' : 'Confirmado',
+          }),
+        })
+        const data = await res.json()
+        if (!res.ok) throw new Error(data?.message ?? `HTTP ${res.status}`)
+        router.push(`/admin/orders/${data.orderId}`)
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : 'No se pudo crear el borrador')
+      } finally {
+        setContractCreatingId(null)
+      }
+    },
+    [tripId, trip, router]
+  )
 
   // Auto-fetch sales when trip loads (only once per tripId, NOT on trip state changes)
   useEffect(() => {
@@ -857,6 +893,7 @@ export function TripEditPanel() {
                           <th className="pb-2 pr-3 text-right">Pendiente</th>
                           <th className="pb-2">Facturacion</th>
                           <th className="pb-2">Pago</th>
+                          <th className="pb-2">Contrato</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -922,6 +959,17 @@ export function TripEditPanel() {
                                 <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${ps.color}`}>
                                   {ps.label}
                                 </span>
+                              </td>
+                              <td className="py-3 align-top">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="text-xs h-7"
+                                  disabled={contractCreatingId === order.orderId}
+                                  onClick={() => handleAssignContract(order)}
+                                >
+                                  {contractCreatingId === order.orderId ? 'Creando…' : 'Asignar contrato →'}
+                                </Button>
                               </td>
                             </tr>
                           )

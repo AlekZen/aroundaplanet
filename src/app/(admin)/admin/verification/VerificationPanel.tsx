@@ -405,6 +405,19 @@ export function VerificationPanel() {
                   <span className="text-muted-foreground">Agente</span>
                   <span>{selectedPayment.agentName ?? 'Sin asignar'}</span>
                 </div>
+                {selectedPayment.orderId && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Orden</span>
+                    <a
+                      href={`/admin/orders/${selectedPayment.orderId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-mono text-xs text-primary underline"
+                    >
+                      Abrir detalle de orden →
+                    </a>
+                  </div>
+                )}
                 {selectedPayment.bankName && (
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Banco</span>
