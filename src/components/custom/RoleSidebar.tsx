@@ -20,7 +20,7 @@ import { RoleSwitcher } from '@/components/custom/RoleSwitcher'
 import { staggerChildren } from '@/lib/animations/variants'
 import { spring } from '@/lib/animations/transitions'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
-import { LayoutDashboard, CreditCard, BarChart3, Shield, UserCircle, RefreshCw, Map as MapIcon, Users, Plane, Contact, UserCheck, DollarSign, FileText, Link2, Copy, ClipboardList } from 'lucide-react'
+import { LayoutDashboard, CreditCard, BarChart3, Shield, UserCircle, RefreshCw, Map as MapIcon, Users, Plane, Contact, UserCheck, DollarSign, FileText, Link2, Copy, ClipboardList, ShoppingCart } from 'lucide-react'
 
 interface RoleSidebarProps {
   roles: string[]
@@ -47,6 +47,7 @@ const GROUPS_BY_ROLE: Record<string, SidebarGroupDef[]> = {
       items: [
         { id: 'leads', label: 'Leads', icon: <Users className="h-5 w-5" />, href: '/admin/leads' },
         { id: 'quotations', label: 'Cotizaciones', icon: <ClipboardList className="h-5 w-5" />, href: '/admin/quotations' },
+        { id: 'orders', label: 'Órdenes', icon: <ShoppingCart className="h-5 w-5" />, href: '/admin/orders' },
         { id: 'verification', label: 'Verificacion', icon: <CreditCard className="h-5 w-5" />, href: '/admin/verification' },
         { id: 'commissions', label: 'Comisiones', icon: <DollarSign className="h-5 w-5" />, href: '/admin/commissions' },
       ],
@@ -132,6 +133,7 @@ const GROUPS_BY_ROLE: Record<string, SidebarGroupDef[]> = {
       items: [
         { id: 'leads', label: 'Leads', icon: <Users className="h-5 w-5" />, href: '/superadmin/leads' },
         { id: 'quotations', label: 'Cotizaciones', icon: <ClipboardList className="h-5 w-5" />, href: '/admin/quotations' },
+        { id: 'orders', label: 'Órdenes', icon: <ShoppingCart className="h-5 w-5" />, href: '/admin/orders' },
         { id: 'verification', label: 'Verificacion', icon: <CreditCard className="h-5 w-5" />, href: '/superadmin/verification' },
         { id: 'commissions', label: 'Comisiones', icon: <DollarSign className="h-5 w-5" />, href: '/superadmin/commissions' },
       ],
