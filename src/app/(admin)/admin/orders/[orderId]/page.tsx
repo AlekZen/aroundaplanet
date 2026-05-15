@@ -232,6 +232,8 @@ export default async function OrderDetailPage(props: { params: Promise<{ orderId
           acceptedByName={order.contractAcceptedByName}
           hasAgent={!!order.agentId}
           hasClientUser={!!order.contactName /* placeholder visible — backend valida userId real */}
+          tripId={order.tripId}
+          tripName={order.tripName}
         />
       </div>
 

@@ -12,6 +12,7 @@ import {
 import { contractTemplateSchema } from '@/schemas/contractTemplateSchema'
 import { currencyToSpanish, formatMxnFromCents } from '@/lib/pdf/currencyToSpanish'
 import { renderAndUploadContract } from '@/lib/pdf/contracts/generate'
+import { findTemplateForTrip } from '@/lib/pdf/contracts/findTemplate'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -95,6 +96,21 @@ export async function POST(
       resolveTripName(order.tripId as string | null | undefined),
       resolveAgentName(order.agentId as string | null | undefined),
     ])
+
+    // Defensa: confirmar que la plantilla seleccionada coincide con el viaje.
+    // Evita que un admin (o un bug de UI) genere contrato con plantilla equivocada.
+    const matchCheck = findTemplateForTrip(
+      tripName,
+      order.tripId as string | null | undefined,
+      [template]
+    )
+    if (!matchCheck.template) {
+      throw new AppError(
+        'TEMPLATE_TRIP_MISMATCH',
+        `La plantilla "${template.destinoLabel}" no corresponde al viaje "${tripName ?? order.tripId ?? 'sin nombre'}". Elige la plantilla correcta o crea una para este destino.`,
+        400
+      )
+    }
 
     const montoTotalCents =
       typeof snapshotOverrides?.montoTotalCents === 'number'

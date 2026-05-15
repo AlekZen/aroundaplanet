@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import type { ContractTemplate } from '@/schemas/contractTemplateSchema'
+import { findTemplateForTrip } from '@/lib/pdf/contracts/findTemplate'
 
 interface Props {
   orderId: string
@@ -20,6 +21,8 @@ interface Props {
   existingPdfUrl: string | null
   existingVersion: number | null
   contactName: string | null
+  tripId: string | null
+  tripName: string | null
   sharedWithClient: boolean
   sharedWithAgent: boolean
   acceptedAt: string | null
@@ -38,6 +41,8 @@ export function OrderContractCard(props: Props) {
   const [templates, setTemplates] = useState<ContractTemplate[] | null>(null)
   const [loadingTemplates, setLoadingTemplates] = useState(true)
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>('')
+  const [matchReason, setMatchReason] = useState<string>('')
+  const [matchOk, setMatchOk] = useState<boolean>(false)
   const [nombreOverride, setNombreOverride] = useState<string>(props.contactName ?? '')
   const [acompanantes, setAcompanantes] = useState<string>('')
   const [anticipoPesos, setAnticipoPesos] = useState<string>('')
@@ -78,8 +83,12 @@ export function OrderContractCard(props: Props) {
         const data = (await r.json()) as { templates: ContractTemplate[] }
         if (!aborted) {
           setTemplates(data.templates)
-          if (data.templates.length > 0 && !selectedTemplateId) {
-            setSelectedTemplateId(data.templates[0]!.templateId)
+          // Auto-match destino → plantilla. Si NO match, deja selector vacío y bloquea generar.
+          const match = findTemplateForTrip(props.tripName, props.tripId, data.templates)
+          setMatchReason(match.reason)
+          setMatchOk(!!match.template)
+          if (match.template) {
+            setSelectedTemplateId(match.template.templateId)
           }
         }
       })
@@ -93,7 +102,7 @@ export function OrderContractCard(props: Props) {
       aborted = true
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [props.tripId, props.tripName])
 
   async function handleGenerate() {
     if (!selectedTemplateId) return
@@ -162,7 +171,20 @@ export function OrderContractCard(props: Props) {
         <Skeleton className="h-10 w-full" />
       ) : templates && templates.length > 0 ? (
         <div className="space-y-2">
-          <label className="text-sm font-medium text-foreground">Plantilla</label>
+          <label className="text-sm font-medium text-foreground">Plantilla para este viaje</label>
+          {matchOk ? (
+            <div className="rounded border-l-4 border-green-500 bg-green-50 p-2 text-xs">
+              ✓ {matchReason}. Cambia abajo solo si conoces una mejor.
+            </div>
+          ) : (
+            <div className="rounded border-l-4 border-red-500 bg-red-50 p-2 text-xs">
+              ⚠ {matchReason}
+              <br />
+              No se puede generar contrato hasta que exista una plantilla para este destino. Pide a
+              Alek que agregue la plantilla correspondiente al catálogo, o cambia el nombre del
+              viaje si el destino sí está en la lista pero con otro nombre.
+            </div>
+          )}
           <Select value={selectedTemplateId} onValueChange={setSelectedTemplateId}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Selecciona destino" />
@@ -224,15 +246,18 @@ export function OrderContractCard(props: Props) {
         disabled={
           state.kind === 'submitting' ||
           !selectedTemplateId ||
-          props.orderTotalCents <= 0
+          props.orderTotalCents <= 0 ||
+          !matchOk
         }
         className="w-full"
       >
         {state.kind === 'submitting'
           ? 'Generando...'
-          : hasExisting
-            ? `Regenerar contrato (v${(props.existingVersion ?? 1) + 1})`
-            : 'Generar contrato PDF'}
+          : !matchOk
+            ? 'No se puede generar (plantilla faltante)'
+            : hasExisting
+              ? `Regenerar contrato (v${(props.existingVersion ?? 1) + 1})`
+              : 'Generar contrato PDF'}
       </Button>
 
       {state.kind === 'success' ? (

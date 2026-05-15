@@ -81,7 +81,7 @@ describe('POST /api/contracts/from-order/[orderId]/generate', () => {
     mockRequireAuth.mockReset()
     mockOrderGet.mockReset()
     mockTemplateGet.mockReset()
-    mockTripGet.mockReset().mockResolvedValue({ exists: false, data: () => null })
+    mockTripGet.mockReset().mockResolvedValue({ exists: true, data: () => ({ odooName: 'VUELTA AL MUNDO 2026' }) })
     mockUserGet.mockReset().mockResolvedValue({ exists: false, data: () => null })
     mockAgentGet.mockReset().mockResolvedValue({ exists: false, data: () => null })
     mockCountGet.mockReset().mockResolvedValue({ data: () => ({ count: 0 }) })
@@ -127,7 +127,7 @@ describe('POST /api/contracts/from-order/[orderId]/generate', () => {
         contactName: 'Felipe Rubio',
         amountTotalCents: 11500000,
         agentId: null,
-        tripId: null,
+        tripId: 'odoo-vam',
         userId: 'u-felipe',
       }),
     })
@@ -163,8 +163,9 @@ describe('POST /api/contracts/from-order/[orderId]/generate', () => {
     mockRequireAuth.mockResolvedValue({ uid: 'admin1', roles: ['admin'] })
     mockOrderGet.mockResolvedValue({
       exists: true,
-      data: () => ({ contactName: 'Juan Test', amountTotalCents: 100000 }),
+      data: () => ({ contactName: 'Juan Test', amountTotalCents: 100000, tripId: 'odoo-asia' }),
     })
+    mockTripGet.mockResolvedValue({ exists: true, data: () => ({ odooName: 'ASIA MAYO 2026' }) })
     mockTemplateGet.mockResolvedValue({
       exists: true,
       id: 'asia',
