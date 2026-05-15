@@ -187,7 +187,7 @@ export function OrderContractCard(props: Props) {
         <Input
           value={nombreOverride}
           onChange={(e) => setNombreOverride(e.target.value)}
-          placeholder="FELIPE DE JESÚS RUBIO RUIZ"
+          placeholder="Nombre completo del titular"
         />
       </div>
 
@@ -196,8 +196,11 @@ export function OrderContractCard(props: Props) {
         <Input
           value={acompanantes}
           onChange={(e) => setAcompanantes(e.target.value)}
-          placeholder="Y MA TERESA VIDAÑA SALAS"
+          placeholder="Déjalo vacío si viaja solo. Ejemplo: Y JUAN PÉREZ GARCÍA"
         />
+        <p className="text-xs text-muted-foreground">
+          Aparece en el contrato precedido por “Y” solo si lo escribes.
+        </p>
       </div>
 
       <div className="space-y-2">
@@ -209,7 +212,7 @@ export function OrderContractCard(props: Props) {
           step="0.01"
           value={anticipoPesos}
           onChange={(e) => setAnticipoPesos(e.target.value)}
-          placeholder="20000"
+          placeholder="Déjalo vacío para pago inmediato"
         />
         <p className="text-xs text-muted-foreground">
           Si se deja vacío, la cláusula segunda se redacta como pago inmediato.
