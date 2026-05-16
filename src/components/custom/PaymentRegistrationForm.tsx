@@ -225,8 +225,7 @@ function FormContent({
         <input
           id="receipt-upload"
           type="file"
-          accept="image/*"
-          capture="environment"
+          accept="image/jpeg,image/png,image/webp,image/heic"
           className="hidden"
           onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {
             const file = e.target.files?.[0] ?? null
