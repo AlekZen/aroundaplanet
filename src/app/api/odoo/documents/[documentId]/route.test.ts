@@ -94,6 +94,47 @@ describe('PATCH /api/odoo/documents/[documentId]', () => {
     expect(res.status).toBe(404)
   })
 
+  it.each(['payment', 'contract', 'quote', 'sales', 'coupon', 'trip-backoffice'] as const)(
+    'happy: acepta scopeOverride=%s',
+    async (scope) => {
+      mockRequirePermission.mockResolvedValue({ uid: 'admin1', roles: ['admin'] })
+      mockDocGet.mockResolvedValue({ exists: true })
+      const res = await callPATCH('42', { scopeOverride: scope })
+      expect(res.status).toBe(200)
+      const [payload] = mockDocSet.mock.calls[0]
+      expect(payload.adminOverride.scope).toBe(scope)
+    },
+  )
+
+  it('400: scopeOverride inválido', async () => {
+    mockRequirePermission.mockResolvedValue({ uid: 'admin1', roles: ['admin'] })
+    mockDocGet.mockResolvedValue({ exists: true })
+    const res = await callPATCH('42', { scopeOverride: 'not-a-real-scope' })
+    expect(res.status).toBe(400)
+    expect(mockDocSet).not.toHaveBeenCalled()
+  })
+
+  it('merge:true preserva campos pull: el set NO incluye scope top-level (solo nested adminOverride)', async () => {
+    // Garantiza el invariante de 9.3: el pull escribe campos top-level (scope, relationStatus),
+    // el PATCH solo escribe nested adminOverride.* → un pull posterior NO sobreescribe el override.
+    mockRequirePermission.mockResolvedValue({ uid: 'admin1', roles: ['admin'] })
+    mockDocGet.mockResolvedValue({ exists: true })
+    await callPATCH('42', { scopeOverride: 'payment' })
+    const [payload, opts] = mockDocSet.mock.calls[0]
+    expect(Object.keys(payload)).toEqual(['adminOverride'])
+    expect(payload).not.toHaveProperty('scope')
+    expect(payload).not.toHaveProperty('relationStatus')
+    expect(opts).toEqual({ merge: true })
+  })
+
+  it('idempotente: dos PATCH consecutivos con mismo body emiten 2 set() merge', async () => {
+    mockRequirePermission.mockResolvedValue({ uid: 'admin1', roles: ['admin'] })
+    mockDocGet.mockResolvedValue({ exists: true })
+    await callPATCH('42', { scopeOverride: 'payment' })
+    await callPATCH('42', { scopeOverride: 'payment' })
+    expect(mockDocSet).toHaveBeenCalledTimes(2)
+  })
+
   it('403 sin permiso', async () => {
     const { AppError } = await import('@/lib/errors/AppError')
     mockRequirePermission.mockRejectedValue(

@@ -90,6 +90,31 @@ describe('POST /api/odoo/documents/[documentId]/mark-unrelated', () => {
     expect(res.status).toBe(404)
   })
 
+  it('idempotente: dos calls consecutivos producen mismo override (merge:true)', async () => {
+    mockRequirePermission.mockResolvedValue({ uid: 'admin1', roles: ['admin'] })
+    mockDocGet.mockResolvedValue({ exists: true })
+    await callPOST('42', { reason: 'sin viaje' })
+    await callPOST('42', { reason: 'sin viaje' })
+    expect(mockDocSet).toHaveBeenCalledTimes(2)
+    const [[payloadA, optsA], [payloadB, optsB]] = mockDocSet.mock.calls
+    expect(payloadA.adminOverride.scope).toBe('unmatched')
+    expect(payloadB.adminOverride.scope).toBe('unmatched')
+    expect(optsA).toEqual({ merge: true })
+    expect(optsB).toEqual({ merge: true })
+  })
+
+  it('body {} se acepta como reason=null (decisión: default permisivo, no 400)', async () => {
+    // DECISIÓN finding 8-1c L2: body vacío {} es válido — reason es opcional.
+    // Solo strings <3 chars o tipos inválidos fallan con 400 (cubierto arriba).
+    mockRequirePermission.mockResolvedValue({ uid: 'admin1', roles: ['admin'] })
+    mockDocGet.mockResolvedValue({ exists: true })
+    const res = await callPOST('42', {})
+    expect(res.status).toBe(200)
+    const [payload] = mockDocSet.mock.calls[0]
+    expect(payload.adminOverride.markedUnrelated).toBe(true)
+    expect(payload.adminOverride.markedUnrelatedReason).toBeNull()
+  })
+
   it('403 sin permiso', async () => {
     const { AppError } = await import('@/lib/errors/AppError')
     mockRequirePermission.mockRejectedValue(

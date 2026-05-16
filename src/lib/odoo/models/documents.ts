@@ -55,7 +55,7 @@ function asStringOrFalse(value: unknown): string | false {
   return typeof value === 'string' ? value : false
 }
 
-function classifyFolder(path: string, relationStatus: 'linked' | 'suggested' | 'unmatched'): OdooDocumentScope {
+export function classifyFolder(path: string, relationStatus: 'linked' | 'suggested' | 'unmatched'): OdooDocumentScope {
   const normalized = normalizeOdooDocumentName(path)
   if (normalized.includes('pago')) return 'payment'
   if (normalized.includes('venta')) return 'sales'
@@ -67,7 +67,7 @@ function classifyFolder(path: string, relationStatus: 'linked' | 'suggested' | '
   return 'unmatched'
 }
 
-function matchFolderToProduct(
+export function matchFolderToProduct(
   folderName: string,
   products: OdooRecord[],
 ): { status: 'linked' | 'suggested' | 'unmatched'; productId: number | null; productName: string | null; confidence: number; reason: string | null } {

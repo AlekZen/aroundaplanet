@@ -114,6 +114,66 @@ describe('POST /api/odoo/documents/folder-mappings', () => {
     expect(res.status).toBe(404)
   })
 
+  it('happy: unrelate emite status=auto y canonicalFolderId self-referente cuando no se pasa', async () => {
+    mockRequirePermission.mockResolvedValue({ uid: 'admin1', roles: ['admin'] })
+    mockFolderGet.mockResolvedValue({ exists: true })
+    mockMappingGet.mockResolvedValue({ exists: false, data: () => undefined })
+    const { POST } = await import('./route')
+    const res = await POST(makeReq({ folderId: 77, action: 'unrelate' }))
+    expect(res.status).toBe(200)
+    const [payload] = mockMappingSet.mock.calls[0]
+    expect(payload.status).toBe('auto')
+    expect(payload.canonicalFolderId).toBe(77)
+    expect(payload.relatedProductId).toBeNull()
+  })
+
+  it('happy: confirm con canonicalFolderId apunta a otro folder (cluster duplicado)', async () => {
+    mockRequirePermission.mockResolvedValue({ uid: 'admin1', roles: ['admin'] })
+    mockFolderGet.mockResolvedValue({ exists: true })
+    mockMappingGet.mockResolvedValue({ exists: false, data: () => undefined })
+    const { POST } = await import('./route')
+    const res = await POST(makeReq({ folderId: 50, action: 'confirm', canonicalFolderId: 49, productId: 1748 }))
+    expect(res.status).toBe(200)
+    const [payload] = mockMappingSet.mock.calls[0]
+    expect(payload.canonicalFolderId).toBe(49)
+    expect(payload.duplicateFolderId).toBe(50)
+  })
+
+  it('happy: scopeOverride persiste en mapping', async () => {
+    mockRequirePermission.mockResolvedValue({ uid: 'admin1', roles: ['admin'] })
+    mockFolderGet.mockResolvedValue({ exists: true })
+    mockMappingGet.mockResolvedValue({ exists: false, data: () => undefined })
+    const { POST } = await import('./route')
+    const res = await POST(makeReq({ folderId: 42, action: 'confirm', productId: 1, scopeOverride: 'contract' }))
+    expect(res.status).toBe(200)
+    const [payload] = mockMappingSet.mock.calls[0]
+    expect(payload.scopeOverride).toBe('contract')
+  })
+
+  it('400: body no es JSON parseable', async () => {
+    mockRequirePermission.mockResolvedValue({ uid: 'admin1', roles: ['admin'] })
+    const { POST } = await import('./route')
+    const req = new Request('http://localhost/api/odoo/documents/folder-mappings', {
+      method: 'POST',
+      body: '{not-json',
+      headers: { 'content-type': 'application/json' },
+    })
+    const res = await POST(req)
+    expect(res.status).toBe(400)
+  })
+
+  it('400: folderId faltante (validación Zod) devuelve mensaje no-genérico', async () => {
+    mockRequirePermission.mockResolvedValue({ uid: 'admin1', roles: ['admin'] })
+    const { POST } = await import('./route')
+    const res = await POST(makeReq({ action: 'confirm' }))
+    expect(res.status).toBe(400)
+    const body = await res.json()
+    // Finding 8-1b L1: respuesta debe contener un mensaje específico del error Zod,
+    // no un genérico "Body inválido" sin pista de qué falló.
+    expect(body.message).toBeTruthy()
+    expect(body.message).not.toBe('Unknown')
+  })
+
   it('403 sin permiso', async () => {
     const { AppError } = await import('@/lib/errors/AppError')
     mockRequirePermission.mockRejectedValue(
