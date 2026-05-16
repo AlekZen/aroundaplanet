@@ -9,6 +9,30 @@
       ]
     },
     {
+      "collectionGroup": "odooDocuments",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "folderId", "order": "ASCENDING" },
+        { "fieldPath": "writeDate", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "odooDocuments",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "scope", "order": "ASCENDING" },
+        { "fieldPath": "writeDate", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "odooDocumentFolders",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "isCanonical", "order": "ASCENDING" },
+        { "fieldPath": "name", "order": "ASCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "users",
       "queryScope": "COLLECTION",
       "fields": [

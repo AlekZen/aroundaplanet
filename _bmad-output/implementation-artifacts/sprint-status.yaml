@@ -121,7 +121,7 @@ development_status:
   # Epic 8: Odoo Documents Backoffice (1 story)
   # =============================================
   epic-8: in-progress
-  8-1-odoo-documents-backoffice: in-progress  # 2026-05-16 audit (Opus 4.7): regress desde review. Solo scaffolding first-pass. 0 tests, 0 persistencia Firestore, sin endpoint folder-mappings, permisos seedeados pero bypass en routes. Ver 8-1-audit-report.md. NO tocar hasta cierre Fase 0 (Epic 10).
+  8-1-odoo-documents-backoffice: in-progress  # 2026-05-16 sub-split 8-1b checkpoint (Opus 4.7): schemas Zod + helper documents-pull.ts (idempotente, cursor incremental, lock concurrencia 10min stale, batched writes 400/batch) + endpoint POST /sync reescrito con response shape completo + rules + indexes para /odooDocuments, /odooDocumentFolders, /odooDocumentFolderMappings. AC3 persistencia Firestore: DONE. Pendiente: 8-1c UI actions (relate/unrelate/scope override) + 8-1d cobertura UI + endpoint folder-mappings confirm/ignore.
   8-1a-fix-permissions-bypass: done  # 2026-05-16 — Finding High #1 del audit cerrado. Reemplaza claims.roles.includes ad-hoc por requirePermission('documents:read'|'documents:manage') en src/app/api/odoo/documents/route.ts y sync/route.ts. +5 tests (route.test.ts + sync/route.test.ts).
   epic-8-retrospective: optional
 

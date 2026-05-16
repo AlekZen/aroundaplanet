@@ -275,6 +275,32 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // === ODOO DOCUMENTS MIRROR (Story 8.1b) ===
+    // Mirror read-only de `documents.document` y carpetas Odoo. Solo Admin SDK
+    // escribe vía endpoint POST /api/odoo/documents/sync. Cliente solo lee.
+    // Director también puede leer para visibilidad cross-area.
+    match /odooDocuments/{documentId} {
+      allow read: if request.auth != null
+                  && ('admin' in request.auth.token.roles
+                      || 'director' in request.auth.token.roles
+                      || 'superadmin' in request.auth.token.roles);
+      allow write: if false;
+    }
+    match /odooDocumentFolders/{folderId} {
+      allow read: if request.auth != null
+                  && ('admin' in request.auth.token.roles
+                      || 'director' in request.auth.token.roles
+                      || 'superadmin' in request.auth.token.roles);
+      allow write: if false;
+    }
+    match /odooDocumentFolderMappings/{folderId} {
+      allow read: if request.auth != null
+                  && ('admin' in request.auth.token.roles
+                      || 'director' in request.auth.token.roles
+                      || 'superadmin' in request.auth.token.roles);
+      allow write: if false;
+    }
+
     // === DEFAULT DENY ===
     // Any unspecified collection: denied
     match /{document=**} {
