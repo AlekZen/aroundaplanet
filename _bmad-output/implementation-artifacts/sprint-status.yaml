@@ -121,7 +121,7 @@ development_status:
   # Epic 8: Odoo Documents Backoffice (1 story)
   # =============================================
   epic-8: in-progress
-  8-1-odoo-documents-backoffice: review
+  8-1-odoo-documents-backoffice: in-progress  # 2026-05-16 audit (Opus 4.7): regress desde review. Solo scaffolding first-pass. 0 tests, 0 persistencia Firestore, sin endpoint folder-mappings, permisos seedeados pero bypass en routes. Ver 8-1-audit-report.md. NO tocar hasta cierre Fase 0 (Epic 10).
   epic-8-retrospective: optional
 
   # =============================================
