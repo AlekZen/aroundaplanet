@@ -19,6 +19,8 @@ vi.mock('@/lib/pdf/contracts/generate', () => ({
   renderAndUploadContract: (...args: unknown[]) => mockRenderAndUpload(...args),
 }))
 
+const mockTxPrevSize = vi.fn(() => 0)
+
 vi.mock('@/lib/firebase/admin', () => ({
   adminDb: {
     collection: (col: string) => {
@@ -42,11 +44,24 @@ vi.mock('@/lib/firebase/admin', () => ({
       }
       throw new Error(`Unexpected collection ${col}`)
     },
+    // Story 10.1 versionado transaccional: la transacción cuenta contratos previos
+    // y reserva el slot. Mock invoca el callback con un `tx` que satisface el shape
+    // mínimo usado por el route (tx.get → {size}, tx.set → noop).
+    runTransaction: async (cb: (tx: unknown) => Promise<unknown>) => {
+      const tx = {
+        get: async () => ({ size: mockTxPrevSize() }),
+        set: () => undefined,
+      }
+      return cb(tx)
+    },
   },
 }))
 
 vi.mock('firebase-admin/firestore', () => ({
-  FieldValue: { serverTimestamp: () => 'SERVER_TIMESTAMP' },
+  FieldValue: {
+    serverTimestamp: () => 'SERVER_TIMESTAMP',
+    delete: () => 'DELETE_SENTINEL',
+  },
 }))
 
 vi.mock('@/lib/errors/handleApiError', () => ({

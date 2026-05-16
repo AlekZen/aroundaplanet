@@ -132,7 +132,9 @@ describe('TripEditPanel', () => {
     render(<TripEditPanel />)
 
     await waitFor(() => {
-      expect(screen.getByText('3/7 campos completados')).toBeInTheDocument()
+      // Story 10.1 sesión 43 añadió 5 campos contract* (plazoDias, incluye,
+      // visitamos, noIncluye, displayName) al schema editorial → 12 campos totales.
+      expect(screen.getByText('3/12 campos completados')).toBeInTheDocument()
     }, { timeout: 2000 })
   })
 
