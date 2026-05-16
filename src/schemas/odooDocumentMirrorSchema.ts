@@ -91,6 +91,26 @@ export const odooDocumentScopeMirrorSchema = z.enum([
   'unmatched',
 ])
 
+/**
+ * Admin overrides (Story 8.1c) — campos editables por admin que el pull
+ * NUNCA debe sobrescribir. Viven en `adminOverride` nested para que el merged
+ * set del sync (que solo escribe top-level mirror fields) los preserve.
+ */
+export const odooDocumentAdminOverrideSchema = z.object({
+  /** Si presente, sobrescribe `scope` calculado por inferScope. */
+  scope: odooDocumentScopeMirrorSchema.optional(),
+  /** Producto Odoo (product.template.id) con el que admin relacionó manualmente. */
+  relatedProductId: z.number().int().positive().nullable().optional(),
+  relatedProductName: z.string().nullable().optional(),
+  /** Si true, admin marcó este documento como deliberadamente no-relacionado. */
+  markedUnrelated: z.boolean().optional(),
+  markedUnrelatedReason: z.string().max(500).nullable().optional(),
+  updatedBy: z.string().nullable().optional(),
+  updatedAt: z.unknown().optional(),
+})
+
+export type OdooDocumentAdminOverride = z.infer<typeof odooDocumentAdminOverrideSchema>
+
 export const odooDocumentMirrorSchema = z.object({
   odooDocumentId: z.number().int().positive(),
   name: z.string(),
@@ -111,6 +131,8 @@ export const odooDocumentMirrorSchema = z.object({
   writeDate: z.string().nullable(),
   tagIds: z.array(z.number().int()).default([]),
   scope: odooDocumentScopeMirrorSchema,
+  /** Overrides admin — el pull NO toca este campo (escribe solo top-level). */
+  adminOverride: odooDocumentAdminOverrideSchema.optional(),
   // Bookkeeping mirror
   syncedAt: z.unknown(), // Timestamp | FieldValue
   syncRunId: z.string().optional(),
@@ -193,3 +215,46 @@ export const documentsSyncRequestSchema = z.object({
 })
 
 export type DocumentsSyncRequest = z.infer<typeof documentsSyncRequestSchema>
+
+// =====================================================================
+// Story 8.1c — request schemas para acciones admin UI
+// =====================================================================
+
+/** POST /api/odoo/documents/folder-mappings */
+export const folderMappingActionRequestSchema = z.object({
+  folderId: z.number().int().positive(),
+  action: z.enum(['confirm', 'ignore', 'unrelate']),
+  /** Producto Odoo a relacionar manualmente. Requerido si action='confirm' sin canonical previo. */
+  productId: z.number().int().positive().nullable().optional(),
+  productName: z.string().max(255).nullable().optional(),
+  /** Si action='confirm' y este folder es duplicado de otro, el canónico al que apunta. */
+  canonicalFolderId: z.number().int().positive().nullable().optional(),
+  /** Override scope folder. */
+  scopeOverride: odooDocumentScopeMirrorSchema.optional(),
+})
+
+export type FolderMappingActionRequest = z.infer<typeof folderMappingActionRequestSchema>
+
+/** PATCH /api/odoo/documents/[documentId] */
+export const documentPatchRequestSchema = z
+  .object({
+    scopeOverride: odooDocumentScopeMirrorSchema.nullable().optional(),
+    relatedProductId: z.number().int().positive().nullable().optional(),
+    relatedProductName: z.string().max(255).nullable().optional(),
+  })
+  .refine(
+    (v) =>
+      v.scopeOverride !== undefined ||
+      v.relatedProductId !== undefined ||
+      v.relatedProductName !== undefined,
+    { message: 'Debe enviar al menos un campo a actualizar' },
+  )
+
+export type DocumentPatchRequest = z.infer<typeof documentPatchRequestSchema>
+
+/** POST /api/odoo/documents/[documentId]/mark-unrelated */
+export const documentMarkUnrelatedRequestSchema = z.object({
+  reason: z.string().min(3).max(500).optional(),
+})
+
+export type DocumentMarkUnrelatedRequest = z.infer<typeof documentMarkUnrelatedRequestSchema>

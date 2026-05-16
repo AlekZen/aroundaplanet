@@ -1152,7 +1152,7 @@ export function TripEditPanel() {
                   {trip.odooDocuments.map((doc) => (
                     <a
                       key={doc.odooAttachmentId}
-                      href={`/api/odoo/documents/${doc.odooAttachmentId}`}
+                      href={`/api/odoo/documents/attachments/${doc.odooAttachmentId}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-3 rounded border p-2 hover:bg-muted/50 transition-colors"

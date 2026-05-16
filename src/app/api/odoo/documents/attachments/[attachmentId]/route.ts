@@ -10,7 +10,7 @@ type RouteParams = { params: Promise<{ attachmentId: string }> }
 const DOWNLOAD_TIMEOUT_MS = 30_000
 
 /**
- * GET /api/odoo/documents/[attachmentId]
+ * GET /api/odoo/documents/attachments/[attachmentId]
  * Proxy: reads binary from ir.attachment via OdooClient (rate-limited).
  * Requires trips:read permission.
  */

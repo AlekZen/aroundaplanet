@@ -1,10 +1,36 @@
 'use client'
 
-import { useCallback, useMemo, useState } from 'react'
-import { Badge } from '@/components/ui/badge'
+/**
+ * Story 8.1c — Documents Backoffice orchestrator.
+ *
+ * Lee mirrors Firestore en realtime (onSnapshot) de tres colecciones:
+ *  - `/odooDocuments` — archivos no-folder
+ *  - `/odooDocumentFolders` — folders
+ *  - `/odooDocumentFolderMappings` — mappings admin-confirmados
+ *
+ * Acciones admin van a endpoints `/api/odoo/documents/[id]` PATCH,
+ * `/api/odoo/documents/[id]/mark-unrelated` y `/api/odoo/documents/folder-mappings`.
+ *
+ * El botón "Sincronizar" sigue golpeando `/api/odoo/documents/sync` (Story 8.1b)
+ * que reactiva el pull Odoo→Firestore; onSnapshot refleja los writes.
+ *
+ * Tab "Públicos del producto" sigue usando `/api/odoo/documents?mode=review`
+ * (no hay mirror Firestore para `product.document`, fuera de scope 8.1c).
+ */
+
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import {
+  collection,
+  getFirestore,
+  onSnapshot,
+  orderBy,
+  query,
+} from 'firebase/firestore'
+import { toast } from 'sonner'
+import { FileText, RefreshCw, ShieldAlert } from 'lucide-react'
+import { firebaseApp } from '@/lib/firebase/client'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
@@ -15,25 +41,23 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { FileText, Folder, RefreshCw, Search, ShieldAlert } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { DocumentsFilters, type DocumentsFiltersValue } from './documents/DocumentsFilters'
+import { DocumentsList } from './documents/DocumentsList'
+import { DocumentDetail } from './documents/DocumentDetail'
+import { FolderClusterView } from './documents/FolderClusterView'
 import type {
-  OdooBackofficeDocumentItem,
-  OdooDocumentFolderItem,
+  DocumentMirrorClient,
+  DocumentScope,
+  FolderMappingClient,
+  FolderMirrorClient,
+} from './documents/types'
+import type {
   OdooDocumentsOverview,
   OdooProductDocumentItem,
 } from '@/types/odooDocuments'
 
-const SCOPE_LABELS: Record<string, string> = {
-  'public-product': 'Publico producto',
-  'trip-backoffice': 'Backoffice viaje',
-  quote: 'Cotizacion',
-  payment: 'Pago',
-  contract: 'Contrato',
-  coupon: 'Cupon',
-  sales: 'Venta',
-  internal: 'Interno',
-  unmatched: 'Sin relacionar',
-}
+const db = getFirestore(firebaseApp)
 
 function formatBytes(bytes: number) {
   if (!bytes) return '-'
@@ -41,124 +65,280 @@ function formatBytes(bytes: number) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
-function formatDate(value: string | null) {
-  if (!value) return '-'
-  const normalized = value.includes('T') ? value : `${value.replace(' ', 'T')}Z`
-  return new Date(normalized).toLocaleString('es-MX', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
+function matchesSearch(values: Array<string | number | null | undefined>, needle: string) {
+  if (!needle) return true
+  const n = needle.toLowerCase()
+  return values.some((v) => String(v ?? '').toLowerCase().includes(n))
 }
 
-function includesSearch(values: unknown[], search: string) {
-  if (!search) return true
-  const needle = search.toLowerCase()
-  return values.some((value) => String(value ?? '').toLowerCase().includes(needle))
-}
-
-function ScopeBadge({ scope }: { scope: string }) {
-  const variant = scope === 'unmatched' ? 'destructive' : scope === 'public-product' ? 'default' : 'secondary'
-  return <Badge variant={variant}>{SCOPE_LABELS[scope] ?? scope}</Badge>
-}
-
-function RelationBadge({ status }: { status: string }) {
-  if (status === 'linked') return <Badge>Relacionado</Badge>
-  if (status === 'suggested') return <Badge variant="secondary">Sugerido</Badge>
-  return <Badge variant="outline">Sin relacionar</Badge>
+function deriveRelationStatus(
+  doc: DocumentMirrorClient & { adminOverride?: { relatedProductId?: number | null } },
+): 'linked' | 'suggested' | 'unmatched' {
+  if (doc.adminOverride?.markedUnrelated) return 'unmatched'
+  if (doc.adminOverride?.relatedProductId) return 'linked'
+  if (doc.resId && doc.resModel === 'product.template') return 'linked'
+  if (doc.effectiveScope === 'unmatched') return 'unmatched'
+  return 'suggested'
 }
 
 export function DocumentsPanel() {
-  const [data, setData] = useState<OdooDocumentsOverview | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [isSyncing, setIsSyncing] = useState(false)
+  const [documents, setDocuments] = useState<DocumentMirrorClient[]>([])
+  const [folders, setFolders] = useState<FolderMirrorClient[]>([])
+  const [docsLoading, setDocsLoading] = useState(true)
+  const [foldersLoading, setFoldersLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [search, setSearch] = useState('')
+  const [isSyncing, setIsSyncing] = useState(false)
+  const [filters, setFilters] = useState<DocumentsFiltersValue>({ search: '', scope: 'all' })
+  const [selected, setSelected] = useState<DocumentMirrorClient | null>(null)
+  const [productDocs, setProductDocs] = useState<OdooProductDocumentItem[] | null>(null)
+  const [productDocsLoading, setProductDocsLoading] = useState(false)
 
-  const fetchDocuments = useCallback(async () => {
-    setIsLoading(true)
-    setError(null)
-    try {
-      const controller = new AbortController()
-      const timeout = window.setTimeout(() => controller.abort(), 30000)
-      const res = await fetch('/api/odoo/documents?mode=review', { signal: controller.signal })
-      window.clearTimeout(timeout)
-      if (!res.ok) {
-        const body = await res.json()
-        throw new Error(body.message ?? 'Error al cargar documentos')
-      }
-      setData(await res.json())
-    } catch (err) {
-      setError(err instanceof Error && err.name === 'AbortError' ? 'Odoo tardo mas de 30s en responder. Intenta sincronizar otra vez.' : err instanceof Error ? err.message : 'Error desconocido')
-    } finally {
-      setIsLoading(false)
+  // --- Firestore: odooDocuments ---
+  useEffect(() => {
+    const ctrl = new AbortController()
+    // Limit grande: la colección admin no debería pasar de 5k. orderBy writeDate desc.
+    const q = query(collection(db, 'odooDocuments'), orderBy('writeDate', 'desc'))
+    const unsub = onSnapshot(
+      q,
+      (snap) => {
+        if (ctrl.signal.aborted) return
+        const items: DocumentMirrorClient[] = snap.docs.map((d) => {
+          const data = d.data() as Record<string, unknown>
+          const adminOverride = (data.adminOverride ?? undefined) as
+            | DocumentMirrorClient['adminOverride']
+            | undefined
+          const baseScope = (data.scope as DocumentScope) ?? 'unmatched'
+          const effective = adminOverride?.scope ?? baseScope
+          const base: DocumentMirrorClient = {
+            id: d.id,
+            odooDocumentId: (data.odooDocumentId as number) ?? Number(d.id),
+            name: (data.name as string) ?? 'Sin nombre',
+            type: (data.type as string) ?? 'binary',
+            mimetype: (data.mimetype as string | null) ?? null,
+            fileSize: (data.fileSize as number) ?? 0,
+            folderId: (data.folderId as number | null) ?? null,
+            folderName: (data.folderName as string | null) ?? null,
+            attachmentId: (data.attachmentId as number | null) ?? null,
+            resModel: (data.resModel as string | null) ?? null,
+            resId: (data.resId as number | null) ?? null,
+            resName: (data.resName as string | null) ?? null,
+            scope: baseScope,
+            writeDate: (data.writeDate as string | null) ?? null,
+            adminOverride,
+            effectiveScope: effective,
+            relationStatus: 'unmatched',
+          }
+          base.relationStatus = deriveRelationStatus(base)
+          return base
+        })
+        setDocuments(items)
+        setDocsLoading(false)
+      },
+      (err) => {
+        if (ctrl.signal.aborted) return
+        console.error('[DocumentsPanel] odooDocuments snapshot error', err)
+        setError(err.message)
+        setDocsLoading(false)
+      },
+    )
+    return () => {
+      ctrl.abort()
+      unsub()
     }
   }, [])
 
-  const handleSync = async () => {
+  // --- Firestore: odooDocumentFolders + odooDocumentFolderMappings join ---
+  useEffect(() => {
+    const ctrl = new AbortController()
+    const qFolders = query(collection(db, 'odooDocumentFolders'), orderBy('name'))
+    let foldersRaw: FolderMirrorClient[] = []
+    let mappings = new Map<number, FolderMappingClient>()
+
+    const recompute = () => {
+      const fileCounts = new Map<number, number>()
+      for (const d of documents) {
+        if (d.folderId != null) {
+          fileCounts.set(d.folderId, (fileCounts.get(d.folderId) ?? 0) + 1)
+        }
+      }
+      setFolders(
+        foldersRaw.map((f) => ({
+          ...f,
+          fileCount: fileCounts.get(f.odooFolderId) ?? 0,
+          mapping: mappings.get(f.odooFolderId),
+        })),
+      )
+    }
+
+    const unsubFolders = onSnapshot(
+      qFolders,
+      (snap) => {
+        if (ctrl.signal.aborted) return
+        foldersRaw = snap.docs.map((d) => {
+          const data = d.data() as Record<string, unknown>
+          return {
+            id: d.id,
+            odooFolderId: (data.odooFolderId as number) ?? Number(d.id),
+            name: (data.name as string) ?? 'Sin nombre',
+            parentFolderId: (data.parentFolderId as number | null) ?? null,
+            parentFolderName: (data.parentFolderName as string | null) ?? null,
+            isCanonical: Boolean(data.isCanonical),
+            isDuplicate: Boolean(data.isDuplicate),
+            writeDate: (data.writeDate as string | null) ?? null,
+            fileCount: 0,
+          }
+        })
+        setFoldersLoading(false)
+        recompute()
+      },
+      (err) => {
+        if (ctrl.signal.aborted) return
+        console.error('[DocumentsPanel] folders snapshot error', err)
+        setFoldersLoading(false)
+      },
+    )
+
+    const unsubMappings = onSnapshot(
+      collection(db, 'odooDocumentFolderMappings'),
+      (snap) => {
+        if (ctrl.signal.aborted) return
+        mappings = new Map(
+          snap.docs.map((d) => {
+            const data = d.data() as Record<string, unknown>
+            return [
+              (data.duplicateFolderId as number) ?? Number(d.id),
+              {
+                id: d.id,
+                duplicateFolderId: (data.duplicateFolderId as number) ?? Number(d.id),
+                canonicalFolderId: (data.canonicalFolderId as number) ?? Number(d.id),
+                status: (data.status as FolderMappingClient['status']) ?? 'auto',
+                confidence: (data.confidence as number) ?? 0,
+                relatedProductId: (data.relatedProductId as number | null) ?? null,
+                relatedProductName: (data.relatedProductName as string | null) ?? null,
+                scopeOverride: (data.scopeOverride as DocumentScope | null) ?? null,
+              },
+            ] as const
+          }),
+        )
+        recompute()
+      },
+      (err) => {
+        if (ctrl.signal.aborted) return
+        console.error('[DocumentsPanel] mappings snapshot error', err)
+      },
+    )
+
+    return () => {
+      ctrl.abort()
+      unsubFolders()
+      unsubMappings()
+    }
+    // documents intentionally NOT a dep: fileCount recompute happens on each snapshot
+    // and we don't need to re-subscribe when documents change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Recompute folder fileCounts when documents change without resubscribing.
+  useEffect(() => {
+    setFolders((prev) => {
+      const counts = new Map<number, number>()
+      for (const d of documents) {
+        if (d.folderId != null) counts.set(d.folderId, (counts.get(d.folderId) ?? 0) + 1)
+      }
+      return prev.map((f) => ({ ...f, fileCount: counts.get(f.odooFolderId) ?? f.fileCount }))
+    })
+  }, [documents])
+
+  const handleSync = useCallback(async () => {
     setIsSyncing(true)
     setError(null)
     try {
       const res = await fetch('/api/odoo/documents/sync', { method: 'POST' })
       if (!res.ok) {
-        const body = await res.json()
-        throw new Error(body.message ?? 'Error al sincronizar documentos')
+        const body = (await res.json().catch(() => ({}))) as { message?: string }
+        throw new Error(body.message ?? 'Error al sincronizar')
       }
-      await fetchDocuments()
+      const summary = await res.json()
+      toast.success(`Sync OK · ${summary.updated} actualizados`)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error desconocido')
+      const msg = err instanceof Error ? err.message : 'Error desconocido'
+      setError(msg)
+      toast.error(msg)
     } finally {
       setIsSyncing(false)
     }
-  }
+  }, [])
 
-  const linkedDocs = useMemo(
-    () => (data?.backofficeDocuments ?? []).filter((doc) =>
-      doc.relationStatus !== 'unmatched' &&
-      includesSearch([doc.name, doc.folderPath, doc.matchedProductName, doc.scope, doc.odooDocumentId], search),
-    ),
-    [data, search],
+  const loadProductDocs = useCallback(async () => {
+    if (productDocs || productDocsLoading) return
+    setProductDocsLoading(true)
+    try {
+      const res = await fetch('/api/odoo/documents?mode=review')
+      if (!res.ok) {
+        const body = (await res.json().catch(() => ({}))) as { message?: string }
+        throw new Error(body.message ?? 'Error al cargar product.documents')
+      }
+      const overview = (await res.json()) as OdooDocumentsOverview
+      setProductDocs(overview.productDocuments)
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Error cargando documentos de producto')
+    } finally {
+      setProductDocsLoading(false)
+    }
+  }, [productDocs, productDocsLoading])
+
+  const filtered = useMemo(() => {
+    return documents.filter((doc) => {
+      if (
+        filters.scope !== 'all' &&
+        doc.effectiveScope !== filters.scope
+      ) {
+        return false
+      }
+      return matchesSearch(
+        [
+          doc.name,
+          doc.folderName,
+          doc.resName,
+          doc.adminOverride?.relatedProductName,
+          doc.odooDocumentId,
+        ],
+        filters.search,
+      )
+    })
+  }, [documents, filters])
+
+  const linked = filtered.filter((d) => d.relationStatus !== 'unmatched')
+  const unmatched = filtered.filter((d) => d.relationStatus === 'unmatched')
+
+  const filteredFolders = useMemo(
+    () =>
+      folders.filter((f) =>
+        matchesSearch(
+          [f.name, f.parentFolderName, f.mapping?.relatedProductName, f.odooFolderId],
+          filters.search,
+        ),
+      ),
+    [folders, filters.search],
   )
 
-  const unmatchedDocs = useMemo(
-    () => (data?.backofficeDocuments ?? []).filter((doc) =>
-      doc.relationStatus === 'unmatched' &&
-      includesSearch([doc.name, doc.folderPath, doc.unmatchedReason, doc.scope, doc.odooDocumentId], search),
-    ),
-    [data, search],
+  const filteredProductDocs = useMemo(
+    () =>
+      (productDocs ?? []).filter((p) =>
+        matchesSearch([p.name, p.resName, p.mimetype, p.odooDocumentId, p.resId], filters.search),
+      ),
+    [productDocs, filters.search],
   )
 
-  const folders = useMemo(
-    () => (data?.folders ?? []).filter((folder) =>
-      includesSearch([folder.name, folder.path, folder.matchedProductName, folder.unmatchedReason, folder.scope, folder.odooFolderId], search),
-    ),
-    [data, search],
-  )
-
-  const productDocs = useMemo(
-    () => (data?.productDocuments ?? []).filter((doc) =>
-      includesSearch([doc.name, doc.resName, doc.mimetype, doc.odooDocumentId, doc.resId], search),
-    ),
-    [data, search],
-  )
+  const loading = docsLoading || foldersLoading
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <div className="relative max-w-md">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            placeholder="Buscar documento, carpeta, producto o ID"
-            className="pl-9"
-          />
-        </div>
-        <Button onClick={handleSync} disabled={isSyncing || isLoading}>
-          <RefreshCw className={`mr-2 h-4 w-4 ${isSyncing || isLoading ? 'animate-spin' : ''}`} />
-          {data ? 'Sincronizar metadata' : 'Cargar metadata'}
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+        <DocumentsFilters value={filters} onChange={setFilters} />
+        <Button onClick={() => void handleSync()} disabled={isSyncing}>
+          <RefreshCw className={`mr-2 h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`} />
+          {isSyncing ? 'Sincronizando…' : 'Sincronizar metadata'}
         </Button>
       </div>
 
@@ -169,37 +349,22 @@ export function DocumentsPanel() {
         </div>
       )}
 
-      {isLoading && !data && (
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
-            {Array.from({ length: 5 }).map((_, index) => <Skeleton key={index} className="h-20 rounded-lg" />)}
+      {loading ? (
+        <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-20 animate-pulse rounded-lg" />
+            ))}
           </div>
-          <Skeleton className="h-80 w-full" />
+          <Skeleton className="h-80 w-full animate-pulse" />
         </div>
-      )}
-
-      {!isLoading && !data && !error && (
-        <Card>
-          <CardContent className="flex min-h-64 flex-col items-center justify-center gap-3 text-center">
-            <FileText className="h-10 w-10 text-muted-foreground" />
-            <div>
-              <p className="font-medium text-foreground">Metadata lista para consultar</p>
-              <p className="text-sm text-muted-foreground">
-                Presiona cargar metadata para traer carpetas y documentos desde Odoo en modo revision.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {data && (
+      ) : (
         <>
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
-            <Metric label="Publicos producto" value={data.counts.productDocuments} />
-            <Metric label="Carpetas" value={data.counts.folders} />
-            <Metric label="Backoffice" value={data.counts.backofficeDocuments} />
-            <Metric label="Relacionados" value={data.counts.linkedBackofficeDocuments} />
-            <Metric label="Sin relacionar" value={data.counts.unmatchedBackofficeDocuments} />
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+            <Metric label="Documentos" value={documents.length} />
+            <Metric label="Relacionados" value={documents.filter((d) => d.relationStatus !== 'unmatched').length} />
+            <Metric label="Sin relacionar" value={documents.filter((d) => d.relationStatus === 'unmatched').length} />
+            <Metric label="Carpetas" value={folders.length} />
           </div>
 
           <Tabs defaultValue="linked" className="space-y-3">
@@ -207,24 +372,48 @@ export function DocumentsPanel() {
               <TabsTrigger value="linked">Relacionados</TabsTrigger>
               <TabsTrigger value="unmatched">Sin relacionar</TabsTrigger>
               <TabsTrigger value="folders">Carpetas</TabsTrigger>
-              <TabsTrigger value="public">Publicos del producto</TabsTrigger>
+              <TabsTrigger value="public" onClick={() => void loadProductDocs()}>
+                Públicos del producto
+              </TabsTrigger>
             </TabsList>
             <TabsContent value="linked">
-              <BackofficeTable documents={linkedDocs} empty="No hay documentos relacionados con ese filtro." />
+              <DocumentsList
+                documents={linked}
+                emptyText="Sin documentos relacionados con ese filtro."
+                onSelect={setSelected}
+                selectedId={selected?.id}
+              />
             </TabsContent>
             <TabsContent value="unmatched">
-              <BackofficeTable documents={unmatchedDocs} empty="No hay documentos sin relacionar con ese filtro." showReason />
+              <DocumentsList
+                documents={unmatched}
+                emptyText="Sin documentos pendientes de relacionar."
+                onSelect={setSelected}
+                selectedId={selected?.id}
+              />
             </TabsContent>
             <TabsContent value="folders">
-              <FoldersTable folders={folders} />
+              <FolderClusterView folders={filteredFolders} />
             </TabsContent>
             <TabsContent value="public">
-              <ProductDocumentsTable documents={productDocs} />
+              {productDocsLoading && !productDocs ? (
+                <Skeleton className="h-40 w-full animate-pulse" />
+              ) : (
+                <ProductDocumentsTable
+                  docs={filteredProductDocs}
+                  formatBytes={formatBytes}
+                />
+              )}
             </TabsContent>
           </Tabs>
-          <p className="text-xs text-muted-foreground">Metadata generada: {formatDate(data.generatedAt)}</p>
         </>
       )}
+
+      <DocumentDetail
+        document={selected}
+        open={selected !== null}
+        onClose={() => setSelected(null)}
+      />
     </div>
   )
 }
@@ -240,103 +429,23 @@ function Metric({ label, value }: { label: string; value: number }) {
   )
 }
 
-function BackofficeTable({ documents, empty, showReason = false }: { documents: OdooBackofficeDocumentItem[]; empty: string; showReason?: boolean }) {
-  if (documents.length === 0) {
-    return <EmptyState icon={<FileText className="h-5 w-5" />} text={empty} />
+function ProductDocumentsTable({
+  docs,
+  formatBytes,
+}: {
+  docs: OdooProductDocumentItem[]
+  formatBytes: (bytes: number) => string
+}) {
+  if (docs.length === 0) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center gap-2 p-10 text-sm text-muted-foreground">
+          <FileText className="h-5 w-5" />
+          No hay documentos públicos de producto con ese filtro.
+        </CardContent>
+      </Card>
+    )
   }
-
-  return (
-    <div className="overflow-x-auto rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Documento</TableHead>
-            <TableHead>Carpeta</TableHead>
-            <TableHead>Relacion</TableHead>
-            <TableHead>Scope</TableHead>
-            {showReason && <TableHead>Razon</TableHead>}
-            <TableHead>Tipo</TableHead>
-            <TableHead>Tamano</TableHead>
-            <TableHead>Actualizado</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {documents.map((doc) => (
-            <TableRow key={doc.odooDocumentId}>
-              <TableCell>
-                <div className="space-y-1">
-                  <p className="font-medium">{doc.name}</p>
-                  <p className="text-xs text-muted-foreground">Odoo #{doc.odooDocumentId}</p>
-                </div>
-              </TableCell>
-              <TableCell className="max-w-xs text-sm text-muted-foreground">{doc.folderPath}</TableCell>
-              <TableCell>
-                <div className="space-y-1">
-                  <RelationBadge status={doc.relationStatus} />
-                  {doc.matchedProductName && <p className="text-xs text-muted-foreground">{doc.matchedProductName}</p>}
-                </div>
-              </TableCell>
-              <TableCell><ScopeBadge scope={doc.scope} /></TableCell>
-              {showReason && <TableCell className="text-sm text-muted-foreground">{doc.unmatchedReason ?? '-'}</TableCell>}
-              <TableCell className="text-sm">{doc.mimetype ?? doc.type}</TableCell>
-              <TableCell className="tabular-nums">{formatBytes(doc.fileSize)}</TableCell>
-              <TableCell className="text-sm text-muted-foreground">{formatDate(doc.writeDate)}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
-  )
-}
-
-function FoldersTable({ folders }: { folders: OdooDocumentFolderItem[] }) {
-  if (folders.length === 0) {
-    return <EmptyState icon={<Folder className="h-5 w-5" />} text="No hay carpetas con ese filtro." />
-  }
-
-  return (
-    <div className="overflow-x-auto rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Carpeta</TableHead>
-            <TableHead>Relacion</TableHead>
-            <TableHead>Scope</TableHead>
-            <TableHead>Archivos</TableHead>
-            <TableHead>Confianza</TableHead>
-            <TableHead>Razon</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {folders.map((folder) => (
-            <TableRow key={folder.odooFolderId}>
-              <TableCell>
-                <p className="font-medium">{folder.name}</p>
-                <p className="text-xs text-muted-foreground">{folder.path}</p>
-              </TableCell>
-              <TableCell>
-                <div className="space-y-1">
-                  <RelationBadge status={folder.relationStatus} />
-                  {folder.matchedProductName && <p className="text-xs text-muted-foreground">{folder.matchedProductName}</p>}
-                </div>
-              </TableCell>
-              <TableCell><ScopeBadge scope={folder.scope} /></TableCell>
-              <TableCell className="tabular-nums">{folder.fileCount}</TableCell>
-              <TableCell className="tabular-nums">{folder.matchConfidence}%</TableCell>
-              <TableCell className="text-sm text-muted-foreground">{folder.unmatchedReason ?? '-'}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
-  )
-}
-
-function ProductDocumentsTable({ documents }: { documents: OdooProductDocumentItem[] }) {
-  if (documents.length === 0) {
-    return <EmptyState icon={<FileText className="h-5 w-5" />} text="No hay documentos publicos de producto con ese filtro." />
-  }
-
   return (
     <div className="overflow-x-auto rounded-md border">
       <Table>
@@ -345,24 +454,25 @@ function ProductDocumentsTable({ documents }: { documents: OdooProductDocumentIt
             <TableHead>Documento</TableHead>
             <TableHead>Producto</TableHead>
             <TableHead>Visible web</TableHead>
-            <TableHead>Venta</TableHead>
             <TableHead>Tipo</TableHead>
-            <TableHead>Tamano</TableHead>
+            <TableHead>Tamaño</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {documents.map((doc) => (
+          {docs.map((doc) => (
             <TableRow key={doc.odooDocumentId}>
               <TableCell>
                 <p className="font-medium">{doc.name}</p>
-                <p className="text-xs text-muted-foreground">Doc #{doc.odooDocumentId} / Adj #{doc.odooAttachmentId ?? '-'}</p>
+                <p className="text-xs text-muted-foreground">
+                  Doc #{doc.odooDocumentId} / Adj #{doc.odooAttachmentId ?? '-'}
+                </p>
               </TableCell>
+              <TableCell>{doc.resName}</TableCell>
               <TableCell>
-                <p>{doc.resName}</p>
-                <p className="text-xs text-muted-foreground">product.template #{doc.resId}</p>
+                <Badge variant={doc.shownOnProductPage ? 'default' : 'secondary'}>
+                  {doc.shownOnProductPage ? 'Sí' : 'No'}
+                </Badge>
               </TableCell>
-              <TableCell><Badge variant={doc.shownOnProductPage ? 'default' : 'secondary'}>{doc.shownOnProductPage ? 'Si' : 'No'}</Badge></TableCell>
-              <TableCell className="text-sm">{doc.attachedOnSale || '-'}</TableCell>
               <TableCell className="text-sm">{doc.mimetype ?? '-'}</TableCell>
               <TableCell className="tabular-nums">{formatBytes(doc.fileSize)}</TableCell>
             </TableRow>
@@ -370,16 +480,5 @@ function ProductDocumentsTable({ documents }: { documents: OdooProductDocumentIt
         </TableBody>
       </Table>
     </div>
-  )
-}
-
-function EmptyState({ icon, text }: { icon: React.ReactNode; text: string }) {
-  return (
-    <Card>
-      <CardContent className="flex items-center justify-center gap-2 p-10 text-sm text-muted-foreground">
-        {icon}
-        {text}
-      </CardContent>
-    </Card>
   )
 }
