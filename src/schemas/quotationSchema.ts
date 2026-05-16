@@ -31,12 +31,29 @@ export const quotationLeadSnapshotSchema = z.object({
 
 export type QuotationLeadSnapshot = z.infer<typeof quotationLeadSnapshotSchema>
 
-/** Payload del cliente para POST /api/quotations (público) */
+/**
+ * Payload del cliente para POST /api/quotations (público).
+ *
+ * Refine fail-closed: variant `cotizar-public` exige `whatsappSent === true`.
+ * Esto alinea el shape con `firestore.rules` (quotations.create requiere
+ * whatsappSent==true como defensa-en-profundidad contra abuso client-direct).
+ *
+ * Nota semántica: aunque el endpoint persiste ANTES de abrir WhatsApp,
+ * `whatsappSent: true` se interpreta como "intent-to-send confirmado por UX"
+ * (el botón está a punto de dispararse). El frontend `/cotizar` siempre debe
+ * enviar `whatsappSent: true`.
+ */
 export const createQuotationSchema = z.object({
   source: quotationSourceSchema,
   leadSnapshot: quotationLeadSnapshotSchema,
   whatsappSent: z.boolean().default(false),
-})
+}).refine(
+  (data) => data.source !== 'cotizar-public' || data.whatsappSent === true,
+  {
+    message: 'cotizar-public requiere whatsappSent=true (alineado con firestore.rules)',
+    path: ['whatsappSent'],
+  }
+)
 
 export type CreateQuotationInput = z.infer<typeof createQuotationSchema>
 
