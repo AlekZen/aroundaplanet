@@ -1,4 +1,6 @@
-// TODO: eliminar cuando homepage use datos de Firestore (Story 2-3 ya no usa STATIC_TRIPS para landing)
+// Deuda F1: la homepage `(public)/page.tsx` aún consume STATIC_TRIPS para el grid de destinos.
+// Story 2-3 ya migró la landing por slug `/viajes/[slug]` a Firestore, pero migrar la homepage
+// requiere decidir estrategia de render (SSG con generateStaticParams vs ISR vs CSR) — defer F1.
 
 export interface StaticTrip {
   title: string

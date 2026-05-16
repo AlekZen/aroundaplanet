@@ -151,8 +151,8 @@ development_status:
   10-1-1-orders-list-sidebar: done  # commit 8e7dcc8 — lista /admin/orders + Cotizaciones+Órdenes en sidebar admin/superadmin + Contratos agente + bottom nav cliente.
   10-1-2-ui-connections: done  # commit d532706 — A: Pagos card en order detail · B: link orden en verificación · D: Asignar contrato desde Ventas del trip (mirror Firestore via /api/orders/from-odoo-sale).
   10-1-3-contract-fields-dinamicos: deployed-awaiting-user-smoke  # build-009 commit 16149f5 — refactor: datos contract* viven en trips/{id}, NO en tabla aparte. Endpoint generate lee del trip. UI /admin/trips/[tripId] sección "Datos del contrato" inline autosave. 5 piloto backfilled (VAM/ASIA/COLOMBIA MAYO/EUROPA SEP/CHEPE ENERO). Resuelve bug Paloma "todos dicen Asia". Bug IAM signBlob también resuelto runtime (grantaccess Token Creator self-impersonation SA compute).
-  10-2-prd-consolidado: pending  # PRD ejecutivo unificado + PDF export. Destila _bmad-output/planning-artifacts/prd/. PM+Tech-writer party-mode
-  10-3-mapeo-odoo-completo: pending  # Architect. Destila Epic 9 gotchas + custom fields + patrón invertido + restricciones firmes
-  10-4-roadmap-transformacion-visual: pending  # Architect+PM. Matriz impacto×esfuerzo + timeline 12m + anexo features Noel 30-mar
+  10-2-prd-consolidado: done  # 2026-05-16 sesión 44 — cierre admin contra artefactos existentes en _bmad-output/planning-artifacts/prd/ (10 docs + arch + UX + epics). Ver 10-2-completion.md. NO se genera PDF proactivo (pandoc on-demand si Noel lo pide).
+  10-3-mapeo-odoo-completo: pending  # Replanteada: ahora es runbook `odoo-18-gotchas.md` destilando 12 hallazgos Epic 9. Apply 17-18 may. Ver epic-9-followup-triage.md item #10.
+  10-4-roadmap-transformacion-visual: done  # 2026-05-16 sesión 44 — cierre admin contra artefactos existentes en repo de estrategia (sprint-plan-td90, roadmap-td90.html, epic-tracker, mapa-iniciativas.html, OG4 O1-O4 + Champions kickoff). Ver 10-4-completion.md.
   10-5-subfase-c-cierre: pending  # Contenedor 5.a DNS + 5.b documentación + 5.c entrega formal + 5.d propuesta Fase 1 ajustada
   epic-10-retrospective: pending
