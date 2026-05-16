@@ -1,20 +1,11 @@
 import { NextResponse } from 'next/server'
-import { requireAuth } from '@/lib/auth/requireAuth'
-import { AppError } from '@/lib/errors/AppError'
+import { requirePermission } from '@/lib/auth/requirePermission'
 import { handleApiError } from '@/lib/errors/handleApiError'
 import { fetchOdooDocumentsOverview } from '@/lib/odoo/models/documents'
-import type { UserRole } from '@/types/user'
-
-function canReadDocuments(roles: readonly UserRole[]) {
-  return roles.includes('admin') || roles.includes('superadmin')
-}
 
 export async function GET(request: Request) {
   try {
-    const claims = await requireAuth()
-    if (!canReadDocuments(claims.roles)) {
-      throw new AppError('INSUFFICIENT_PERMISSION', 'Solo Admin y SuperAdmin pueden ver documentos Odoo', 403, false)
-    }
+    await requirePermission('documents:read')
 
     const { searchParams } = new URL(request.url)
     const mode = searchParams.get('mode')
