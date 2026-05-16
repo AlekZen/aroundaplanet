@@ -19,6 +19,8 @@ export async function renderAndUploadQuotation(input: {
     lead,
     generatedAtIso,
   })
+  // `renderToBuffer` espera ReactElement<DocumentProps>; nuestro wrapper devuelve un Document
+  // pero los tipos no infieren la equivalencia. Cast intencional.
   const buffer = await renderToBuffer(element as unknown as Parameters<typeof renderToBuffer>[0])
 
   const storagePath = `quotations/${quotationId}/${quotationId}.pdf`

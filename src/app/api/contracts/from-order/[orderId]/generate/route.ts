@@ -165,15 +165,28 @@ export async function POST(
       ciudadFirma: snapshotOverrides?.ciudadFirma ?? 'Ocotlán, Jalisco',
     })
 
-    // Versionado: cuenta contratos previos para esta orden
-    const prev = await adminDb
-      .collection(CONTRACTS)
-      .where('orderId', '==', orderId)
-      .count()
-      .get()
-    const version = (prev.data().count ?? 0) + 1
-
+    // Versionado: cuenta contratos previos para esta orden.
+    // Patrón mirror del versionado de pagos (Story 9.2): leemos el contador en una
+    // transacción para evitar que dos POST simultáneos asignen la misma version.
+    // El render+upload del PDF se hace FUERA de la transacción (operación lenta y
+    // externa), pero la reserva del docId+version se commitea atómicamente.
     const contractRef = adminDb.collection(CONTRACTS).doc()
+    const version = await adminDb.runTransaction(async (tx) => {
+      const prev = await tx.get(
+        adminDb.collection(CONTRACTS).where('orderId', '==', orderId)
+      )
+      // Reserva el slot escribiendo un placeholder; el set final con pdfUrl
+      // ocurre afuera con merge:true. Esto serializa las concurrencias por orden.
+      const nextVersion = prev.size + 1
+      tx.set(contractRef, {
+        contractId: contractRef.id,
+        orderId,
+        version: nextVersion,
+        _reserved: true,
+        createdAt: FieldValue.serverTimestamp(),
+      })
+      return nextVersion
+    })
     const generatedAtIso = new Date().toISOString()
 
     // ContractDocument espera la shape de "ContractTemplate" (legacy). Adaptamos
@@ -204,28 +217,31 @@ export async function POST(
     const fullUserName = `${userData?.firstName ?? ''} ${userData?.lastName ?? ''}`.trim()
     const generatedByName = userData?.displayName ?? (fullUserName || claims.uid)
 
-    await contractRef.set({
-      contractId: contractRef.id,
-      orderId,
-      tripId: order.tripId ?? null,
-      templateId: templateForRender.templateId,
-      templateKey: templateForRender.templateKey,
-      snapshot: snapshotBase,
-      pdfUrl,
-      pdfStoragePath,
-      generatedBy: claims.uid,
-      generatedByName,
-      version,
-      clientUserId: order.userId ?? null,
-      agentId: order.agentId ?? null,
-      sharedWithClient: false,
-      sharedWithAgent: false,
-      acceptedAt: null,
-      acceptedByUid: null,
-      acceptedByName: null,
-      acceptedIp: null,
-      createdAt: FieldValue.serverTimestamp(),
-    })
+    await contractRef.set(
+      {
+        contractId: contractRef.id,
+        orderId,
+        tripId: order.tripId ?? null,
+        templateId: templateForRender.templateId,
+        templateKey: templateForRender.templateKey,
+        snapshot: snapshotBase,
+        pdfUrl,
+        pdfStoragePath,
+        generatedBy: claims.uid,
+        generatedByName,
+        version,
+        clientUserId: order.userId ?? null,
+        agentId: order.agentId ?? null,
+        sharedWithClient: false,
+        sharedWithAgent: false,
+        acceptedAt: null,
+        acceptedByUid: null,
+        acceptedByName: null,
+        acceptedIp: null,
+        _reserved: FieldValue.delete(),
+      },
+      { merge: true }
+    )
 
     await adminDb.collection(ORDERS).doc(orderId).update({
       contractId: contractRef.id,
