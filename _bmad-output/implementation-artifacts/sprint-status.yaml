@@ -120,7 +120,7 @@ development_status:
   # =============================================
   # Epic 8: Odoo Documents Backoffice (1 story)
   # =============================================
-  epic-8: in-progress
+  epic-8: done  # cerrado 2026-05-16 sesión 44 — Story 8-1 done en sub-split a/b/c/d (b3b2cf2/761472b/8c64ff8/d2f9998)
   8-1-odoo-documents-backoffice: done  # 2026-05-16 sub-splits 8-1a (b3b2cf2 permissions) + 8-1b (761472b sync persistence) + 8-1c (8c64ff8 UI actions relate/unrelate/scope-override/mappings) + 8-1d (este commit) cobertura tests AC9: models/documents.test.ts (matchFolderToProduct + classifyFolder + normalize, 20 tests) + DocumentsFilters.test.tsx (4 tests) + extensiones mark-unrelated (+2 idempotencia/body{}) + extensiones documentId PATCH (+8 scope variants + invariante merge nested) + extensiones folder-mappings (+5 unrelate/canonical cluster/scopeOverride/JSON inválido/echo Zod). +40 tests vs baseline 1751. typecheck verde, lint 0 errores. Decisión finding 8-1c L2: body {} en mark-unrelated se acepta como reason=null (default permisivo, NO 400).
   8-1a-fix-permissions-bypass: done  # 2026-05-16 — Finding High #1 del audit cerrado. Reemplaza claims.roles.includes ad-hoc por requirePermission('documents:read'|'documents:manage') en src/app/api/odoo/documents/route.ts y sync/route.ts. +5 tests (route.test.ts + sync/route.test.ts).
   epic-8-retrospective: optional
