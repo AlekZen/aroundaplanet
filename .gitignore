@@ -58,3 +58,10 @@ next-env.d.ts
 # Vercel
 .vercel
 .playwright-mcp/
+
+# Spike outputs y evidencia local (screenshots de smokes, audit JSONs puntuales)
+# Los scripts/spike-*.mjs SI se commitean (historial de research). Solo ignoramos outputs.
+/*.png
+/*.pdf
+scripts/audit-output/
+.claude/scheduled_tasks.lock
