@@ -473,7 +473,7 @@ export function ContractDocument({ template, snapshot, contractId, generatedAtIs
           firman por duplicado en {snapshot.ciudadFirma}, a {fechaFirmaStr}.
         </Text>
 
-        <View style={styles.signaturesRow}>
+        <View style={styles.signaturesRow} wrap={false}>
           <View style={styles.signatureBlock}>
             <Text style={styles.signatureLine}>
               <Text style={styles.signatureLabel}>"LA AGENCIA"</Text>
