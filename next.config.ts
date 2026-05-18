@@ -11,6 +11,19 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'storage.googleapis.com' },
     ],
   },
+  // Firebase signInWithPopup needs same-origin-allow-popups to communicate
+  // with the OAuth popup window (window.closed, postMessage). Next.js 16
+  // default COOP is stricter and breaks Google Sign-In silently.
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'Cross-Origin-Opener-Policy', value: 'same-origin-allow-popups' },
+        ],
+      },
+    ]
+  },
 };
 
 // Dynamic import avoids CJS/ESM mismatch warning:
