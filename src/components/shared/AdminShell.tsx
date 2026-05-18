@@ -4,6 +4,7 @@ import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/s
 import { RoleSidebar } from '@/components/custom/RoleSidebar'
 import { RoleSwitcher } from '@/components/custom/RoleSwitcher'
 import { PageTransition } from '@/components/shared/PageTransition'
+import { PwaInstallToaster } from '@/components/pwa/PwaInstallToaster'
 
 interface AdminShellProps {
   roles: string[]
@@ -30,6 +31,7 @@ export function AdminShell({ roles, children }: AdminShellProps) {
           <PageTransition>{children}</PageTransition>
         </main>
       </SidebarInset>
+      <PwaInstallToaster />
     </SidebarProvider>
   )
 }

@@ -3,6 +3,7 @@ import { BarChart3, Map, RefreshCw, UserCircle } from 'lucide-react'
 import { RoleSidebar } from '@/components/custom/RoleSidebar'
 import { BottomNavBar } from '@/components/custom/BottomNavBar'
 import { PageTransition } from '@/components/shared/PageTransition'
+import { PwaInstallToaster } from '@/components/pwa/PwaInstallToaster'
 
 const DIRECTOR_TABS = [
   {
@@ -54,6 +55,7 @@ export default function DirectorLayout({
         </main>
         <BottomNavBar className="lg:hidden" tabs={DIRECTOR_TABS} />
       </div>
+      <PwaInstallToaster />
     </SidebarProvider>
   )
 }
