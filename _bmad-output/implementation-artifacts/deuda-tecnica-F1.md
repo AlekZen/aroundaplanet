@@ -32,7 +32,7 @@ con justificación explícita y estimación de esfuerzo para Fase 1.
 
 | # | Item | Commit | Notas |
 |---|---|---|---|
-| A1 | TOCTOU en POST `/contracts/[id]/accept` (#10.1-L2) | ver commits | `runTransaction` envuelve lectura+update atómico |
+| A1 | TOCTOU en POST `/contracts/[id]/accept` (#10.1-L2) | ver commits | `runTransaction` envuelve lectura+update atómico. Regression test agregado en sesión 44 (`route.test.ts`, 6 casos: happy/race/idempotencia/auth/404/ownership) |
 | A2 | Sort por string ISO con createdAt nullable (#10.1-L3) | ver commits | Null explícito al final; no depende de `''` vacío |
 | A3 | Stale lock duck-typing (#8-1b-M2) | ver commits | `instanceof Timestamp` con fallback duck-type para mocks de test |
 | A4 | Hard cap 20k sin warning (#8-1b-M3) | ver commits | Log warning + `summary.warnings[]` cuando i===99 y página completa |
