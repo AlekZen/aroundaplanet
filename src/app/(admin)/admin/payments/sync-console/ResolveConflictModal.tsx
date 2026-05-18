@@ -213,8 +213,9 @@ export function ResolveConflictModal({ conflict, open, onClose }: Props) {
                   type={conflict.field === 'paymentDate' ? 'date' : 'number'}
                   step={conflict.field === 'amount' ? '0.01' : undefined}
                   min={conflict.field === 'amount' ? '0' : undefined}
+                  max={conflict.field === 'amount' ? '9999999' : undefined}
                   {...register('customValue')}
-                  placeholder={conflict.field === 'amount' ? 'Ej: 5000.00' : ''}
+                  placeholder={conflict.field === 'amount' ? 'Ej: 5000.00 = $5,000 MXN' : ''}
                 />
               )}
               {errors.customValue && (

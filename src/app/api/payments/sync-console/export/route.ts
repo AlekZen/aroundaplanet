@@ -141,6 +141,9 @@ export async function GET(request: NextRequest) {
         ])
       }
     } else if (section === 'queue') {
+      // Nota: status='all' trae todos los pagos sin filtrar odooSyncStatus —
+      // incluye pagos sincronizados, pendientes y con error (hasta MAX_ROWS=1000).
+      // Comportamiento intencional: descarga para revisión contable completa.
       let query = adminDb.collection('payments').orderBy('verifiedAt', 'desc').limit(MAX_ROWS)
 
       if (status === 'open') {

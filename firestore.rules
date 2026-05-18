@@ -190,6 +190,8 @@ service cloud.firestore {
     // Alertas detectadas por sync jobs (odoo_canceled, attachment_failed, etc).
     // Write: NEVER from client. Read: admin+ y agente dueño del pago referenciado
     // (el doc lleva paymentId; admin SDK decide rule por separado al consultar).
+    // Nota: `director` incluido intencionalmente (Noel/Director General necesita
+    // visibilidad del estado de sync para gestión operativa).
     match /paymentAlerts/{alertId} {
       allow read: if request.auth != null
                   && ('admin' in request.auth.token.roles
@@ -200,6 +202,7 @@ service cloud.firestore {
 
     // === PAYMENT CONFLICTS (Story 9.3 + Story 9.6) ===
     // Cola de conflictos LWW Firestore↔Odoo. Solo Admin SDK escribe.
+    // Nota: `director` incluido intencionalmente (visibilidad operativa para Noel).
     match /paymentConflicts/{conflictId} {
       allow read: if request.auth != null
                   && ('admin' in request.auth.token.roles
