@@ -60,10 +60,13 @@ export async function GET() {
       })
     }
 
-    // Más reciente primero
+    // Más reciente primero; null al final
     merge.sort((a, b) => {
-      const aT = (a.createdAt as string | null) ?? ''
-      const bT = (b.createdAt as string | null) ?? ''
+      const aT = a.createdAt as string | null
+      const bT = b.createdAt as string | null
+      if (aT == null && bT == null) return 0
+      if (aT == null) return 1
+      if (bT == null) return -1
       return bT.localeCompare(aT)
     })
 

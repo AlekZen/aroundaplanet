@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { FieldValue } from 'firebase-admin/firestore'
+import { FieldValue, type DocumentData } from 'firebase-admin/firestore'
 import { adminDb } from '@/lib/firebase/admin'
 import { requireAuth } from '@/lib/auth/requireAuth'
 import { AppError } from '@/lib/errors/AppError'
@@ -28,40 +28,58 @@ export async function POST(
     const { contractId } = await context.params
     if (!contractId) throw new AppError('VALIDATION_ERROR', 'contractId requerido', 400)
 
-    const ref = adminDb.collection('contracts').doc(contractId)
-    const snap = await ref.get()
-    if (!snap.exists) throw new AppError('CONTRACT_NOT_FOUND', 'Contrato no encontrado', 404)
-    const c = snap.data()!
-
-    if (c.clientUserId !== claims.uid) {
-      throw new AppError('FORBIDDEN', 'Solo el cliente dueño del contrato puede aceptarlo', 403)
-    }
-    if (c.sharedWithClient !== true) {
-      throw new AppError('NOT_SHARED', 'El admin aún no ha compartido este contrato contigo', 403)
-    }
-    if (c.acceptedAt) {
-      // Idempotente: ya aceptado previamente.
-      return NextResponse.json({
-        contractId,
-        alreadyAccepted: true,
-        acceptedAt: c.acceptedAt?.toDate?.()?.toISOString() ?? c.acceptedAt,
-        acceptedByUid: c.acceptedByUid,
-      })
-    }
-
-    // Resolver nombre del aceptante para auditoría
+    // Resolver nombre del aceptante para auditoría (fuera de tx — lectura de users,
+    // no parte del invariante de contract)
     const userDoc = await adminDb.collection('users').doc(claims.uid).get()
     const u = userDoc.data()
     const fullName = `${u?.firstName ?? ''} ${u?.lastName ?? ''}`.trim()
     const acceptedByName = u?.displayName ?? (fullName || claims.uid)
+    const ip = clientIp(request)
 
-    await ref.update({
-      acceptedAt: FieldValue.serverTimestamp(),
-      acceptedByUid: claims.uid,
-      acceptedByName,
-      acceptedIp: clientIp(request),
-      updatedAt: FieldValue.serverTimestamp(),
+    const ref = adminDb.collection('contracts').doc(contractId)
+
+    // runTransaction re-chequea condiciones y escribe atómicamente —
+    // evita TOCTOU si admin revoca sharedWithClient entre la lectura y la escritura.
+    let alreadyAccepted = false
+    let existingAcceptedAt: string | undefined
+    let existingAcceptedByUid: string | undefined
+
+    await adminDb.runTransaction(async (tx) => {
+      const snap = await tx.get(ref)
+      if (!snap.exists) throw new AppError('CONTRACT_NOT_FOUND', 'Contrato no encontrado', 404)
+      const c = snap.data() as DocumentData
+
+      if (c.clientUserId !== claims.uid) {
+        throw new AppError('FORBIDDEN', 'Solo el cliente dueño del contrato puede aceptarlo', 403)
+      }
+      if (c.sharedWithClient !== true) {
+        throw new AppError('NOT_SHARED', 'El admin aún no ha compartido este contrato contigo', 403)
+      }
+      if (c.acceptedAt) {
+        // Idempotente: ya aceptado. Capturar para respuesta fuera de tx.
+        alreadyAccepted = true
+        existingAcceptedAt = c.acceptedAt?.toDate?.()?.toISOString() ?? c.acceptedAt
+        existingAcceptedByUid = c.acceptedByUid
+        return
+      }
+
+      tx.update(ref, {
+        acceptedAt: FieldValue.serverTimestamp(),
+        acceptedByUid: claims.uid,
+        acceptedByName,
+        acceptedIp: ip,
+        updatedAt: FieldValue.serverTimestamp(),
+      })
     })
+
+    if (alreadyAccepted) {
+      return NextResponse.json({
+        contractId,
+        alreadyAccepted: true,
+        acceptedAt: existingAcceptedAt,
+        acceptedByUid: existingAcceptedByUid,
+      })
+    }
 
     return NextResponse.json({ contractId, acceptedByName })
   } catch (error) {
