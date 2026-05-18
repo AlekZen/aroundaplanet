@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'
+import type { CommissionStatus } from '@/schemas/commissionSchema'
 
 interface CommissionItem {
   id: string
@@ -11,7 +12,7 @@ interface CommissionItem {
   tripName: string
   paymentAmountCents: number
   commissionAmountCents: number
-  status: 'approved' | 'paid'
+  status: CommissionStatus
   createdAt: { _seconds: number } | string
 }
 
@@ -30,9 +31,14 @@ function formatDate(createdAt: { _seconds: number } | string): string {
   return date.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
-const STATUS_CONFIG = {
-  approved: { label: 'Aprobada', variant: 'default' as const },
-  paid: { label: 'Pagada', variant: 'secondary' as const },
+const STATUS_CONFIG: Record<CommissionStatus, { label: string; variant: 'default' | 'secondary' | 'outline' }> = {
+  pending: { label: 'Pendiente', variant: 'outline' },
+  approved: { label: 'Aprobada', variant: 'default' },
+  paid: { label: 'Pagada', variant: 'secondary' },
+}
+
+function statusConfig(status: string): { label: string; variant: 'default' | 'secondary' | 'outline' } {
+  return STATUS_CONFIG[status as CommissionStatus] ?? { label: status || 'Desconocido', variant: 'outline' }
 }
 
 export function CommissionList({ agentId }: { agentId?: string }) {
@@ -93,9 +99,7 @@ export function CommissionList({ agentId }: { agentId?: string }) {
             <CardContent className="p-4 space-y-1">
               <div className="flex items-center justify-between">
                 <p className="text-sm font-medium">{c.clientName || 'Cliente'}</p>
-                <Badge variant={STATUS_CONFIG[c.status].variant}>
-                  {STATUS_CONFIG[c.status].label}
-                </Badge>
+                {(() => { const cfg = statusConfig(c.status); return <Badge variant={cfg.variant}>{cfg.label}</Badge> })()}
               </div>
               <p className="text-xs text-muted-foreground">{c.tripName}</p>
               <div className="flex justify-between text-xs">
@@ -129,9 +133,7 @@ export function CommissionList({ agentId }: { agentId?: string }) {
                 <td className="py-3 text-right font-mono">{formatMXN(c.paymentAmountCents)}</td>
                 <td className="py-3 text-right font-mono font-semibold">{formatMXN(c.commissionAmountCents)}</td>
                 <td className="py-3">
-                  <Badge variant={STATUS_CONFIG[c.status].variant}>
-                    {STATUS_CONFIG[c.status].label}
-                  </Badge>
+                  {(() => { const cfg = statusConfig(c.status); return <Badge variant={cfg.variant}>{cfg.label}</Badge> })()}
                 </td>
                 <td className="py-3 text-muted-foreground">{formatDate(c.createdAt)}</td>
               </tr>

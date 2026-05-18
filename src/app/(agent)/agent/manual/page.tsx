@@ -11,7 +11,7 @@ export const metadata = {
 export const dynamic = 'force-static'
 
 async function loadManual(): Promise<string> {
-  const filePath = path.join(process.cwd(), '_bmad-output', 'manuals', 'manual-agente.md')
+  const filePath = path.join(process.cwd(), 'src', 'content', 'manuals', 'manual-agente.md')
   return fs.readFile(filePath, 'utf-8')
 }
 
