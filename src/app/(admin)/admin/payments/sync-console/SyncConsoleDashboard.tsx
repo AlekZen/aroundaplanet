@@ -153,11 +153,26 @@ export function SyncConsoleDashboard({ initialCounts, cursorSummary }: Props) {
         </Card>
 
         {/* Tasa de éxito 24h */}
-        <KPICard
-          title="Éxito 24h"
-          value={successRate24h !== null ? `${successRate24h}%` : '—'}
-          variant="compact"
-        />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="cursor-help" aria-label="Información sobre Éxito 24h">
+                <KPICard
+                  title="Éxito 24h"
+                  value={successRate24h !== null ? `${successRate24h}%` : '—'}
+                  variant="compact"
+                />
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" className="max-w-xs">
+              <p className="text-xs">
+                Porcentaje del último pull Odoo→Firestore: <code>(matched + updated) / fetched</code>.
+                {' "—" indica que el último pull no trajo registros (sin tráfico reciente).'}
+                {' 0% con tráfico puede indicar conflictos pendientes o fallas de match — revisa la cola y el log de alertas.'}
+              </p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       {/* Tabs */}
