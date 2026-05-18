@@ -44,9 +44,10 @@ vi.mock('firebase-admin/firestore', () => ({
 }))
 
 vi.mock('@/lib/firebase/admin', () => {
-  // payments chain: .where().where().where().get()
+  // payments chain: .where().where().where().orderBy().get()
   const paymentsChain = {
     where: () => paymentsChain,
+    orderBy: () => paymentsChain,
     get: () => mockPaymentsGet(),
   }
 
@@ -54,15 +55,17 @@ vi.mock('@/lib/firebase/admin', () => {
   const ordersChain = {
     where: () => ordersChain,
     limit: () => ordersChain,
+    orderBy: () => ordersChain,
     get: () => mockOrdersGet(),
   }
 
-  // commissions chain (collectionGroup): .where().where().get()
+  // commissions chain (collectionGroup): .where().where().orderBy().get()
   // Distinguished by which mock to call via a counter strategy —
   // first call is pending, second call is earned.
   let commissionsCallCount = 0
   const commissionsChain = {
     where: () => commissionsChain,
+    orderBy: () => commissionsChain,
     get: () => {
       commissionsCallCount += 1
       if (commissionsCallCount % 2 === 1) {

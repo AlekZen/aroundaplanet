@@ -33,10 +33,12 @@ export async function GET(_request: NextRequest, context: RouteContext) {
       earnedCommissionsSnap,
     ] = await Promise.all([
       // F7: Verified payments this month (real cash in)
+      // orderBy createdAt desc to reuse [agentId, status, createdAt DESC] index
       adminDb.collection('payments')
         .where('agentId', '==', agentId)
         .where('status', '==', 'verified')
         .where('createdAt', '>=', startTimestamp)
+        .orderBy('createdAt', 'desc')
         .get(),
 
       // F4: Active orders (limit 500 to avoid degradation)
@@ -47,15 +49,18 @@ export async function GET(_request: NextRequest, context: RouteContext) {
         .get(),
 
       // Pending commissions (all time for this agent)
+      // orderBy createdAt desc to reuse [agentId, status, createdAt DESC] CG index
       adminDb.collectionGroup('commissions')
         .where('agentId', '==', agentId)
         .where('status', '==', 'pending')
+        .orderBy('createdAt', 'desc')
         .get(),
 
       // Earned commissions (approved + paid, all time)
       adminDb.collectionGroup('commissions')
         .where('agentId', '==', agentId)
         .where('status', 'in', ['approved', 'paid'])
+        .orderBy('createdAt', 'desc')
         .get(),
     ])
 
@@ -92,6 +97,7 @@ export async function GET(_request: NextRequest, context: RouteContext) {
 
     return NextResponse.json(metrics)
   } catch (error) {
+    console.error('[metrics] STACK:', error)
     return handleApiError(error)
   }
 }
