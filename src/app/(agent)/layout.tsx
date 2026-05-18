@@ -5,6 +5,7 @@ import { RoleSidebar } from '@/components/custom/RoleSidebar'
 import { RoleSwitcher } from '@/components/custom/RoleSwitcher'
 import { BottomNavBar } from '@/components/custom/BottomNavBar'
 import { PageTransition } from '@/components/shared/PageTransition'
+import { PwaInstallToaster } from '@/components/pwa/PwaInstallToaster'
 import { LayoutDashboard, Globe, Users, User, UserCheck } from 'lucide-react'
 
 const AGENT_TABS = [
@@ -38,6 +39,7 @@ export default function AgentMobileLayout({
           <PageTransition>{children}</PageTransition>
         </main>
         <BottomNavBar tabs={AGENT_TABS} className="lg:hidden" />
+        <PwaInstallToaster />
       </div>
     </SidebarProvider>
   )

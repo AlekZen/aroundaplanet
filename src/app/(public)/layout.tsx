@@ -2,6 +2,7 @@ import { Navbar } from '@/components/shared/Navbar'
 import { Footer } from '@/components/shared/Footer'
 import { PageTransition } from '@/components/shared/PageTransition'
 import { AnalyticsProvider } from '@/components/shared/AnalyticsProvider'
+import { PwaInstallToaster } from '@/components/pwa/PwaInstallToaster'
 
 export default function PublicLayout({
   children,
@@ -24,6 +25,7 @@ export default function PublicLayout({
         </div>
       </main>
       <Footer />
+      <PwaInstallToaster />
     </>
   )
 }

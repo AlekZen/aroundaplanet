@@ -3,6 +3,7 @@
 import { BottomNavBar } from '@/components/custom/BottomNavBar'
 import { RoleSwitcher } from '@/components/custom/RoleSwitcher'
 import { PageTransition } from '@/components/shared/PageTransition'
+import { PwaInstallToaster } from '@/components/pwa/PwaInstallToaster'
 import { Plane, Globe, User, FileSignature } from 'lucide-react'
 
 const CLIENT_TABS = [
@@ -44,6 +45,7 @@ export default function ClientLayout({
           </section>
         </main>
         <BottomNavBar tabs={CLIENT_TABS} />
+        <PwaInstallToaster />
       </div>
     </>
   )
