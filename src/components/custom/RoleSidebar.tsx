@@ -20,7 +20,7 @@ import { RoleSwitcher } from '@/components/custom/RoleSwitcher'
 import { staggerChildren } from '@/lib/animations/variants'
 import { spring } from '@/lib/animations/transitions'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
-import { LayoutDashboard, CreditCard, BarChart3, Shield, UserCircle, RefreshCw, Map as MapIcon, Users, Plane, Contact, UserCheck, DollarSign, FileText, Link2, Copy, ClipboardList, ShoppingCart } from 'lucide-react'
+import { LayoutDashboard, CreditCard, BarChart3, Shield, UserCircle, RefreshCw, Map as MapIcon, Users, Plane, Contact, UserCheck, DollarSign, FileText, Link2, Copy, ClipboardList, ShoppingCart, BookOpen } from 'lucide-react'
 
 interface RoleSidebarProps {
   roles: string[]
@@ -106,6 +106,7 @@ const GROUPS_BY_ROLE: Record<string, SidebarGroupDef[]> = {
         { id: 'agent-contracts', label: 'Contratos', icon: <ClipboardList className="h-5 w-5" />, href: '/agent/contracts' },
         { id: 'agent-my-trips', label: 'Mis Viajes', icon: <Plane className="h-5 w-5" />, href: '/agent/my-trips' },
         { id: 'agent-profile', label: 'Mi Perfil', icon: <UserCircle className="h-5 w-5" />, href: '/agent/profile' },
+        { id: 'agent-manual', label: 'Ayuda y Manual', icon: <BookOpen className="h-5 w-5" />, href: '/agent/manual' },
       ],
     },
   ],

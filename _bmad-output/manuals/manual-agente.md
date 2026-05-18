@@ -39,6 +39,8 @@ AroundaPlanet es una **PWA** (una app web que se instala como app normal, sin pa
 
 ## La pantalla principal
 
+<!-- TODO: re-capturar tras fix B3 (CommissionList variant) — screenshot 02-dashboard.png -->
+
 ### El menú de abajo (BottomNav)
 
 En tu celular siempre vas a ver una barra fija abajo con 5 íconos. Esto es lo que hace cada uno:
@@ -50,6 +52,8 @@ En tu celular siempre vas a ver una barra fija abajo con 5 íconos. Esto es lo q
 | 🌍 | **Catálogo** | Todos los viajes disponibles. Aquí copias tu link personal para mandarlo por WhatsApp. |
 | 👤 | **Mis Leads** | Clientes nuevos que llegaron desde tu link de referido. Aquí también registras pagos. |
 | 👤 | **Perfil** | Tu foto, tu nombre, tu correo. |
+
+<!-- TODO: re-capturar tras fix B3 — screenshot 03-bottomnav.png (contaminado con error boundary del dashboard) -->
 
 En computadora la barra de abajo desaparece y todo se ve en un menú lateral.
 
@@ -71,6 +75,8 @@ Abajo verás una lista con el detalle de cada comisión: por qué cliente, qué 
 ---
 
 ## Mis Clientes
+
+![Lista de Mis Clientes con tabs de agrupación por viaje o por cliente](/manuals/agente/04-mis-clientes.png)
 
 Aquí ves a **toda tu cartera**. Puedes ordenarla de dos formas:
 
@@ -113,6 +119,8 @@ Cuando un cliente te entrega el comprobante por WhatsApp o en persona:
 
 ## Catálogo y tu link de referido
 
+<!-- TODO: re-capturar — screenshot 07-catalogo-link-referido.png (placeholders sin imágenes de viajes) -->
+
 En **Catálogo** ves todos los viajes publicados. Cada tarjeta tiene un botón **Copiar Link**.
 
 1. Toca **Copiar Link** en el viaje que quieres promover.
@@ -124,6 +132,8 @@ En **Catálogo** ves todos los viajes publicados. Cada tarjeta tiene un botón *
 ---
 
 ## Mis Leads
+
+<!-- TODO: re-capturar tras fix B3 — screenshot 08-mis-leads.png -->
 
 Aquí ves a las personas que **entraron por tu link** y dejaron sus datos o ya compraron. Es tu lista de cacería.
 
@@ -151,6 +161,8 @@ Las comisiones están en tu tablero **Mi Negocio**, en la lista de abajo.
 
 ## Contratos compartidos
 
+<!-- TODO: re-capturar tras fix B3 — screenshot 09-mis-contratos.png -->
+
 Tienes una sección **Contratos** en tu menú lateral (en computadora) o vía link directo `/agent/contracts`.
 
 - Aquí ves los contratos de tus clientes **siempre que el administrador te autorice la visibilidad**.
@@ -160,6 +172,8 @@ Tienes una sección **Contratos** en tu menú lateral (en computadora) o vía li
 ---
 
 ## Tu Perfil
+
+![Pantalla de Perfil del agente con foto, nombre y datos de contacto](/manuals/agente/10-perfil.png)
 
 En **Perfil** ves y editas:
 
