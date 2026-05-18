@@ -44,7 +44,7 @@ describe('AgentCatalogPage', () => {
 
     render(<AgentCatalogPage />)
 
-    expect(screen.getByText('Sin acceso al catalogo')).toBeDefined()
+    expect(screen.getByText(/perfil de agente/i)).toBeDefined()
   })
 
   it('shows error when claims is null', () => {
@@ -54,6 +54,6 @@ describe('AgentCatalogPage', () => {
 
     render(<AgentCatalogPage />)
 
-    expect(screen.getByText('Sin acceso al catalogo')).toBeDefined()
+    expect(screen.getByText(/perfil de agente/i)).toBeDefined()
   })
 })

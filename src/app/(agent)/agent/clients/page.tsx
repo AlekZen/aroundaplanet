@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { Skeleton } from '@/components/ui/skeleton'
+import { NoAgentIdEmptyState } from '@/components/custom/NoAgentIdEmptyState'
 import { AgentClientList } from './AgentClientList'
 
 export default function AgentClientsPage() {
@@ -45,16 +46,8 @@ export default function AgentClientsPage() {
   }
 
   if (!agentId) {
-    return (
-      <div className="flex flex-col items-center justify-center py-16 text-center">
-        <h2 className="font-heading text-xl font-semibold text-foreground mb-2">
-          Sin acceso a clientes
-        </h2>
-        <p className="text-muted-foreground">
-          Tu cuenta no tiene un agentId asignado. Contacta al administrador.
-        </p>
-      </div>
-    )
+    const isAdmin = claims?.roles?.some((r) => ['admin', 'director', 'superadmin'].includes(r)) ?? false
+    return <NoAgentIdEmptyState userRole={isAdmin ? 'admin' : 'agente'} />
   }
 
   return <AgentClientList agentId={agentId} />

@@ -1,10 +1,13 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+import Link from 'next/link'
+import { FileText, ChevronRight } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
 import { useAuthStore } from '@/stores/useAuthStore'
+import { NoAgentIdEmptyState } from '@/components/custom/NoAgentIdEmptyState'
 import { CommissionList } from './CommissionList'
 import type { AgentMetrics } from '@/types/commission'
 
@@ -45,18 +48,13 @@ export default function AgentDashboardPage() {
     }
   }, [claims, fetchMetrics])
 
-  // F9: agentId null/undefined — error descriptivo, nunca skeleton infinito
+  // F9: agentId null/undefined — empty state unificado, nunca skeleton infinito
   if (claims && !claims.agentId) {
+    const isAdmin = claims.roles?.some((r) => ['admin', 'director', 'superadmin'].includes(r)) ?? false
     return (
       <div className="space-y-6 p-4">
         <h1 className="font-heading text-2xl font-semibold text-foreground">Mi Negocio</h1>
-        <Card className="border-destructive">
-          <CardContent className="p-6 text-center space-y-2">
-            <p className="text-sm text-destructive">
-              No se encontró tu perfil de agente. Contacta a soporte para vincular tu cuenta.
-            </p>
-          </CardContent>
-        </Card>
+        <NoAgentIdEmptyState userRole={isAdmin ? 'admin' : 'agente'} />
       </div>
     )
   }
@@ -103,6 +101,27 @@ export default function AgentDashboardPage() {
           ))}
         </div>
       )}
+
+      <Link
+        href="/agent/contracts"
+        className="block rounded-xl border bg-card text-card-foreground shadow-sm py-4 px-4 transition-colors hover:bg-accent/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        aria-label="Ir a Mis Contratos"
+      >
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="rounded-md bg-primary/10 p-2">
+              <FileText className="h-5 w-5 text-primary" aria-hidden="true" />
+            </div>
+            <div>
+              <p className="font-medium text-foreground">Mis Contratos</p>
+              <p className="text-xs text-muted-foreground">
+                Revisa los contratos compartidos contigo
+              </p>
+            </div>
+          </div>
+          <ChevronRight className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
+        </div>
+      </Link>
 
       <CommissionList agentId={claims?.agentId} />
     </div>

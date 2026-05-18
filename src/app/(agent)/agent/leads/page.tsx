@@ -11,6 +11,7 @@ import { STATUS_COLORS } from '@/config/orderStatus'
 import { Globe, Users, Plus, CreditCard, CheckCircle2, XCircle, Clock, MessageSquare } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { PaymentRegistrationForm } from '@/components/custom/PaymentRegistrationForm'
+import { NoAgentIdEmptyState } from '@/components/custom/NoAgentIdEmptyState'
 import { PAYMENT_STATUS_LABELS, PAYMENT_METHOD_LABELS, type PaymentStatus, type PaymentMethod } from '@/schemas/paymentSchema'
 
 interface AgentPayment {
@@ -101,16 +102,8 @@ export default function AgentLeadsPage() {
   }, [agentId])
 
   if (!agentId) {
-    return (
-      <div className="flex flex-col items-center justify-center py-16 text-center">
-        <h2 className="font-heading text-xl font-semibold text-foreground mb-2">
-          Sin acceso a leads
-        </h2>
-        <p className="text-muted-foreground">
-          Tu cuenta no tiene un agentId asignado. Contacta al administrador.
-        </p>
-      </div>
-    )
+    const isAdmin = claims?.roles?.some((r) => ['admin', 'director', 'superadmin'].includes(r)) ?? false
+    return <NoAgentIdEmptyState userRole={isAdmin ? 'admin' : 'agente'} />
   }
 
   return (

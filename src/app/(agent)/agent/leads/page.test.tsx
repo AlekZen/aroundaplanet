@@ -36,7 +36,7 @@ describe('AgentLeadsPage', () => {
 
     render(<AgentLeadsPage />)
 
-    expect(screen.getByText('Sin acceso a leads')).toBeDefined()
+    expect(screen.getByText(/perfil de agente/i)).toBeDefined()
   })
 
   it('shows empty state with CTA when agent has no orders', async () => {
