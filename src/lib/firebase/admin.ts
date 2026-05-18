@@ -5,12 +5,15 @@ import { getFirestore } from "firebase-admin/firestore";
 function initAdmin(): App {
   if (getApps().length > 0) return getApps()[0];
 
-  // Production (Cloud Run): ADC automatic, no arguments needed
-  if (process.env.NODE_ENV === "production") {
+  // Cloud Run / App Hosting: ADC automatic, no arguments needed.
+  // Detect via K_SERVICE (Cloud Run injects this), NOT NODE_ENV — running
+  // `next start` locally also sets NODE_ENV=production but must still use
+  // the JSON SA, otherwise local ADC may point at the wrong project.
+  if (process.env.K_SERVICE) {
     return initializeApp();
   }
 
-  // Development: use JSON file from .keys/
+  // Local (dev or prod build via `next start`): use JSON file from .keys/
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const fs = require("fs") as typeof import("fs");
   const keyPath =

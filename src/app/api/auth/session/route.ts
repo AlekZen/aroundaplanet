@@ -40,9 +40,15 @@ export async function POST(request: Request) {
     })
 
     return new NextResponse(null, { status: 204 })
-  } catch {
+  } catch (err) {
+    console.error('[auth/session POST] verify failed:', err)
     return NextResponse.json(
-      { code: 'AUTH_INVALID_TOKEN', message: 'Token invalido o expirado', retryable: false },
+      {
+        code: 'AUTH_INVALID_TOKEN',
+        message: 'Token invalido o expirado',
+        retryable: false,
+        debug: err instanceof Error ? err.message : String(err),
+      },
       { status: 401 }
     )
   }
