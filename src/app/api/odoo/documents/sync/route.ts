@@ -20,7 +20,11 @@ export async function POST(request: Request) {
 
     const parsed = documentsSyncRequestSchema.safeParse(body)
     if (!parsed.success) {
-      throw new AppError('INVALID_REQUEST', 'Body inválido', 400, false)
+      const detail =
+        process.env.NODE_ENV !== 'production'
+          ? `: ${parsed.error.issues.map((i) => i.message).join(', ')}`
+          : ''
+      throw new AppError('INVALID_REQUEST', `Body inválido${detail}`, 400, false)
     }
 
     const summary = await syncOdooDocuments({

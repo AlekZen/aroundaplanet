@@ -194,6 +194,12 @@ export type OdooDocumentFolderMapping = z.infer<typeof odooDocumentFolderMapping
 
 export const documentsSyncRunSummarySchema = z.object({
   created: z.number().int().nonnegative(),
+  /**
+   * Cuenta todos los upserts (set merge) al mirror Firestore — tanto documentos
+   * nuevos como actualizados. No distingue created vs updated porque `batch.set`
+   * con merge es idempotente; distinguirlos requeriría un get() previo por doc
+   * (costoso). Diferenciación creado/actualizado declarado como deuda F1.
+   */
   updated: z.number().int().nonnegative(),
   skipped: z.number().int().nonnegative(),
   errored: z.number().int().nonnegative(),
@@ -202,12 +208,28 @@ export const documentsSyncRunSummarySchema = z.object({
   fetched: z.number().int().nonnegative(),
   runId: z.string(),
   dryRun: z.boolean().default(false),
+  /** Advertencias no-fatales del run (ej: hard-cap alcanzado). */
+  warnings: z.array(z.string()).optional(),
 })
 
 export type DocumentsSyncRunSummary = z.infer<typeof documentsSyncRunSummarySchema>
 
+/**
+ * Acepta formato ISO-8601 ("2026-05-18T12:00:00Z") O formato interno
+ * Odoo ("YYYY-MM-DD HH:MM:SS"). El cursor interno del pull siempre usa
+ * formato Odoo, por lo que permite ambos para consistencia con el cursor.
+ */
+const ODOO_DATETIME_REGEX = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/
+const sinceSchema = z
+  .string()
+  .optional()
+  .refine(
+    (v) => v == null || ODOO_DATETIME_REGEX.test(v) || !isNaN(Date.parse(v)),
+    { message: 'since debe ser ISO-8601 o formato Odoo "YYYY-MM-DD HH:MM:SS"' },
+  )
+
 export const documentsSyncRequestSchema = z.object({
-  since: z.string().datetime().optional(),
+  since: sinceSchema,
   dryRun: z.boolean().optional().default(false),
   batchSize: z.number().int().min(50).max(500).optional().default(200),
   /** Si true, fuerza un re-sync completo (ignora cursor). */

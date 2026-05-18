@@ -18,7 +18,7 @@
  */
 
 import 'server-only'
-import { FieldValue, type Firestore, type WriteBatch } from 'firebase-admin/firestore'
+import { FieldValue, Timestamp, type Firestore, type WriteBatch } from 'firebase-admin/firestore'
 import { adminDb } from '@/lib/firebase/admin'
 import { getOdooClient, type OdooClient } from '@/lib/odoo/client'
 import type { OdooDomain } from '@/types/odoo'
@@ -226,23 +226,27 @@ async function fetchDocumentsPage(
   offset: number,
   limit: number,
   fetchAll: boolean,
-): Promise<OdooDocumentRaw[]> {
+): Promise<{ rows: OdooDocumentRaw[]; parseErrors: number }> {
   const domain: OdooDomain = fetchAll ? [] : [['write_date', '>', cursor]]
-  const rows = await client.searchRead(
+  const rawRows = await client.searchRead(
     'documents.document',
     domain,
     [...DOCUMENT_FIELDS],
     { offset, limit, order: 'write_date asc, id asc' },
   )
 
-  const parsed: OdooDocumentRaw[] = []
-  for (const raw of rows) {
+  const rows: OdooDocumentRaw[] = []
+  let parseErrors = 0
+  for (const raw of rawRows) {
     const result = odooDocumentRawSchema.safeParse(raw)
-    if (result.success) parsed.push(result.data)
-    // else: skip silently — el caller incrementa `errored` con error agregado.
-    // No persistimos el raw para no leakear shape no validado.
+    if (result.success) {
+      rows.push(result.data)
+    } else {
+      parseErrors += 1
+      // No persistimos el raw para no leakear shape no validado.
+    }
   }
-  return parsed
+  return { rows, parseErrors }
 }
 
 // =====================================================================
@@ -260,10 +264,15 @@ export async function acquireLock(
     const data = (snap.data() ?? {}) as SyncCursorDoc
     if (data.inProgress) {
       // Si el lock es viejo (>10min), considerarlo stale y robarlo.
-      const startedAtMs =
-        data.inProgressStartedAt && typeof (data.inProgressStartedAt as { toMillis?: () => number }).toMillis === 'function'
-          ? (data.inProgressStartedAt as { toMillis: () => number }).toMillis()
-          : 0
+      const startedAtMs = (() => {
+        const v = data.inProgressStartedAt
+        if (v instanceof Timestamp) return v.toMillis()
+        // Duck-type: Firestore Timestamp-like (también cubre mocks de test)
+        if (v != null && typeof (v as Record<string, unknown>).toMillis === 'function') {
+          return (v as { toMillis: () => number }).toMillis()
+        }
+        return 0
+      })()
       if (now() - startedAtMs < 10 * 60 * 1000) {
         throw new DocumentsSyncLockError(data.inProgressRunId ?? 'unknown')
       }
@@ -350,12 +359,22 @@ export async function syncOdooDocuments(
     let offset = 0
     for (let i = 0; i < 100; i++) {
       if (now() - startMs > hardTimeout) throw new Error('documents_sync_timeout')
-      const rows = await fetchDocumentsPage(client, lastCursor, offset, pageSize, fetchAll)
-      if (rows.length === 0) break
+      const { rows, parseErrors } = await fetchDocumentsPage(client, lastCursor, offset, pageSize, fetchAll)
+      summary.errored += parseErrors
+      if (rows.length === 0 && parseErrors === 0) break
       allRows.push(...rows)
       summary.fetched += rows.length
-      if (rows.length < pageSize) break
+      const totalPage = rows.length + parseErrors
+      if (totalPage < pageSize) break
       offset += pageSize
+      // Detectar hard cap: última iteración (i===99) con página completa
+      if (i === 99 && totalPage === pageSize) {
+        const msg = `[documents-pull] HARD CAP alcanzado: ${summary.fetched} docs fetched en 100 páginas de ${pageSize}. Puede quedar delta sin procesar. Forzar full-sync.`
+        console.warn(msg)
+        if (!summary.warnings) summary.warnings = []
+        summary.warnings.push(msg)
+        break
+      }
     }
 
     // 2) Particionar folders vs docs
