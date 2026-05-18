@@ -39,7 +39,7 @@ AroundaPlanet es una **PWA** (una app web que se instala como app normal, sin pa
 
 ## La pantalla principal
 
-<!-- TODO: re-capturar tras fix B3 (CommissionList variant) — screenshot 02-dashboard.png -->
+![Dashboard agente con tarjetas de Ventas, Clientes Activos, Comisiones Pendientes y Ganadas, más la lista de comisiones](/manuals/agente/02-dashboard.png)
 
 ### El menú de abajo (BottomNav)
 
@@ -53,7 +53,7 @@ En tu celular siempre vas a ver una barra fija abajo con 5 íconos. Esto es lo q
 | 👤 | **Mis Leads** | Clientes nuevos que llegaron desde tu link de referido. Aquí también registras pagos. |
 | 👤 | **Perfil** | Tu foto, tu nombre, tu correo. |
 
-<!-- TODO: re-capturar tras fix B3 — screenshot 03-bottomnav.png (contaminado con error boundary del dashboard) -->
+![BottomNav móvil del agente con 5 íconos: Mi Negocio, Clientes, Catálogo, Mis Leads y Perfil](/manuals/agente/03-bottomnav.png)
 
 En computadora la barra de abajo desaparece y todo se ve en un menú lateral.
 
@@ -119,7 +119,7 @@ Cuando un cliente te entrega el comprobante por WhatsApp o en persona:
 
 ## Catálogo y tu link de referido
 
-<!-- TODO: re-capturar — screenshot 07-catalogo-link-referido.png (placeholders sin imágenes de viajes) -->
+![Catálogo de viajes con filtros por destino y precio más botón Copiar Link en cada tarjeta](/manuals/agente/07-catalogo-link-referido.png)
 
 En **Catálogo** ves todos los viajes publicados. Cada tarjeta tiene un botón **Copiar Link**.
 
@@ -133,7 +133,7 @@ En **Catálogo** ves todos los viajes publicados. Cada tarjeta tiene un botón *
 
 ## Mis Leads
 
-<!-- TODO: re-capturar tras fix B3 — screenshot 08-mis-leads.png -->
+![Pantalla Mis Leads con tabla de leads, sección de pagos registrados y botón flotante Registrar Pago](/manuals/agente/08-mis-leads.png)
 
 Aquí ves a las personas que **entraron por tu link** y dejaron sus datos o ya compraron. Es tu lista de cacería.
 
@@ -161,7 +161,7 @@ Las comisiones están en tu tablero **Mi Negocio**, en la lista de abajo.
 
 ## Contratos compartidos
 
-<!-- TODO: re-capturar tras fix B3 — screenshot 09-mis-contratos.png -->
+![Pantalla Contratos del agente con la lista de contratos compartidos por el admin](/manuals/agente/09-mis-contratos.png)
 
 Tienes una sección **Contratos** en tu menú lateral (en computadora) o vía link directo `/agent/contracts`.
 
