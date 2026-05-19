@@ -23,6 +23,7 @@ import { AppError } from '@/lib/errors/AppError'
 import type { OdooDomain } from '@/types/odoo'
 import type { PaymentMethod } from '@/schemas/paymentSchema'
 import { syncReceiptToOdoo } from '@/lib/odoo/sync/receipt-attachment'
+import { paymentAlertDocId } from '@/schemas/paymentAlertSchema'
 
 // =====================================================================
 // Constantes
@@ -36,6 +37,7 @@ const UNIQUE_VIOLATION_MARKERS = [
 ]
 const PAYMENTS_COLLECTION = 'payments'
 const SYNCLOG_COLLECTION = 'syncLog'
+const PAYMENT_ALERTS_COLLECTION = 'paymentAlerts'
 const MAX_ERROR_LENGTH = 2000
 
 // =====================================================================
@@ -354,11 +356,13 @@ export async function syncVerifiedPaymentToOdoo(
   } catch (err) {
     const message = (err instanceof Error ? err.message : String(err)).slice(0, MAX_ERROR_LENGTH)
     const retryable = err instanceof AppError ? err.retryable : true
+    const errorCode = err instanceof AppError ? err.code : 'UNKNOWN'
     try {
       await paymentRef.set(
         {
           odooSyncStatus: 'error',
           odooLastError: message,
+          odooLastErrorCode: errorCode,
           syncRetryCount: FieldValue.increment(1),
           updatedAt: FieldValue.serverTimestamp(),
         },
@@ -367,6 +371,30 @@ export async function syncVerifiedPaymentToOdoo(
     } catch (mirrorErr) {
       console.error('[syncVerifiedPaymentToOdoo] Failed to persist error mirror:', mirrorErr)
     }
+
+    // Escribir alerta operativa en paymentAlerts/ para que la consola admin
+    // muestre algo cuando el usuario clickea "ver consola". Idempotente por docId.
+    try {
+      const alertId = paymentAlertDocId(firestoreId, 'orphan_payment')
+      await getFirestoreInstance()
+        .collection(PAYMENT_ALERTS_COLLECTION)
+        .doc(alertId)
+        .set(
+          {
+            paymentId: firestoreId,
+            type: 'orphan_payment',
+            status: 'open',
+            errorMessage: message,
+            firestoreStatus: 'verified',
+            detectedAt: FieldValue.serverTimestamp(),
+            runId: `push_${errorCode}`,
+          },
+          { merge: true },
+        )
+    } catch (alertErr) {
+      console.error('[syncVerifiedPaymentToOdoo] Failed to write paymentAlert:', alertErr)
+    }
+
     return { status: 'error', isNew: false, orphan: false, error: message, retryable }
   }
 }

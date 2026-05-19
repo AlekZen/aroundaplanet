@@ -514,15 +514,31 @@ export function VerificationPanel() {
                     {(selectedPayment.odooSyncStatus === 'error' || selectedPayment.odooSyncStatus === 'orphan') && (
                       <Button
                         size="sm"
-                        variant="outline"
+                        variant="default"
+                        className="bg-amber-600 hover:bg-amber-700"
                         disabled={retryingId === selectedPayment.id}
                         onClick={() => handleRetrySync(selectedPayment.id)}
+                        data-testid="retry-sync-button"
                       >
                         {retryingId === selectedPayment.id && <Loader2 className="mr-1.5 h-3 w-3 animate-spin" />}
                         Reintentar sync
                       </Button>
                     )}
                   </div>
+                  {selectedPayment.odooSyncStatus === 'error' && selectedPayment.odooLastError && (
+                    <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-xs" data-testid="sync-error-detail">
+                      <div className="mb-1 flex items-center gap-1.5 font-semibold text-red-800">
+                        <XCircle className="h-3.5 w-3.5" />
+                        Error de sincronización con Odoo
+                      </div>
+                      <p className="break-words text-red-700">{selectedPayment.odooLastError}</p>
+                      {selectedPayment.odooLastError.includes('ODOO_JOURNAL') && (
+                        <p className="mt-1.5 text-[11px] text-red-600">
+                          Configuración faltante en producción. Avisa al equipo técnico.
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
 

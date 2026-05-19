@@ -53,14 +53,14 @@ env:
     availability: [RUNTIME]
 
   # === Story 9.2 — Odoo Journal IDs (push Firestore→account.payment) ===
-  # Resolver IDs reales antes del primer deploy: vía Odoo Accounting > Journals.
-  # Comentadas hasta tener los IDs; activar como secrets cuando estén disponibles.
-  # - variable: ODOO_JOURNAL_BANK_DEFAULT_ID
-  #   secret: prod-odoo-journal-bank-default-id
-  #   availability: [RUNTIME]
-  # - variable: ODOO_JOURNAL_CASH_ID
-  #   secret: prod-odoo-journal-cash-id
-  #   availability: [RUNTIME]
+  # IDs auditados vía XML-RPC 2026-05-19: Bank id=13 (BNK1), Cash id=14 (CSH1).
+  # Validados contra account.payment 8134 (Felipe Rubio, primer sync OK).
+  - variable: ODOO_JOURNAL_BANK_DEFAULT_ID
+    secret: prod-odoo-journal-bank-default-id
+    availability: [RUNTIME]
+  - variable: ODOO_JOURNAL_CASH_ID
+    secret: prod-odoo-journal-cash-id
+    availability: [RUNTIME]
   # Feature flag: ODOO_AUTO_RECONCILE=false por default (Story 9.2 AC10)
   # - variable: ODOO_AUTO_RECONCILE
   #   value: "false"
