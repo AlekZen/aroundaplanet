@@ -292,8 +292,24 @@ export async function syncVerifiedPaymentToOdoo(
   try {
     const client = getOdooClient()
 
-    // 1. Resolver partner
-    const partnerId = await resolvePartnerId(client, paymentData.clientName ?? '')
+    // 1. Resolver partner. Si clientName falta (pagos legacy sin denormalizar),
+    //    intentar enriquecer desde orders/{orderId}.contactName antes de fallar.
+    let resolvedClientName = paymentData.clientName ?? ''
+    if (!resolvedClientName.trim() && paymentData.orderId) {
+      try {
+        const orderSnap = await getFirestoreInstance()
+          .collection('orders')
+          .doc(paymentData.orderId)
+          .get()
+        if (orderSnap.exists) {
+          const orderData = orderSnap.data() as { contactName?: string | null } | undefined
+          resolvedClientName = (orderData?.contactName ?? '').toString()
+        }
+      } catch (enrichErr) {
+        console.warn('[syncVerifiedPaymentToOdoo] orders enrichment failed:', enrichErr)
+      }
+    }
+    const partnerId = await resolvePartnerId(client, resolvedClientName)
 
     // 2. Resolver journal
     const journal = await resolveJournalId(client, paymentData.paymentMethod ?? null)

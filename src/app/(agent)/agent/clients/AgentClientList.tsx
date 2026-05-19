@@ -715,6 +715,11 @@ function OrderCard({
   const paidAmount = getOrderPaidAmount(order)
   const residualAmount = getOrderResidualAmount(order)
   const progress = order.amountTotal > 0 ? Math.min(100, Math.round((paidAmount / order.amountTotal) * 100)) : 0
+  // BUG-C — pagos del cliente que ya fueron registrados pero el admin todavía no verifica.
+  // Antes solo se veían como "En revisión" dentro de la lista; ahora también suman como subtotal.
+  const inReviewAmount = (order.payments ?? [])
+    .filter((p) => p.status === 'pending_verification')
+    .reduce((acc, p) => acc + (p.amountCents ?? 0), 0) / 100
 
   return (
     <Card className="p-3">
@@ -741,7 +746,7 @@ function OrderCard({
             )}
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-2 text-xs">
+        <div className={`grid gap-2 text-xs ${inReviewAmount > 0 ? 'grid-cols-4' : 'grid-cols-3'}`}>
           <div>
             <p className="text-muted-foreground">Total</p>
             <p className="font-mono font-semibold">{formatMXN(order.amountTotal)}</p>
@@ -750,6 +755,12 @@ function OrderCard({
             <p className="text-muted-foreground">Cobrado</p>
             <p className="font-mono font-semibold text-green-700">{formatMXN(paidAmount)}</p>
           </div>
+          {inReviewAmount > 0 && (
+            <div>
+              <p className="text-muted-foreground">En revisión</p>
+              <p className="font-mono font-semibold text-amber-700">{formatMXN(inReviewAmount)}</p>
+            </div>
+          )}
           <div>
             <p className="text-muted-foreground">Pendiente</p>
             <p className="font-mono font-semibold text-orange-700">{formatMXN(residualAmount)}</p>

@@ -352,11 +352,19 @@ function SuccessContent({ onClose }: { onClose: () => void }) {
       <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
         <CheckCircle2 className="h-8 w-8 text-green-600" />
       </div>
-      <div className="space-y-2">
+      <div className="space-y-3">
         <h3 className="text-lg font-semibold">Pago registrado</h3>
         <p className="text-sm text-muted-foreground">
-          El equipo de administracion verificara el comprobante y actualizara el estado.
+          Tu pago está en proceso de validación con el banco. El equipo de administración
+          confirmará la entrada del dinero en cuentas y actualizará el estado.
         </p>
+        <div className="rounded-md bg-amber-50 border border-amber-200 p-3 text-left">
+          <p className="text-xs font-medium text-amber-900">⏱ Generación de recibo</p>
+          <p className="mt-1 text-xs text-amber-800">
+            Una vez validado el pago (típicamente 3 a 4 días hábiles), tu recibo
+            estará disponible para descarga desde la sección Mis Viajes.
+          </p>
+        </div>
       </div>
       <Button variant="outline" className="w-full" onClick={onClose}>
         Cerrar

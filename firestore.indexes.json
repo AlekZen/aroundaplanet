@@ -204,6 +204,14 @@
         { "fieldPath": "resolvedAt", "order": "ASCENDING" },
         { "fieldPath": "detectedAt", "order": "DESCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "paymentAlerts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "detectedAt", "order": "DESCENDING" }
+      ]
     }
   ],
   "fieldOverrides": [

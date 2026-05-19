@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, Suspense } from 'react'
+import { useState, useEffect, useCallback, useRef, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/useAuthStore'
@@ -42,10 +42,13 @@ function ConversionFlowInner({
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [selectedDepartureId, setSelectedDepartureId] = useState<string | null>(null)
   const [isEnrolling, setIsEnrolling] = useState(false)
+  // BUG-E — guard sincrónico contra doble-submit (state es async; ref bloquea inmediato)
+  const enrollingRef = useRef(false)
 
   /** Authenticated user: create order instantly, no form */
   const handleAuthEnroll = useCallback(async () => {
-    if (isEnrolling) return
+    if (enrollingRef.current) return
+    enrollingRef.current = true
     setIsEnrolling(true)
 
     try {
@@ -84,9 +87,10 @@ function ConversionFlowInner({
       const message = error instanceof Error ? error.message : 'No pudimos procesar tu solicitud'
       toast.error(message)
     } finally {
+      enrollingRef.current = false
       setIsEnrolling(false)
     }
-  }, [isEnrolling, profile, user, tripId, router])
+  }, [profile, user, tripId, router])
 
   // Auto-open from URL params
   useEffect(() => {

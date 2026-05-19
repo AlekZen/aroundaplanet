@@ -143,7 +143,16 @@ function setupFirestoreMocks(options: {
   const mockCount = vi.fn().mockReturnValue({ get: mockCountGet })
   const mockRateLimitWhere3 = vi.fn().mockReturnValue({ count: mockCount })
   const mockRateLimitWhere2 = vi.fn().mockReturnValue({ where: mockRateLimitWhere3 })
-  const mockRateLimitWhere1 = vi.fn().mockReturnValue({ where: mockRateLimitWhere2 })
+
+  // Dedup query mock (.where('dedupKey','==',key).limit(1).get()) — by default empty
+  const mockDedupGet = vi.fn().mockResolvedValue({ empty: true, docs: [] })
+  const mockDedupLimit = vi.fn().mockReturnValue({ get: mockDedupGet })
+
+  // First .where() on orders: must support BOTH rate-limit chain (.where()) AND dedup chain (.limit())
+  const mockRateLimitWhere1 = vi.fn().mockReturnValue({
+    where: mockRateLimitWhere2,
+    limit: mockDedupLimit,
+  })
 
   // Top-level collection routing
   mockCollection.mockImplementation((name: string) => {
@@ -155,7 +164,7 @@ function setupFirestoreMocks(options: {
 
   mockAdd.mockResolvedValue({ id: 'order-new-1' })
 
-  return { mockCountGet, mockAgentGet }
+  return { mockCountGet, mockAgentGet, mockDedupGet }
 }
 
 // === Tests ===
@@ -470,5 +479,45 @@ describe('POST /api/orders', () => {
     expect(mockAdd).toHaveBeenCalledWith(
       expect.objectContaining({ agentId: null })
     )
+  })
+
+  // --- Idempotencia dedupKey (BUG-E) ---
+
+  it('persists dedupKey in created order document', async () => {
+    const req = makeRequest(VALID_BODY)
+    await POST(req)
+
+    expect(mockAdd).toHaveBeenCalledWith(
+      expect.objectContaining({ dedupKey: expect.any(String) })
+    )
+  })
+
+  it('returns existing order with deduplicated:true when dedupKey already exists (no new add)', async () => {
+    const { mockDedupGet } = setupFirestoreMocks({})
+    mockDedupGet.mockResolvedValue({
+      empty: false,
+      docs: [
+        {
+          id: 'order-existing-99',
+          data: () => ({ status: 'Interesado', guestToken: null }),
+        },
+      ],
+    })
+
+    const req = makeRequest(VALID_BODY)
+    const res = await POST(req)
+    const data = await res.json()
+
+    expect(res.status).toBe(200)
+    expect(data).toEqual({
+      orderId: 'order-existing-99',
+      status: 'Interesado',
+      tripId: 'trip-1',
+      departureId: 'dep-1',
+      amountTotalCents: 14500000,
+      guestToken: null,
+      deduplicated: true,
+    })
+    expect(mockAdd).not.toHaveBeenCalled()
   })
 })

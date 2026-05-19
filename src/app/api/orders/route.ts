@@ -98,6 +98,37 @@ export async function POST(request: NextRequest) {
     const guestToken = claims ? null : crypto.randomUUID()
     const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
 
+    // BUG-E — Idempotencia 5min: dedupKey hash(tripId|phone|userId|window5min).
+    // Si ya existe orden con misma clave, retornamos esa (status 200) sin crear duplicado.
+    const normalizedPhone = (contactPhone ?? '').replace(/\D/g, '')
+    const identityKey = claims?.uid ?? ip
+    const windowBucket = Math.floor(Date.now() / (5 * 60 * 1000))
+    const dedupKey = crypto
+      .createHash('sha1')
+      .update(`${tripId}|${normalizedPhone}|${identityKey}|${windowBucket}`)
+      .digest('hex')
+
+    const existingSnap = await adminDb
+      .collection(ORDERS_COLLECTION)
+      .where('dedupKey', '==', dedupKey)
+      .limit(1)
+      .get()
+    if (!existingSnap.empty) {
+      const existing = existingSnap.docs[0]
+      return NextResponse.json(
+        {
+          orderId: existing.id,
+          status: existing.data().status ?? 'Interesado',
+          tripId,
+          departureId,
+          amountTotalCents,
+          guestToken: existing.data().guestToken ?? guestToken,
+          deduplicated: true,
+        },
+        { status: 200 },
+      )
+    }
+
     // Create order document
     const orderData = {
       userId: claims?.uid ?? null,
@@ -115,6 +146,7 @@ export async function POST(request: NextRequest) {
       utmSource: utmSource ?? null,
       utmMedium: utmMedium ?? null,
       utmCampaign: utmCampaign ?? null,
+      dedupKey,
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
     }

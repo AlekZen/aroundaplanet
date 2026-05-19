@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import {
   CheckCircle2, XCircle, MessageSquare, AlertTriangle, CreditCard,
@@ -123,6 +123,24 @@ export function VerificationPanel() {
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [selectedPayment, setSelectedPayment] = useState<PaymentItem | null>(null)
+  const detailPanelRef = useRef<HTMLDivElement | null>(null)
+
+  // BUG-A — En mobile el panel derecho queda apilado debajo; al seleccionar un pago
+  // hacemos scroll hacia el panel de detalle para que los botones Aprobar/Rechazar
+  // queden visibles y el Dialog modal se abra en viewport accesible.
+  // Doble rAF para esperar a que React termine el render del panel antes de scrollear.
+  useEffect(() => {
+    if (!selectedPayment) return
+    if (typeof window === 'undefined') return
+    if (window.matchMedia('(min-width: 1024px)').matches) return
+    const r1 = requestAnimationFrame(() => {
+      const r2 = requestAnimationFrame(() => {
+        detailPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      })
+      return () => cancelAnimationFrame(r2)
+    })
+    return () => cancelAnimationFrame(r1)
+  }, [selectedPayment])
   const [actionDialog, setActionDialog] = useState<{ type: ActionType; payment: PaymentItem } | null>(null)
   const [rejectionNote, setRejectionNote] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -326,9 +344,9 @@ export function VerificationPanel() {
       </div>
 
       {/* Right panel: Detail view */}
-      <div className="w-full lg:w-96">
+      <div ref={detailPanelRef} className="w-full lg:w-96">
         {selectedPayment ? (
-          <Card className="sticky top-4">
+          <Card className="lg:sticky lg:top-4">
             <CardHeader className="pb-3">
               <CardTitle className="text-base">Detalle del Pago</CardTitle>
             </CardHeader>

@@ -26,8 +26,11 @@ export async function GET() {
       .select(...UNASSIGNED_ORDER_FIELDS)
       .get()
 
+    // BUG-E — excluir órdenes marcadas como duplicadas por dedup-orders-retroactive.mjs
+    const visibleDocs = ordersSnap.docs.filter((d) => d.data().status !== 'Duplicado')
+
     // Batch-fetch trip names
-    const tripIds = [...new Set(ordersSnap.docs.map((d) => d.data().tripId as string))]
+    const tripIds = [...new Set(visibleDocs.map((d) => d.data().tripId as string))]
     const tripNames: Record<string, string> = {}
     if (tripIds.length > 0) {
       const tripSnaps = await Promise.all(
@@ -40,7 +43,7 @@ export async function GET() {
       }
     }
 
-    const orders = ordersSnap.docs.map((doc) => {
+    const orders = visibleDocs.map((doc) => {
       const d = doc.data()
       return {
         id: doc.id,
