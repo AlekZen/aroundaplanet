@@ -39,6 +39,7 @@ const GROUPS_BY_ROLE: Record<string, SidebarGroupDef[]> = {
         { id: 'dashboard', label: 'Panel', icon: <LayoutDashboard className="h-5 w-5" />, href: '/admin/dashboard' },
         { id: 'admin-my-trips', label: 'Mis Viajes', icon: <Plane className="h-5 w-5" />, href: '/admin/my-trips' },
         { id: 'admin-profile', label: 'Mi Perfil', icon: <UserCircle className="h-5 w-5" />, href: '/admin/profile' },
+        { id: 'admin-manual', label: 'Ayuda y Manual', icon: <BookOpen className="h-5 w-5" />, href: '/admin/manual' },
       ],
     },
     {
@@ -117,6 +118,7 @@ const GROUPS_BY_ROLE: Record<string, SidebarGroupDef[]> = {
       items: [
         { id: 'superadmin-my-trips', label: 'Mis Viajes', icon: <Plane className="h-5 w-5" />, href: '/superadmin/my-trips' },
         { id: 'superadmin-profile', label: 'Mi Perfil', icon: <UserCircle className="h-5 w-5" />, href: '/superadmin/profile' },
+        { id: 'superadmin-manual', label: 'Ayuda y Manual', icon: <BookOpen className="h-5 w-5" />, href: '/admin/manual' },
       ],
     },
     {
