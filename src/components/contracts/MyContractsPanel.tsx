@@ -22,6 +22,19 @@ interface ContractRow {
   createdAt: string | null
 }
 
+interface AgentPayment {
+  id: string
+  orderId: string
+  amountCents: number
+  receiptUrl: string | null
+  verifiedAt: string | null
+}
+
+function formatMxnCents(cents: number): string {
+  const pesos = (cents / 100).toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+  return `$${pesos}`
+}
+
 interface Props {
   viewerHint: 'client' | 'agent'
 }
@@ -46,6 +59,7 @@ export function MyContractsPanel({ viewerHint }: Props) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [pendingId, setPendingId] = useState<string | null>(null)
+  const [paymentsByOrder, setPaymentsByOrder] = useState<Record<string, AgentPayment[]>>({})
 
   async function load() {
     setLoading(true)
@@ -68,7 +82,25 @@ export function MyContractsPanel({ viewerHint }: Props) {
 
   useEffect(() => {
     void load()
-  }, [])
+    // Story 10.6 B2: enriquecer con pagos verified del agente para mostrar
+    // botón "Ver recibo" dentro de cada card de contrato.
+    if (viewerHint === 'agent') {
+      fetch('/api/agent/client-payments')
+        .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`${r.status}`))))
+        .then((data: { payments: AgentPayment[] }) => {
+          const map: Record<string, AgentPayment[]> = {}
+          for (const p of data.payments) {
+            if (!p.orderId) continue
+            if (!map[p.orderId]) map[p.orderId] = []
+            map[p.orderId].push(p)
+          }
+          setPaymentsByOrder(map)
+        })
+        .catch(() => {
+          // best-effort: si falla el enrichment, la card aún muestra el contrato
+        })
+    }
+  }, [viewerHint])
 
   async function openPdf(contractId: string) {
     setPendingId(contractId)
@@ -188,6 +220,34 @@ export function MyContractsPanel({ viewerHint }: Props) {
               </Button>
             )}
           </div>
+
+          {/* Story 10.6 B2 — botones "Ver recibo" por cada pago verified del agente */}
+          {viewerHint === 'agent' && paymentsByOrder[c.orderId]?.length > 0 && (
+            <div className="rounded-md border bg-muted/30 p-3 space-y-2">
+              <p className="text-xs font-medium text-muted-foreground">
+                Recibos de pago verificados ({paymentsByOrder[c.orderId].length})
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {paymentsByOrder[c.orderId].map((p) => (
+                  <Button
+                    key={p.id}
+                    asChild
+                    size="sm"
+                    variant="outline"
+                    disabled={!p.receiptUrl}
+                  >
+                    {p.receiptUrl ? (
+                      <a href={p.receiptUrl} target="_blank" rel="noopener noreferrer">
+                        Ver recibo {formatMxnCents(p.amountCents)}
+                      </a>
+                    ) : (
+                      <span>Sin URL</span>
+                    )}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {viewerHint === 'client' && !c.acceptedAt && (
             <p className="text-xs text-muted-foreground">
