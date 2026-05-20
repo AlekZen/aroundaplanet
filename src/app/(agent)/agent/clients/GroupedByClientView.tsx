@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import {
   Accordion,
   AccordionContent,
@@ -7,11 +8,17 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import {
+  Popover, PopoverContent, PopoverTrigger,
+} from '@/components/ui/popover'
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table'
+import { FileText, FileDown } from 'lucide-react'
 import type { UnifiedClient, UnifiedOrder } from '@/schemas/contactSchema'
 import type { ClientGroup } from './grouping'
+import type { OrderActionEntry } from '@/app/api/agent/orders-contract-map/route'
 import {
   formatMXN, formatDate,
   PAYMENT_STATE_LABELS, PAYMENT_STATE_COLORS,
@@ -30,9 +37,110 @@ function getResidualAmount(order: UnifiedOrder): number {
 interface GroupedByClientViewProps {
   clientGroups: ClientGroup[]
   onClientClick: (client: UnifiedClient) => void
+  orderActions?: Record<string, OrderActionEntry>
 }
 
-export function GroupedByClientView({ clientGroups, onClientClick }: GroupedByClientViewProps) {
+async function openContractPdf(contractId: string) {
+  try {
+    const r = await fetch(`/api/contracts/${contractId}/url`)
+    const data = await r.json()
+    if (!r.ok) throw new Error(data?.message ?? `HTTP ${r.status}`)
+    window.open(data.url, '_blank', 'noopener,noreferrer')
+  } catch (e) {
+    console.error('Error abriendo contrato:', e)
+  }
+}
+
+function OrderActions({
+  order,
+  actions,
+  variant,
+}: {
+  order: UnifiedOrder
+  actions: OrderActionEntry | undefined
+  variant: 'desktop' | 'mobile'
+}) {
+  const [popoverOpen, setPopoverOpen] = useState(false)
+  const stack = variant === 'mobile' ? 'flex flex-col gap-1.5' : 'flex flex-wrap items-center gap-1.5'
+  const btnSize = variant === 'mobile' ? 'w-full justify-center' : ''
+
+  if (!actions) {
+    return <span className="text-xs text-muted-foreground italic">Contrato pendiente</span>
+  }
+
+  const { contractId, verifiedPayments } = actions
+  const hasContract = contractId !== null
+  const hasPayments = verifiedPayments.length > 0
+  const singlePayment = verifiedPayments.length === 1
+
+  return (
+    <div className={stack}>
+      {hasContract ? (
+        <Button
+          size="sm"
+          variant="outline"
+          className={btnSize}
+          onClick={() => void openContractPdf(contractId)}
+        >
+          <FileText className="h-3.5 w-3.5 mr-1.5" /> Ver contrato
+        </Button>
+      ) : (
+        <span className="text-xs text-muted-foreground italic">Contrato pendiente</span>
+      )}
+
+      {hasPayments ? (
+        singlePayment ? (
+          <Button asChild size="sm" variant="default" className={btnSize}>
+            <a
+              href={`/api/payments/${verifiedPayments[0].paymentId}/receipt-pdf`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <FileDown className="h-3.5 w-3.5 mr-1.5" /> Recibo PDF
+            </a>
+          </Button>
+        ) : (
+          <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+            <PopoverTrigger asChild>
+              <Button size="sm" variant="default" className={btnSize}>
+                <FileDown className="h-3.5 w-3.5 mr-1.5" /> Recibos PDF ({verifiedPayments.length})
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-64 p-2" align="end">
+              <p className="text-xs text-muted-foreground mb-2 px-2">
+                Selecciona un recibo
+              </p>
+              <div className="space-y-1">
+                {verifiedPayments.map((p) => (
+                  <a
+                    key={p.paymentId}
+                    href={`/api/payments/${p.paymentId}/receipt-pdf`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setPopoverOpen(false)}
+                    className="block rounded-md px-2 py-1.5 text-sm hover:bg-muted"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-mono">{formatMXN(p.amountCents / 100)}</span>
+                      <span className="text-xs text-muted-foreground">{formatDate(p.dateIso)}</span>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
+        )
+      ) : hasContract ? (
+        <span className="text-xs text-muted-foreground italic">Sin pagos verificados aún</span>
+      ) : null}
+
+      {/* Marcar 'order' como usado para satisfacer linter aunque no se utilice directamente */}
+      <span className="sr-only">{order.orderId}</span>
+    </div>
+  )
+}
+
+export function GroupedByClientView({ clientGroups, onClientClick, orderActions }: GroupedByClientViewProps) {
   if (clientGroups.length === 0) return null
 
   return (
@@ -87,6 +195,7 @@ export function GroupedByClientView({ clientGroups, onClientClick }: GroupedByCl
                       <TableHead className="text-right">Pendiente</TableHead>
                       <TableHead>Fecha</TableHead>
                       <TableHead>Fuente</TableHead>
+                      <TableHead className="text-right">Acciones</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -124,12 +233,19 @@ export function GroupedByClientView({ clientGroups, onClientClick }: GroupedByCl
                               {order.source === 'platform' ? 'Plataforma' : 'Odoo'}
                             </Badge>
                           </TableCell>
+                          <TableCell className="text-right">
+                            <OrderActions
+                              order={order}
+                              actions={orderActions?.[order.orderId]}
+                              variant="desktop"
+                            />
+                          </TableCell>
                         </TableRow>
                       ))
                     )}
                     {group.trips.length === 0 && (
                       <TableRow>
-                        <TableCell colSpan={8} className="text-center text-muted-foreground py-4">
+                        <TableCell colSpan={9} className="text-center text-muted-foreground py-4">
                           Sin ordenes registradas
                         </TableCell>
                       </TableRow>
@@ -174,6 +290,13 @@ export function GroupedByClientView({ clientGroups, onClientClick }: GroupedByCl
                       {order.dateOrder && (
                         <p className="text-xs text-muted-foreground mt-1">{formatDate(order.dateOrder)}</p>
                       )}
+                      <div className="mt-2 pt-2 border-t">
+                        <OrderActions
+                          order={order}
+                          actions={orderActions?.[order.orderId]}
+                          variant="mobile"
+                        />
+                      </div>
                     </div>
                   ))
                 )}

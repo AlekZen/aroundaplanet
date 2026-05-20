@@ -72,6 +72,6 @@ Registro de issues recibidos del equipo durante el periodo de smoke. Cada issue 
 |---|---|---|---|
 | NS-01 | 🟡 Smoke positivo | No | Documentar como evidencia |
 | NS-02 | ✅ Cerrado | — | Template + endpoint + UI desplegados (commit pendiente de push). Smoke en `smoke-cierre-fase-0/ns-02-receipt-pdf/`. |
-| NS-03 | 🔴 F0-blocker | Sí | Implementar links inline contrato + recibo en `/agent/clients` |
+| NS-03 | ✅ Cerrado | — | Endpoint orders-contract-map + OrderActions inline desplegados. Smoke en `smoke-cierre-fase-0/ns-03-inline-links/`. |
 
 **Estado:** NS-02 y NS-03 se incorporan al cierre como batches subsecuentes. NS-01 queda como evidencia de smoke OK. La ejecución se hace después de cerrar Batch A (logo en layouts) para mantener el orden de dependencias (logo es prerrequisito visual del PDF).

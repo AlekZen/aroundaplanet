@@ -29,6 +29,7 @@ import {
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { PaymentRegistrationForm } from '@/components/custom/PaymentRegistrationForm'
 import type { AgentClientsResponse, AgentClientOrder } from '@/app/api/agents/[agentId]/clients/route'
+import type { OrderActionEntry } from '@/app/api/agent/orders-contract-map/route'
 import type { UnifiedClient, UnifiedOrder, UnifiedPayment } from '@/schemas/contactSchema'
 import { groupByTrip, groupByClient } from './grouping'
 import { GroupedByTripView } from './GroupedByTripView'
@@ -808,6 +809,18 @@ export function AgentClientList({ agentId, title, hideHeader }: AgentClientListP
   // Nombres de viaje Odoo extraídos del response de clientes
   const [odooTripNames, setOdooTripNames] = useState<Record<string, string>>({})
 
+  // NS-03 — mapa de acciones por orden (contractId + pagos verified)
+  const [orderActions, setOrderActions] = useState<Record<string, OrderActionEntry>>({})
+
+  useEffect(() => {
+    fetch('/api/agent/orders-contract-map')
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`${r.status}`))))
+      .then((data: { orders: Record<string, OrderActionEntry> }) => setOrderActions(data.orders ?? {}))
+      .catch(() => {
+        // best-effort: si falla, el UI muestra "Contrato pendiente" en todas
+      })
+  }, [])
+
   const tripMap = useMemo(() => {
     const map: Record<string, string> = {}
     for (const t of trips) {
@@ -1133,6 +1146,7 @@ export function AgentClientList({ agentId, title, hideHeader }: AgentClientListP
         <GroupedByClientView
           clientGroups={clientGroups}
           onClientClick={setSelectedClient}
+          orderActions={orderActions}
         />
       )}
 
