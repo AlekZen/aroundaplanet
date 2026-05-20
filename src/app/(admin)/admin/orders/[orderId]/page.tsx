@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { adminDb } from '@/lib/firebase/admin'
 import { OrderContractCard } from './OrderContractCard'
+import { AssignAgentBanner } from './AssignAgentBanner'
 import { PAYMENT_STATUS_LABELS, PAYMENT_METHOD_LABELS, type PaymentStatus, type PaymentMethod } from '@/schemas/paymentSchema'
 
 export const metadata = {
@@ -178,6 +179,13 @@ export default async function OrderDetailPage(props: { params: Promise<{ orderId
         </h1>
         <p className="text-sm text-muted-foreground">Detalle de la orden y generación de contrato</p>
       </div>
+
+      {/* Story 10.6 AC5 — Banner asignar agente si la orden no lo tiene */}
+      <AssignAgentBanner
+        orderId={order.orderId}
+        currentAgentId={order.agentId}
+        currentAgentName={order.agentName}
+      />
 
       <div className="grid gap-4 lg:grid-cols-2">
         <section className="rounded-lg border border-border bg-card p-4 space-y-3">

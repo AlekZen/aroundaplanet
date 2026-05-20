@@ -33,6 +33,7 @@ import type { UnifiedClient, UnifiedOrder, UnifiedPayment } from '@/schemas/cont
 import { groupByTrip, groupByClient } from './grouping'
 import { GroupedByTripView } from './GroupedByTripView'
 import { GroupedByClientView } from './GroupedByClientView'
+import { AgentVerifiedPaymentsPanel } from './AgentVerifiedPaymentsPanel'
 
 import {
   formatMXN, formatDate,
@@ -1052,6 +1053,9 @@ export function AgentClientList({ agentId, title, hideHeader }: AgentClientListP
           )}
         </div>
       )}
+
+      {/* Story 10.6 AC4 — Panel de recibos verificados */}
+      {!isLoading && <AgentVerifiedPaymentsPanel />}
 
       {/* Group toggle + Search + actions */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">

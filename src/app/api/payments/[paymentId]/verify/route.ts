@@ -9,6 +9,8 @@ import { createCommissionFromPayment } from './createCommission'
 import { syncVerifiedPaymentToOdoo } from '@/lib/odoo/payments-push'
 
 const PAYMENTS_COLLECTION = 'payments'
+const ORDERS_COLLECTION = 'orders'
+const CONTRACTS_COLLECTION = 'contracts'
 
 interface RouteContext {
   params: Promise<{ paymentId: string }>
@@ -57,12 +59,46 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       updatedAt: FieldValue.serverTimestamp(),
     }
 
+    // Story 10.6 AC2: re-leer la orden al momento del verify para denormalizar
+    // agentId actualizado en el pago (puede haber sido asignado por admin después
+    // de crearse el pago). También permite el auto-share del contrato.
+    let resolvedOrderAgentId: string | null = null
+    let resolvedOrderContractId: string | null = null
+    let resolvedOrderClientUid: string | null = null
+    if (action === 'verify') {
+      const paymentData = paymentSnap.data() ?? {}
+      const orderId = typeof paymentData.orderId === 'string' ? paymentData.orderId : null
+      if (orderId) {
+        const orderSnap = await adminDb.collection(ORDERS_COLLECTION).doc(orderId).get()
+        const orderData = orderSnap.data()
+        if (orderData) {
+          resolvedOrderAgentId = typeof orderData.agentId === 'string' && orderData.agentId.length > 0
+            ? orderData.agentId
+            : null
+          resolvedOrderContractId = typeof orderData.contractId === 'string' && orderData.contractId.length > 0
+            ? orderData.contractId
+            : null
+          resolvedOrderClientUid = typeof orderData.userId === 'string' && orderData.userId.length > 0
+            ? orderData.userId
+            : null
+        }
+      }
+    }
+
     switch (action) {
       case 'verify':
         updateData.status = 'verified'
         updateData.verifiedBy = claims.uid
         updateData.verifiedAt = FieldValue.serverTimestamp()
         updateData.rejectionNote = null
+        // Denormaliza agentId desde la orden si el pago no lo tenía (admin lo
+        // pudo haber asignado después de crear el pago).
+        if (resolvedOrderAgentId) {
+          const currentAgentId = paymentSnap.data()?.agentId
+          if (typeof currentAgentId !== 'string' || currentAgentId.length === 0) {
+            updateData.agentId = resolvedOrderAgentId
+          }
+        }
         break
       case 'reject':
         updateData.status = 'rejected'
@@ -92,6 +128,45 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
         odooSync = await syncVerifiedPaymentToOdoo(paymentId, paymentData)
       } catch (err) {
         console.error('[Odoo Sync Hook] Error pushing to Odoo:', err)
+      }
+
+      // Story 10.6 AC2: auto-share del contrato asociado a la orden.
+      // Solo activa, nunca desactiva. Si el contrato no tiene agentId
+      // resuelto, queda como está (admin debe asignarlo desde el banner).
+      if (resolvedOrderContractId) {
+        try {
+          const contractRef = adminDb.collection(CONTRACTS_COLLECTION).doc(resolvedOrderContractId)
+          const contractSnap = await contractRef.get()
+          const contractData = contractSnap.data()
+          if (contractData) {
+            const contractUpdate: Record<string, unknown> = {}
+            const hasAgentId = typeof contractData.agentId === 'string' && contractData.agentId.length > 0
+            if (hasAgentId && contractData.sharedWithAgent !== true) {
+              contractUpdate.sharedWithAgent = true
+            }
+            const hasClientUid = typeof contractData.clientUserId === 'string' && contractData.clientUserId.length > 0
+            if (hasClientUid && contractData.sharedWithClient !== true) {
+              contractUpdate.sharedWithClient = true
+            }
+            if (Object.keys(contractUpdate).length > 0) {
+              contractUpdate.updatedAt = FieldValue.serverTimestamp()
+              await contractRef.update(contractUpdate)
+              await adminDb.collection('auditLog').add({
+                action: 'contract.autoSharedOnVerify',
+                targetUid: resolvedOrderClientUid ?? 'unknown',
+                performedBy: claims.uid,
+                timestamp: FieldValue.serverTimestamp(),
+                details: {
+                  contractId: resolvedOrderContractId,
+                  paymentId,
+                  ...contractUpdate,
+                },
+              })
+            }
+          }
+        } catch (err) {
+          console.error('[Auto-share Hook] Error sharing contract:', err)
+        }
       }
     }
 
