@@ -5,6 +5,7 @@ import { RoleSidebar } from '@/components/custom/RoleSidebar'
 import { RoleSwitcher } from '@/components/custom/RoleSwitcher'
 import { PageTransition } from '@/components/shared/PageTransition'
 import { PwaInstallToaster } from '@/components/pwa/PwaInstallToaster'
+import { AppLogo } from '@/components/shared/AppLogo'
 
 interface AdminShellProps {
   roles: string[]
@@ -24,6 +25,7 @@ export function AdminShell({ roles, children }: AdminShellProps) {
       <SidebarInset>
         <header className="flex h-14 items-center gap-2 border-b px-4 lg:hidden">
           <SidebarTrigger />
+          <AppLogo size="sm" />
           <span className="flex-1 font-heading text-sm font-semibold">AroundaPlanet</span>
           <RoleSwitcher />
         </header>

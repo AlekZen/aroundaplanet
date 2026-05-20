@@ -4,6 +4,7 @@ import { BottomNavBar } from '@/components/custom/BottomNavBar'
 import { RoleSwitcher } from '@/components/custom/RoleSwitcher'
 import { PageTransition } from '@/components/shared/PageTransition'
 import { PwaInstallToaster } from '@/components/pwa/PwaInstallToaster'
+import { AppLogo } from '@/components/shared/AppLogo'
 import { Plane, Globe, User, FileSignature } from 'lucide-react'
 
 const CLIENT_TABS = [
@@ -32,7 +33,10 @@ export default function ClientLayout({
             className="flex items-center justify-between px-4 h-14"
             aria-label="Navegacion de cliente"
           >
-            <span className="font-heading text-sm font-semibold">AroundaPlanet</span>
+            <div className="flex items-center gap-2">
+              <AppLogo size="sm" />
+              <span className="font-heading text-sm font-semibold">AroundaPlanet</span>
+            </div>
             <RoleSwitcher />
           </nav>
         </header>

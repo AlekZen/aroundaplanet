@@ -6,6 +6,7 @@ import { RoleSwitcher } from '@/components/custom/RoleSwitcher'
 import { BottomNavBar } from '@/components/custom/BottomNavBar'
 import { PageTransition } from '@/components/shared/PageTransition'
 import { PwaInstallToaster } from '@/components/pwa/PwaInstallToaster'
+import { AppLogo } from '@/components/shared/AppLogo'
 import { LayoutDashboard, Globe, Users, User, UserCheck } from 'lucide-react'
 
 const AGENT_TABS = [
@@ -32,7 +33,10 @@ export default function AgentMobileLayout({
       <RoleSidebar roles={['agente']} className="hidden lg:block" />
       <div className="flex flex-1 flex-col">
         <header className="flex h-14 items-center justify-between border-b px-4 lg:hidden">
-          <span className="font-heading text-sm font-semibold">AroundaPlanet</span>
+          <div className="flex items-center gap-2">
+            <AppLogo size="sm" />
+            <span className="font-heading text-sm font-semibold">AroundaPlanet</span>
+          </div>
           <RoleSwitcher />
         </header>
         <main id="main-content" className="flex-1 p-4 pb-20 lg:pb-4 lg:p-6">

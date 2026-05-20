@@ -1,8 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
 import { usePathname } from 'next/navigation'
+import { AppLogo } from '@/components/shared/AppLogo'
 import { motion } from 'framer-motion'
 import {
   Sidebar,
@@ -193,7 +193,7 @@ export function RoleSidebar({ roles, className }: RoleSidebarProps) {
     <Sidebar collapsible="icon" className={className}>
       <SidebarHeader className="border-b border-sidebar-border">
         <div className="flex items-center gap-3 px-2">
-          <Image src="/images/logo-aroundaplanet.webp" alt="AroundaPlanet" width={32} height={32} className="h-8 w-8" />
+          <AppLogo size="sm" />
           <span className="font-heading text-sm font-semibold group-data-[collapsible=icon]:hidden">AroundaPlanet</span>
         </div>
       </SidebarHeader>

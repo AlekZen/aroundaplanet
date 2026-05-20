@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
-import Image from 'next/image'
 import { PageTransition } from '@/components/shared/PageTransition'
+import { AppLogo } from '@/components/shared/AppLogo'
 import { Skeleton } from '@/components/ui/skeleton'
 
 export default function AuthLayout({
@@ -21,13 +21,7 @@ export default function AuthLayout({
         <div className="hidden lg:block bg-primary relative overflow-hidden">
           <div className="absolute inset-0 bg-primary/20 backdrop-blur" />
           <div className="relative z-10 flex h-full flex-col items-center justify-center p-12 text-primary-foreground">
-            <Image
-              src="/images/logo-aroundaplanet.webp"
-              alt="AroundaPlanet"
-              width={80}
-              height={80}
-              className="h-20 w-20 mb-6"
-            />
+            <AppLogo size="lg" priority className="mb-6" />
             <h1 className="font-heading text-3xl font-bold text-center">
               AroundaPlanet
             </h1>
@@ -42,13 +36,7 @@ export default function AuthLayout({
           {/* Logo centrado en mobile */}
           <div className="w-full max-w-md">
             <div className="flex flex-col items-center mb-8 lg:hidden">
-              <Image
-                src="/images/logo-aroundaplanet.webp"
-                alt="AroundaPlanet"
-                width={56}
-                height={56}
-                className="h-14 w-14 mb-3"
-              />
+              <AppLogo size="md" priority className="mb-3" />
               <span className="font-heading text-xl font-semibold text-primary">
                 AroundaPlanet
               </span>

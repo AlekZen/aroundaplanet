@@ -3,8 +3,8 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import Image from 'next/image'
 import { Menu, X, LogOut } from 'lucide-react'
+import { AppLogo } from '@/components/shared/AppLogo'
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
@@ -44,13 +44,7 @@ export function Navbar({ className }: NavbarProps) {
       >
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 min-h-11 min-w-11">
-          <Image
-            src="/images/logo-aroundaplanet.webp"
-            alt="AroundaPlanet"
-            width={40}
-            height={40}
-            className="h-10 w-10"
-          />
+          <AppLogo size="md" priority />
           <span className="font-heading text-lg font-semibold text-primary hidden sm:inline">
             AroundaPlanet
           </span>
