@@ -1,8 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 import React from 'react'
 import { Document, Page, Text, View, StyleSheet, Image, Svg, Polygon } from '@react-pdf/renderer'
-import { readFileSync } from 'node:fs'
-import path from 'node:path'
+import { loadLogoBuffer } from '@/lib/pdf/assets'
 import type { ContractSnapshot } from '@/schemas/contractSchema'
 import type { ContractTemplate } from '@/schemas/contractTemplateSchema'
 
@@ -20,16 +19,7 @@ const COLOR_ACCENT = '#F4A261'
 const COLOR_MUTED = '#525252'
 const COLOR_BORDER = '#9CA3AF'
 
-// Logo cargado una sola vez al cargar el módulo. process.cwd() = root del repo en Next/Vitest.
-const LOGO_BUFFER: Buffer = (() => {
-  try {
-    return readFileSync(path.join(process.cwd(), 'src', 'lib', 'pdf', 'assets', 'logo-aroundaplanet.png'))
-  } catch {
-    // Fallback silencioso: si no se encuentra el logo en CWD esperado, el PDF se renderiza
-    // sin logo en vez de fallar. Test cubre que el Buffer no es vacío en cwd normal.
-    return Buffer.alloc(0)
-  }
-})()
+const LOGO_BUFFER: Buffer = loadLogoBuffer()
 
 const PAGE_W = 612 // LETTER width (pt)
 const HEADER_H = 80
@@ -54,10 +44,10 @@ const styles = StyleSheet.create({
   },
   headerLogo: {
     position: 'absolute',
-    top: 14,
-    left: 32,
-    width: 140,
-    height: 52,
+    top: 10,
+    left: 36,
+    width: 60,
+    height: 60,
     objectFit: 'contain',
   },
   headerAddress: {

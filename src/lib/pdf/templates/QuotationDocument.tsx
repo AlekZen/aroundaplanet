@@ -1,6 +1,9 @@
 import React from 'react'
-import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer'
+import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer'
+import { loadLogoBuffer } from '@/lib/pdf/assets'
 import type { QuotationLeadSnapshot } from '@/schemas/quotationSchema'
+
+const LOGO_BUFFER: Buffer = loadLogoBuffer()
 
 const COLOR_PRIMARY = '#1B4332'
 const COLOR_ACCENT = '#F4A261'
@@ -21,8 +24,18 @@ const styles = StyleSheet.create({
     backgroundColor: COLOR_PRIMARY,
     color: 'white',
     padding: 16,
+    paddingLeft: 92,
     marginBottom: 16,
     borderRadius: 6,
+    position: 'relative',
+  },
+  heroLogo: {
+    position: 'absolute',
+    top: 12,
+    left: 16,
+    width: 60,
+    height: 60,
+    objectFit: 'contain',
   },
   heroBrand: { fontSize: 9, color: COLOR_ACCENT, fontFamily: 'Helvetica-Bold', letterSpacing: 1.2 },
   heroTitle: { fontSize: 18, color: 'white', fontFamily: 'Helvetica-Bold', marginTop: 4 },
@@ -119,6 +132,9 @@ export function QuotationDocument({ quotationId, lead, generatedAtIso }: Quotati
     <Document title={`Cotización ${quotationId} — ${lead.destino}`} author="AroundaPlanet">
       <Page size="LETTER" style={styles.page}>
         <View style={styles.hero}>
+          {LOGO_BUFFER.length > 0 ? (
+            <Image style={styles.heroLogo} src={{ data: LOGO_BUFFER, format: 'png' }} />
+          ) : null}
           <Text style={styles.heroBrand}>AROUNDAPLANET — AGENCIA DE VIAJES</Text>
           <Text style={styles.heroTitle}>Cotización personalizada</Text>
           <Text style={styles.heroMeta}>
