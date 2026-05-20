@@ -1,9 +1,9 @@
 import React from 'react'
 import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer'
-import { loadLogoBuffer } from '@/lib/pdf/assets'
+import { loadLogoWhiteBuffer } from '@/lib/pdf/assets'
 import type { QuotationLeadSnapshot } from '@/schemas/quotationSchema'
 
-const LOGO_BUFFER: Buffer = loadLogoBuffer()
+const LOGO_BUFFER: Buffer = loadLogoWhiteBuffer()
 
 const COLOR_PRIMARY = '#1B4332'
 const COLOR_ACCENT = '#F4A261'
@@ -24,17 +24,17 @@ const styles = StyleSheet.create({
     backgroundColor: COLOR_PRIMARY,
     color: 'white',
     padding: 16,
-    paddingLeft: 92,
+    paddingLeft: 172,
     marginBottom: 16,
     borderRadius: 6,
     position: 'relative',
   },
   heroLogo: {
     position: 'absolute',
-    top: 12,
+    top: 18,
     left: 16,
-    width: 60,
-    height: 60,
+    width: 140,
+    height: 45,
     objectFit: 'contain',
   },
   heroBrand: { fontSize: 9, color: COLOR_ACCENT, fontFamily: 'Helvetica-Bold', letterSpacing: 1.2 },

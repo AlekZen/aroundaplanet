@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 import React from 'react'
 import { Document, Page, Text, View, StyleSheet, Image, Svg, Polygon } from '@react-pdf/renderer'
-import { loadLogoBuffer } from '@/lib/pdf/assets'
+import { loadLogoWhiteBuffer } from '@/lib/pdf/assets'
 import type { ContractSnapshot } from '@/schemas/contractSchema'
 import type { ContractTemplate } from '@/schemas/contractTemplateSchema'
 
@@ -19,7 +19,7 @@ const COLOR_ACCENT = '#F4A261'
 const COLOR_MUTED = '#525252'
 const COLOR_BORDER = '#9CA3AF'
 
-const LOGO_BUFFER: Buffer = loadLogoBuffer()
+const LOGO_BUFFER: Buffer = loadLogoWhiteBuffer()
 
 const PAGE_W = 612 // LETTER width (pt)
 const HEADER_H = 80
@@ -44,10 +44,10 @@ const styles = StyleSheet.create({
   },
   headerLogo: {
     position: 'absolute',
-    top: 10,
-    left: 36,
-    width: 60,
-    height: 60,
+    top: 18,
+    left: 32,
+    width: 140,
+    height: 45,
     objectFit: 'contain',
   },
   headerAddress: {

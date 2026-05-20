@@ -1,18 +1,27 @@
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
 
-let cachedLogo: Buffer | null = null
+let cachedColor: Buffer | null = null
+let cachedWhite: Buffer | null = null
 
-export function loadLogoBuffer(): Buffer {
-  if (cachedLogo !== null) return cachedLogo
+function load(filename: string): Buffer {
   try {
-    cachedLogo = readFileSync(path.join(process.cwd(), 'src', 'lib', 'pdf', 'assets', 'logo-aroundaplanet.png'))
+    return readFileSync(path.join(process.cwd(), 'src', 'lib', 'pdf', 'assets', filename))
   } catch {
-    cachedLogo = Buffer.alloc(0)
+    return Buffer.alloc(0)
   }
-  return cachedLogo
+}
+
+export function loadLogoColorBuffer(): Buffer {
+  if (cachedColor === null) cachedColor = load('logo-aroundaplanet-color.png')
+  return cachedColor
+}
+
+export function loadLogoWhiteBuffer(): Buffer {
+  if (cachedWhite === null) cachedWhite = load('logo-aroundaplanet-white.png')
+  return cachedWhite
 }
 
 export function hasLogo(): boolean {
-  return loadLogoBuffer().length > 0
+  return loadLogoColorBuffer().length > 0
 }
