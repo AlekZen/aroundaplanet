@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { ReceiptText, ExternalLink, AlertCircle } from 'lucide-react'
+import { ReceiptText, ExternalLink, AlertCircle, FileDown } from 'lucide-react'
 import { formatMXN, formatDate } from './client-utils'
 
 interface VerifiedPayment {
@@ -154,23 +154,24 @@ export function AgentVerifiedPaymentsPanel() {
                 {p.bankReference && <span className="font-mono">Ref {p.bankReference}</span>}
               </div>
             </div>
-            <div className="shrink-0">
-              {p.receiptUrl ? (
-                <Button
-                  asChild
-                  size="sm"
-                  variant="outline"
+            <div className="shrink-0 flex flex-col gap-1.5">
+              <Button asChild size="sm" variant="default">
+                <a
+                  href={`/api/payments/${p.id}/receipt-pdf`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
-                  <a
-                    href={p.receiptUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <ExternalLink className="h-3.5 w-3.5 mr-1.5" /> Ver recibo
+                  <FileDown className="h-3.5 w-3.5 mr-1.5" /> Recibo PDF
+                </a>
+              </Button>
+              {p.receiptUrl ? (
+                <Button asChild size="sm" variant="outline">
+                  <a href={p.receiptUrl} target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="h-3.5 w-3.5 mr-1.5" /> Ver comprobante
                   </a>
                 </Button>
               ) : (
-                <Badge variant="secondary" className="text-xs">Sin recibo</Badge>
+                <Badge variant="secondary" className="text-xs">Sin comprobante</Badge>
               )}
             </div>
           </div>

@@ -279,6 +279,7 @@ export default async function OrderDetailPage(props: { params: Promise<{ orderId
                   <th className="px-2 py-1.5 font-medium">Status</th>
                   <th className="px-2 py-1.5 font-medium">Sync Odoo</th>
                   <th className="px-2 py-1.5 font-medium">Comprobante</th>
+                  <th className="px-2 py-1.5 font-medium">Recibo PDF</th>
                   <th className="px-2 py-1.5 font-medium">Registrado por</th>
                 </tr>
               </thead>
@@ -311,6 +312,20 @@ export default async function OrderDetailPage(props: { params: Promise<{ orderId
                           className="text-primary hover:underline text-xs"
                         >
                           Ver
+                        </a>
+                      ) : (
+                        <span className="text-muted-foreground text-xs">—</span>
+                      )}
+                    </td>
+                    <td className="px-2 py-1.5">
+                      {p.status === 'verified' ? (
+                        <a
+                          href={`/api/payments/${p.paymentId}/receipt-pdf`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary hover:underline text-xs"
+                        >
+                          Recibo PDF
                         </a>
                       ) : (
                         <span className="text-muted-foreground text-xs">—</span>

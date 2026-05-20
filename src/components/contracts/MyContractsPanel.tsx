@@ -229,21 +229,24 @@ export function MyContractsPanel({ viewerHint }: Props) {
               </p>
               <div className="flex flex-wrap gap-2">
                 {paymentsByOrder[c.orderId].map((p) => (
-                  <Button
-                    key={p.id}
-                    asChild
-                    size="sm"
-                    variant="outline"
-                    disabled={!p.receiptUrl}
-                  >
-                    {p.receiptUrl ? (
-                      <a href={p.receiptUrl} target="_blank" rel="noopener noreferrer">
-                        Ver recibo {formatMxnCents(p.amountCents)}
+                  <div key={p.id} className="flex items-center gap-1.5">
+                    <Button asChild size="sm" variant="default">
+                      <a
+                        href={`/api/payments/${p.id}/receipt-pdf`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Recibo PDF {formatMxnCents(p.amountCents)}
                       </a>
-                    ) : (
-                      <span>Sin URL</span>
-                    )}
-                  </Button>
+                    </Button>
+                    {p.receiptUrl ? (
+                      <Button asChild size="sm" variant="outline">
+                        <a href={p.receiptUrl} target="_blank" rel="noopener noreferrer">
+                          Comprobante
+                        </a>
+                      </Button>
+                    ) : null}
+                  </div>
                 ))}
               </div>
             </div>
