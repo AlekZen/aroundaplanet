@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-const DEFAULT_OG_IMAGE = '/images/hero/hero-group-photo-01.webp'
+const DEFAULT_OG_IMAGE = '/og-image.png'
 
 export function createMetadata(overrides: Partial<Metadata> = {}): Metadata {
   const title = overrides.title ?? 'AroundaPlanet — Viaja el Mundo'
@@ -26,6 +26,7 @@ export function createMetadata(overrides: Partial<Metadata> = {}): Metadata {
     },
     twitter: {
       card: 'summary_large_image',
+      images: [DEFAULT_OG_IMAGE],
       ...(typeof twOverrides === 'object' ? twOverrides : {}),
     },
     ...restOverrides,

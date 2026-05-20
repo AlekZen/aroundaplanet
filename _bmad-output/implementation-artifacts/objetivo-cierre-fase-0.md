@@ -238,9 +238,9 @@ Estos acuerdos rigen el cierre y deben respetarse en todo trabajo restante:
 Cada criterio debe poder verificarse con evidencia concreta. El cierre se declara únicamente cuando **todos** estén en verde.
 
 ### 7.1. Identidad visual
-- ☐ **Logo desplegado en producción**: capturas de header en `/`, `/login`, `/agent/clients`, `/admin/verification`, `/client/my-trips` muestran logo correcto.
-- ☐ **Logo en PDF de contrato**: descarga de cualquiera de los 5 viajes piloto incluye logo en header del PDF.
-- ☐ **PWA icon + splash con logo**: install desde mobile produce icono + splash screen correctos.
+- ☑ **Logo desplegado en producción**: capturas de header en `/`, `/login`, `/agent/clients`, `/admin/verification`, `/client/my-trips`, `/superadmin/users`, `/director/dashboard` muestran logo correcto. Commit `631ff0f`. Evidencia: `smoke-cierre-fase-0/7-1-1-layouts/`.
+- ☑ **Logo en PDF de contrato y cotización**: helper `src/lib/pdf/assets.ts` con cache module-scoped, asset optimizado 8 KB, render verificado vía Playwright (capturas 01/02 en `smoke-cierre-fase-0/7-1-2-contract-pdf/`). Commit `5a31c47`. Captura 03 desde prod queda como evidencia operativa cuando Paloma genere el siguiente contrato real.
+- ☑ **PWA icon + splash con logo**: PWA icons 72/192/512 + variante maskable + favicon.ico multi-res 16/32/48 + apple-touch-icon 180 + og-image 1200×630 derivados del logo oficial vía `scripts/generate-pwa-assets.ts`. Manifest + metadata HTML actualizados (theme color #1B4332, background #FAFAF8). Bug recurrente del proxy resuelto agregando `apple-touch-icon.png|og-image.png` al matcher. Evidencia: `smoke-cierre-fase-0/7-1-3-pwa-favicon-og/`.
 
 ### 7.2. Funcionalidad validada en navegador real
 - ☐ **Suite Cliente público completa**: los 4 flujos del apartado 3.1 ejecutados sin error en prod.
