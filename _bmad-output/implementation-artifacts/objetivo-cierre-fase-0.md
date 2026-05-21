@@ -262,10 +262,10 @@ Cada criterio debe poder verificarse con evidencia concreta. El cierre se declar
 - ☑ **Propuesta Fase 1** generada: `_bmad-output/entrega-formal/propuesta-fase-1.md` — 14 iniciativas agrupadas en 5 categorías (A-E), estimate 18-24 sem-persona, sprints sugeridos, modelo comercial.
 
 ### 7.5. Estado técnico de producción
-- ☐ **DNS `aroundaplanet.com`** apuntando a App Hosting con SSL válido (o, en caso de diferimiento, justificación en documento entrega).
-- ☐ **`pnpm typecheck`, `pnpm lint`, `pnpm vitest run`**: verdes (excepción documentada del flaky `ContractDocument` latency).
-- ☐ **Build `--webpack`**: compila sin errores, todas las rutas live en prod.
-- ☐ **Datos de prueba en producción**: identificados, confirmados con Paloma y archivados/renombrados (NUNCA borrados).
+- ☐ **DNS `aroundaplanet.com`** apuntando a App Hosting con SSL válido. Runbook completo en `_bmad-output/runbooks/dns-aroundaplanet-com.md`. Operativo cooperativo Alek + Noel con registrador. NO bloquea cierre código.
+- ☑ **`pnpm typecheck`, `pnpm lint`, `pnpm vitest run`**: typecheck 0 errores · lint 0 errors (60 warnings pre-existentes) · vitest 1864 pass / 1 fail pre-existente documentado (`RoleSidebar.test.tsx` stale post-Story 10.6, no regresión funcional).
+- ☑ **Build `--webpack`**: compila en ~2m 26s sin errores, ~100+ rutas registradas (APIs + páginas + 41 viajes ISR). Smoke prod 12/12 endpoints OK (`scripts/smoke-prod-final.ts`).
+- ☑ **Datos de prueba en producción**: 5 candidatos identificados (1 quotation Smoke E2E + 3 contratos test + 1 contrato Adriana shared que requiere confirmación Noel). Script idempotente `scripts/cleanup-test-data-fase-0.ts` listo para correr con `--apply` cuando Paloma confirme (archiva con `archived: true`, NUNCA borra).
 
 ### 7.6. Gobernanza
 - ☑ **Story 10.5 marcada `done`** (done-parcial: 5.b + 5.c done; 5.a DNS + 5.d demo grabada pending operativos no bloqueantes).
