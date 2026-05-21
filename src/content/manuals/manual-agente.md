@@ -108,12 +108,57 @@ Cuando un cliente te entrega el comprobante por WhatsApp o en persona:
 - A Paloma le llega en su panel de verificación.
 - Cuando lo aprueba, el estado cambia a **Verificado** y tu comisión correspondiente entra a **Pendientes**.
 - Si algo no cuadró, te llega como **Información solicitada** o **Rechazado** con el motivo escrito.
+- Una vez **Verificado**, el sistema genera automáticamente el **recibo PDF formal** que tú y tu cliente pueden descargar (ver siguiente sección).
 
 ### Tips para que tu comprobante se procese rápido
 
 - **Foto bien iluminada y sin recortes**: incluye monto, fecha, banco y referencia.
 - **Si el comprobante es PDF, súbelo directo** (no le tomes foto al PDF).
 - **No subas comprobantes duplicados** del mismo pago: la app y Paloma los detectan y se atrasa la verificación.
+
+---
+
+## Cómo veo los recibos y contratos de mis clientes
+
+Cuando Paloma verifica un pago tuyo, te aparece en dos lugares:
+
+### Panel "Recibos verificados" en /agent/clients
+
+![Panel "Recibos verificados" arriba de la lista de clientes con botones "Recibo PDF" y "Ver comprobante"](/manuals/agente/11-recibos-verificados.png)
+
+Arriba de la lista de clientes en `/agent/clients` hay una sección llamada **Recibos verificados** con todos tus pagos aprobados. Cada fila tiene:
+
+- Nombre del cliente, viaje y monto.
+- Botón verde **Recibo PDF** — abre el documento formal de AroundaPlanet (membrete, monto en letras, saldo del cliente). Es el que le compartes oficialmente al cliente.
+- Botón gris **Ver comprobante** — abre el archivo bancario que se subió al registrar el pago (la captura del banco).
+
+### Acciones inline por orden — vista "Por Cliente"
+
+En `/agent/clients` cambia a la pestaña **Por Cliente**, expande un cliente y verás una tabla con sus órdenes. Cada fila tiene una columna **Acciones** a la derecha:
+
+![Tabla "Por Cliente" con columna Acciones a la derecha mostrando Ver contrato y Recibo PDF](/manuals/agente/12-acciones-inline.png)
+
+Lo que aparece según el estado:
+
+- **Contrato + 1 pago verified** → botones **Ver contrato** + **Recibo PDF**.
+- **Contrato + varios pagos verified** → **Ver contrato** + **Recibos PDF (N)** con popover que lista cada recibo por fecha y monto.
+- **Contrato sin pagos verificados** → **Ver contrato** + texto sutil *"Sin pagos verificados aún"*.
+- **Sin contrato (orden Odoo legacy)** → texto sutil *"Contrato pendiente"*. Esto significa que admin todavía no asignó el contrato a esa orden — pídele a Paloma.
+
+> En **móvil** las acciones aparecen como un bloque al final de cada tarjeta de orden, no como columna. La lógica es la misma.
+
+### Recibos formales de pago de mis clientes
+
+![Recibo PDF formal con logo, monto en letras y resumen del expediente](/manuals/agente/13-recibo-pdf.png)
+
+El **Recibo PDF** es distinto del **comprobante bancario**:
+
+- **Comprobante bancario** = la captura del banco que tu cliente o tú subieron al registrar el pago. Sirve para verificar internamente.
+- **Recibo PDF formal** = documento de AroundaPlanet con membrete, monto en pesos y en letras, fecha de verificación, método de pago y **resumen del expediente** (total contratado, cobrado acumulado a la fecha del pago, saldo pendiente).
+
+**El que le mandas oficialmente al cliente como comprobante es el Recibo PDF formal**, no la captura del banco.
+
+> Solo se genera para pagos **Verificados**. Si tu cliente te pide el recibo y el pago todavía está "En revisión", espera a que Paloma apruebe.
 
 ---
 
@@ -168,6 +213,9 @@ Tienes una sección **Contratos** en tu menú lateral (en computadora) o vía li
 - Aquí ves los contratos de tus clientes **siempre que el administrador te autorice la visibilidad**.
 - Puedes **ver el PDF** y **descargarlo** para mostrárselo al cliente.
 - **No puedes firmar electrónicamente** desde aquí. El cliente acepta su contrato desde su propio portal. La firma con validez fiscal SAT entra en una fase futura.
+- **Debajo de cada contrato** verás un par de botones por cada pago verificado de esa orden:
+  - **Recibo PDF $X** (botón verde primario) — abre el recibo formal de AroundaPlanet.
+  - **Comprobante** (botón gris outline) — abre la captura bancaria.
 
 ---
 
@@ -241,4 +289,5 @@ Estas funciones **todavía no existen** pero ya están planeadas:
 
 ---
 
-*Manual versión 1.0 — Mayo 2026 · AroundaPlanet Fase 0*
+*Manual versión 1.1 — Mayo 2026 · AroundaPlanet Fase 0*
+*Cambios v1.1: Panel "Recibos verificados" + acciones inline (Ver contrato / Recibo PDF) en `/agent/clients` + recibo PDF formal de pago distinto del comprobante bancario.*

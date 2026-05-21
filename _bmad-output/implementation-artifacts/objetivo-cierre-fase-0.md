@@ -251,10 +251,10 @@ Cada criterio debe poder verificarse con evidencia concreta. El cierre se declar
 - ☐ **Suite sync bidireccional Odoo completa**: 4 flujos del apartado 3.6.
 
 ### 7.3. Documentación operativa
-- ☐ **Manual admin actualizado**: contiene sección Story 10.6 + screenshots reales.
-- ☐ **Manual agente actualizado**: contiene "Cómo veo el recibo y contrato de mi cliente".
-- ☐ **Manual cliente revisado**: PWA install + plazo 3-4 días hábiles claros.
-- ☐ **Runbook ops básico**: documento existe y cubre `/deploy`, logs, recovery, secrets.
+- ☑ **Manual admin actualizado** (commit pendiente push): secciones nuevas "Órdenes sin agente asignado" + "Recibo PDF formal de pago". Screenshot `/admin/orders/sin-agente` capturado fresh. `src/content/manuals/manual-admin.md`.
+- ☑ **Manual agente actualizado**: secciones nuevas "Cómo veo los recibos y contratos de mis clientes" + "Recibos formales de pago de mis clientes" con tres screenshots (panel recibos verificados, acciones inline tabla Por Cliente, recibo PDF formal). `src/content/manuals/manual-agente.md` v1.1.
+- ☑ **Manual cliente revisado**: plazo de verificación corregido a 3-4 días hábiles (era "mismo día"), nueva sección "Tu recibo oficial AroundaPlanet" distinguiendo comprobante bancario vs recibo PDF formal. `src/content/manuals/manual-cliente.md` v1.1.
+- ☑ **Runbook ops básico**: `_bmad-output/runbooks/ops-basico-fase-0.md` cubre `/deploy`, logs (3 caminos), recovery Odoo, secrets + grantaccess, 5 gotchas conocidos, referencias a runbooks Epic 9.
 
 ### 7.4. Documentos de entrega
 - ☐ **Documento entrega formal Fase 0** generado, con logo, checklist firmable y accesos.

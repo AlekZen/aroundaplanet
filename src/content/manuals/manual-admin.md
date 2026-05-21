@@ -78,8 +78,34 @@ Cada fila es una orden (mirror de `sale.order` de Odoo o nativa de la plataforma
 - **Card Pagos**: los pagos vinculados a esta orden, su estado y badge de sync.
 - **Card Contrato**: el contrato asignado (si lo hay) con botones para asignar, generar PDF, compartir con cliente/agente, y regenerar.
 - **Toggle visibilidad**: controla si el cliente y/o el agente pueden ver el contrato en su portal.
+- **Columna "Recibo PDF"** en la tabla de pagos: solo aparece el link cuando el pago está `verified`. Al tocarlo se abre el [recibo formal de pago](#recibo-pdf-formal-de-pago) generado por la plataforma.
 
 > **Si una orden viene de Odoo y no muestra el agente correcto**, casi siempre es porque el `team_id` (columna *Agente* en Odoo) está vacío o apunta a "REDES". Edítalo en Odoo y vuelve a sincronizar la orden — la plataforma no inventa agentes.
+
+### Órdenes sin agente asignado — `/admin/orders/sin-agente`
+
+![Vista batch de órdenes sin agente](/manuals/admin/12-orders-sin-agente.png)
+
+Sidebar **Operación diaria → Sin agente** (ícono triángulo amarillo). Vista batch para resolver el caso recurrente: una orden viene de Odoo con `team_id` vacío o no mapeado y los pagos verificados quedan sin denormalizar el `agentId`. Resultado visible para el equipo: el agente no ve sus recibos en `/agent/clients`.
+
+Lo que muestra:
+
+- Tabla con todas las órdenes que tienen `agentId === null`.
+- **Ordenadas por prioridad**: primero las que ya tienen contrato firmado o pagos verificados (más urgentes), luego el resto.
+- Cada fila tiene un **dropdown** con la lista de agentes activos para asignar inline.
+
+Lo que hace el sistema al asignar agente desde el dropdown:
+
+1. Escribe `agentId` en la orden.
+2. Si la orden tiene `contractId`, actualiza `contracts/{contractId}.agentId` y activa `sharedWithAgent`.
+3. **Backfill on-demand**: re-procesa todos los pagos `verified` de esa orden y denormaliza `agentId` en cada uno (para que aparezcan en `/agent/clients` panel "Recibos verificados").
+4. Escribe un audit log con `action: 'order.assignAgent'` + `paymentsBackfilled: N`.
+
+Aparece un toast `Asignado a {agente} · N pagos actualizados`. La fila desaparece de la tabla.
+
+> **No edites `agentId` directamente desde la consola Firestore** ni desde Odoo. Esta vista hace además el auto-share del contrato y el backfill de pagos. Saltarse este endpoint deja datos inconsistentes.
+
+> **El mapping `team_id` Odoo → `agentId` Firebase es manual en Fase 0**. La automatización (linkedUserId en odooAgents) queda diferida a Fase 1.
 
 ---
 
@@ -152,6 +178,37 @@ Vista de pagos *huérfanos*: existen en Firestore pero no en Odoo, o viceversa. 
 
 ---
 
+## Recibo PDF formal de pago
+
+A partir de mayo 2026 cada pago `verified` tiene **dos** documentos distinguibles:
+
+- **Comprobante bancario** (`receiptUrl`): la imagen o PDF que el cliente o agente subió al banco — la captura del depósito/transferencia que se usó para verificar.
+- **Recibo PDF formal**: documento generado por la plataforma con membrete AroundaPlanet (logo + datos fiscales de la agencia), monto del abono en cifras + letras, fecha de verificación, método/banco/referencia, y resumen del expediente (total contratado + cobrado acumulado a la fecha del pago + saldo pendiente).
+
+![Recibo PDF formal con membrete y saldo acumulado](/manuals/admin/13-recibo-pdf.png)
+
+### Cómo descargar el recibo
+
+Desde `/admin/orders/[orderId]`, card de Pagos, columna **Recibo PDF**:
+
+- Si el pago está `verified` → link "Recibo PDF" visible. Toca para abrir en pestaña nueva.
+- Si el pago está `pending_verification` / `rejected` / `info_requested` → guion (`—`). El recibo solo se genera tras aprobar.
+
+El endpoint es `GET /api/payments/[paymentId]/receipt-pdf`. Genera el PDF on-demand (sin Storage, ~500 ms cold path). Cache cliente 5 min — si modificas un pago, el recibo refleja los datos nuevos en la siguiente descarga.
+
+### Quién puede descargarlo
+
+- **Admin / superadmin**: siempre.
+- **Agente**: solo si `payment.agentId === claims.agentId` (su propio pago).
+- **Cliente**: solo si `payment.clientId === uid` o `payment.registeredBy === uid` (su propio pago).
+- Si no cumple ninguno → HTTP 403.
+
+> **Antes de marcar un pago como verified**, confirma con calma todos los datos. El recibo formal **es lo que el cliente y el agente van a usar como comprobante oficial** — un error después de aprobar implica generar V2 manualmente (no automatizado en Fase 0).
+
+> **El recibo formal NO sustituye el CFDI fiscal**. Es el comprobante interno del abono contra el viaje. La factura SAT, cuando aplique, sigue saliendo desde Odoo.
+
+---
+
 ## Gestión de usuarios — Superadmin
 
 `Usuarios` en el sidebar → `/superadmin/users` (sólo visible con rol superadmin)
@@ -219,4 +276,9 @@ Se crea primero en Odoo como `product.template` con el tipo correcto. El sync po
 
 ---
 
-> **Última actualización**: 2026-05-18. Si encuentras un flujo desactualizado, avísale a Alek por WhatsApp. Este manual se actualiza por cada cambio relevante en la plataforma.
+> **Última actualización**: 2026-05-20. Si encuentras un flujo desactualizado, avísale a Alek por WhatsApp. Este manual se actualiza por cada cambio relevante en la plataforma.
+>
+> **Cambios recientes** (Story 10.6 + NS-02/NS-03 + identidad visual):
+> - Vista batch `/admin/orders/sin-agente` con dropdown inline + backfill automático de pagos verified.
+> - Recibo PDF formal de pago (endpoint `GET /api/payments/[id]/receipt-pdf`) distinto del comprobante bancario que sube el cliente.
+> - Logo oficial AroundaPlanet integrado en headers, PDFs y PWA.

@@ -102,7 +102,16 @@ Cuando hagas un abono (transferencia, depósito, efectivo en oficina), tienes qu
 - Cuando se verifica, el monto se suma a **Total verificado** y la barra de progreso avanza.
 - Si hay algo raro con el comprobante (ilegible, monto distinto, fecha vieja), te van a contactar por WhatsApp para resolverlo.
 
-> **Tiempo típico de verificación**: el mismo día o al día siguiente hábil. Si pasan más de 48 horas y no se mueve, escríbele a tu agente.
+> **Tiempo típico de verificación**: 3 a 4 días hábiles (Paloma revisa los comprobantes contra el estado de cuenta del banco). Si pasan más de 4 días hábiles y no se mueve, escríbele a tu agente.
+
+### Tu recibo oficial AroundaPlanet
+
+Cuando tu pago se marca como **Verificado**, la plataforma genera automáticamente un **Recibo PDF formal** con el membrete de AroundaPlanet, el monto en cifras y en letras, la fecha de verificación, el método de pago y el resumen del saldo de tu viaje (total contratado, lo que llevas cobrado hasta ese pago, lo que falta).
+
+- Lo encuentras desde **Contratos** → debajo del contrato de tu viaje aparece un botón **Recibo PDF $X** por cada pago verificado.
+- También lo puede mandar tu agente directamente por WhatsApp.
+- **Ojo**: el botón **"Ver comprobante"** abre la captura del banco que tú subiste al registrar el pago. El botón **"Recibo PDF"** abre el documento oficial de AroundaPlanet. Son cosas distintas.
+- Solo se genera para pagos **Verificados**. Si tu pago todavía está "En revisión", el recibo aún no está disponible.
 
 > **Importante**: NO registres pagos en efectivo que hayas dado en oficina sin que te lo confirme primero el equipo. Esos los registra Paloma desde su lado.
 
@@ -156,7 +165,7 @@ Si tu comprobante no se puede verificar (foto borrosa, monto que no aparece en e
 
 ### ¿Cuándo me confirman que mi pago fue aceptado?
 
-Normalmente el mismo día hábil o al día siguiente. Vas a ver el cambio reflejado directamente en la app: tu pago pasa de **"En revisión"** a sumarse a **"Total verificado"** y la barra de progreso avanza.
+El plazo típico es **3 a 4 días hábiles**. Vas a ver el cambio reflejado directamente en la app: tu pago pasa de **"En revisión"** a sumarse a **"Total verificado"** y la barra de progreso avanza. Una vez verificado, también queda disponible tu **Recibo PDF oficial** en la sección **Contratos**.
 
 ### ¿Se puede cancelar un viaje?
 
@@ -185,3 +194,8 @@ Tu primera opción es **tu agente** por WhatsApp — él te conoce y conoce tu c
 Esta app es nueva y la estamos puliendo. Si encuentras algo que no funciona o no se entiende, díselo a tu agente — lo anotamos y lo arreglamos. La idea es que viajar con AroundaPlanet sea fácil de principio a fin, también desde el celular.
 
 ¡Disfruta tu viaje! 🌍
+
+---
+
+*Manual versión 1.1 — Mayo 2026.*
+*Cambios v1.1: plazo de verificación 3-4 días hábiles + recibo PDF formal disponible en Contratos tras verificación + distinción entre comprobante bancario (lo que subiste) y recibo oficial AroundaPlanet (el que genera la plataforma).*
