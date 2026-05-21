@@ -94,8 +94,8 @@ describe('RoleSidebar', () => {
     mockUsePathname.mockReturnValue('/admin/verification')
     render(<RoleSidebar roles={['admin']} />)
     const buttons = document.querySelectorAll('[data-active="false"]')
-    // Admin tiene 15 items tras agregar Ayuda y Manual, 1 activo = 14 inactivos
-    expect(buttons.length).toBe(14)
+    // Admin tiene 16 items tras agregar "Sin agente" (Story 10.6), 1 activo = 15 inactivos
+    expect(buttons.length).toBe(15)
   })
 
   it('renders combined sections for multiple roles', () => {
