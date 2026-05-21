@@ -257,9 +257,9 @@ Cada criterio debe poder verificarse con evidencia concreta. El cierre se declar
 - ☑ **Runbook ops básico**: `_bmad-output/runbooks/ops-basico-fase-0.md` cubre `/deploy`, logs (3 caminos), recovery Odoo, secrets + grantaccess, 5 gotchas conocidos, referencias a runbooks Epic 9.
 
 ### 7.4. Documentos de entrega
-- ☐ **Documento entrega formal Fase 0** generado, con logo, checklist firmable y accesos.
-- ☐ **Demo grabada** publicada (Loom o equivalente), enlace incluido en documento entrega.
-- ☐ **Propuesta Fase 1** generada con scope diferido del apartado 4, estimate y prioridad.
+- ☑ **Documento entrega formal Fase 0** generado: `_bmad-output/entrega-formal/fase-0-entregables.md` — encabezado con logo, 7 apartados (resumen + entregables por dominio + accesos + verificaciones técnicas + smoke pendiente + checklist firmable + sección de firma).
+- ☐ **Demo grabada** (Loom) — pendiente operativo Alek. **Guion completo entregado** en `_bmad-output/entrega-formal/fase-0-demo-guion.md` con 10 secciones de ~1 min c/u, checklist pre-grabación, tips y checklist post-grabación.
+- ☑ **Propuesta Fase 1** generada: `_bmad-output/entrega-formal/propuesta-fase-1.md` — 14 iniciativas agrupadas en 5 categorías (A-E), estimate 18-24 sem-persona, sprints sugeridos, modelo comercial.
 
 ### 7.5. Estado técnico de producción
 - ☐ **DNS `aroundaplanet.com`** apuntando a App Hosting con SSL válido (o, en caso de diferimiento, justificación en documento entrega).
