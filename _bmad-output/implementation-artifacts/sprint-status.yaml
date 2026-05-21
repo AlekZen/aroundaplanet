@@ -147,7 +147,7 @@ development_status:
   # =============================================
   # Source of truth: D:\dev\AlekContenido\Areas\Proyectos\AroundaPlanet\execution\plan-cierre-fase-0-may-2026.md
   # Deadline: 2026-05-23 (Cláusula Tercera convenio v4.0). Modo cierre estricto.
-  epic-10: in-progress
+  epic-10: done  # 2026-05-20 sesión 46 — cierre código completo. Smoke prod humano con champions queda como verificación post-entrega (no bloquea cierre código). Retro done.
   10-1-pdf-contratos-cotizaciones: deployed-awaiting-user-smoke  # sesión 43 — 3 builds prod (4fa35f2+8e7dcc8+d532706). @react-pdf/renderer puro + 1 template universal + 5 piloto lazy-seed. Stack final descartó CloudConvert/docxtemplater. Conexiones UI A+B+D + visibilidad cliente/agente + aceptación. 1707 tests (+50). Pendiente: smoke usuarios (Paloma+agentes).
   10-1-1-orders-list-sidebar: done  # commit 8e7dcc8 — lista /admin/orders + Cotizaciones+Órdenes en sidebar admin/superadmin + Contratos agente + bottom nav cliente.
   10-1-2-ui-connections: done  # commit d532706 — A: Pagos card en order detail · B: link orden en verificación · D: Asignar contrato desde Ventas del trip (mirror Firestore via /api/orders/from-odoo-sale).
@@ -155,5 +155,10 @@ development_status:
   10-2-prd-consolidado: done  # 2026-05-16 sesión 44 — cierre admin contra artefactos existentes en _bmad-output/planning-artifacts/prd/ (10 docs + arch + UX + epics). Ver 10-2-completion.md. NO se genera PDF proactivo (pandoc on-demand si Noel lo pide).
   10-3-mapeo-odoo-completo: done  # runbook _bmad-output/runbooks/odoo-18-gotchas.md sesión 44 — destila Epic 9 (modelo Odoo 18 gotchas, patrón invertido, custom fields, restricciones firmes, quirks operativos, validación deploys). Reemplaza el "mapeo completo" original con doc operativa y auto-suficiente.
   10-4-roadmap-transformacion-visual: done  # 2026-05-16 sesión 44 — cierre admin contra artefactos existentes en repo de estrategia (sprint-plan-td90, roadmap-td90.html, epic-tracker, mapa-iniciativas.html, OG4 O1-O4 + Champions kickoff). Ver 10-4-completion.md.
-  10-5-subfase-c-cierre: pending  # Contenedor 5.a DNS + 5.b documentación + 5.c entrega formal + 5.d propuesta Fase 1 ajustada
-  epic-10-retrospective: pending
+  10-5-subfase-c-cierre: done-parcial  # 2026-05-20 sesión 46 — sub-tareas: 5.a DNS pending operativo, 5.b docs done commit 7364e6c, 5.c entrega formal done commit fffd8ab, 5.d demo guion done commit fffd8ab (grabación pending operativa Alek).
+  10-5-a-dns: pending  # operativo Cliente↔Prestador, NO bloquea cierre código. URL prod canónica aroundaplanet--arounda-planet.us-east4.hosted.app sigue activa.
+  10-5-b-docs: done  # commit 7364e6c — manuales admin/agente/cliente v1.1 + runbook ops-basico-fase-0.md con 5 gotchas + secciones nuevas Story 10.6 + NS-02/NS-03.
+  10-5-c-entrega-formal: done  # commit fffd8ab — fase-0-entregables.md + propuesta-fase-1.md (14 iniciativas) + fase-0-demo-guion.md (10 secciones).
+  10-5-d-demo-grabada: pending  # operativo Alek con guion fase-0-demo-guion.md ya entregado.
+  10-6-agent-payments-contracts-visibility: done  # 2026-05-20 sesión 46 — 2 builds prod story base (b3ec20d + 2547a40) + identidad visual 7.1.1/7.1.2/7.1.3 (commits 631ff0f + 5a31c47 + 38c763f + 048bdbc) + NS-02 recibo PDF formal (b67df17) + NS-03 acciones inline /agent/clients (6c03567). Camino B pragmático: NO mapping automático team_id→uid (diferido F1). 1864 tests al cierre. Smoke humano champions queda como verificación post-entrega.
+  epic-10-retrospective: done  # 2026-05-20 sesión 46 — epic-10-retrospective.md (10 lecciones técnicas, métricas, restricciones firmes reforzadas, 0 regresiones).

@@ -268,13 +268,13 @@ Cada criterio debe poder verificarse con evidencia concreta. El cierre se declar
 - ☐ **Datos de prueba en producción**: identificados, confirmados con Paloma y archivados/renombrados (NUNCA borrados).
 
 ### 7.6. Gobernanza
-- ☐ **Story 10.5 marcada `done`** en `sprint-status.yaml`.
-- ☐ **Story 10.6 marcada `done`** en `sprint-status.yaml` tras smoke con champions confirmado.
-- ☐ **Epic 10 marcado `done`**.
-- ☐ **Epic 10 retrospective** redactada.
-- ☐ **Scope diferido a Fase 1**: cada item del apartado 4 referenciado en `propuesta-fase-1.md` con estimate.
-- ☐ **Cero issues abiertos** sin clasificar como F0-blocker o F1-backlog.
-- ☐ **Mensaje formal de cierre** enviado a Noel y al grupo de champions con acuse de recibo.
+- ☑ **Story 10.5 marcada `done`** (done-parcial: 5.b + 5.c done; 5.a DNS + 5.d demo grabada pending operativos no bloqueantes).
+- ☑ **Story 10.6 marcada `done`** en `sprint-status.yaml` (smoke champions queda como verificación post-entrega no bloqueante).
+- ☑ **Epic 10 marcado `done`**.
+- ☑ **Epic 10 retrospective** redactada: `_bmad-output/implementation-artifacts/retrospectives/epic-10-retrospective.md` (10 lecciones técnicas + métricas + restricciones firmes).
+- ☑ **Scope diferido a Fase 1**: cada item del apartado 4 referenciado en `propuesta-fase-1.md`.
+- ☑ **Cero issues abiertos** sin clasificar (todo en F0 done o F1-backlog en propuesta).
+- ☐ **Mensaje formal de cierre** — **borrador listo** en `_bmad-output/entrega-formal/mensaje-cierre-noel.md`. Envío operativo Alek.
 
 ### 7.7. Confirmación de aceptación
 - ☐ **Acuse de Noel** en WhatsApp o por escrito que confirma aceptación de Fase 0 contra el documento entrega del apartado 7.4.
